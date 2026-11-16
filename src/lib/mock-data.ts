@@ -466,7 +466,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26000",
     "sku": "TFD-26000-APP",
     "batteryHealth": 82,
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 14040,
@@ -532,7 +532,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26001",
     "sku": "TFD-26001-APP",
     "batteryHealth": 85,
-    "status": "Ready for Sale",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 54600,
@@ -630,7 +630,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26003",
     "sku": "TFD-26003-APP",
     "batteryHealth": 91,
-    "status": "Ready for Sale",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 46800,
@@ -679,7 +679,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26004",
     "sku": "TFD-26004-APP",
     "batteryHealth": 94,
-    "status": "QC Pending",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 56940,
@@ -728,7 +728,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26005",
     "sku": "TFD-26005-APP",
     "batteryHealth": 97,
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 42900,
@@ -794,7 +794,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26006",
     "sku": "TFD-26006-APP",
     "batteryHealth": 82,
-    "status": "Reserved",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 53040,
@@ -843,7 +843,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26007",
     "sku": "TFD-26007-APP",
     "batteryHealth": 85,
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 42900,
@@ -909,7 +909,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26008",
     "sku": "TFD-26008-APP",
     "batteryHealth": 88,
-    "status": "Ready for Sale",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 50700,
@@ -1007,7 +1007,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26010",
     "sku": "TFD-26010-APP",
     "batteryHealth": 94,
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 60840,
@@ -1073,7 +1073,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26011",
     "sku": "TFD-26011-APP",
     "batteryHealth": 97,
-    "status": "QC Pending",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 23400,
@@ -1122,7 +1122,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26012",
     "sku": "TFD-26012-APP",
     "batteryHealth": 82,
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 46800,
@@ -1171,7 +1171,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26013",
     "sku": "TFD-26013-APP",
     "batteryHealth": 85,
-    "status": "Reserved",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 58500,
@@ -1220,7 +1220,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26014",
     "sku": "TFD-26014-APP",
     "batteryHealth": 88,
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 31200,
@@ -1286,7 +1286,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26015",
     "sku": "TFD-26015-APP",
     "batteryHealth": 91,
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 39000,
@@ -1401,7 +1401,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26017",
     "sku": "TFD-26017-APP",
     "batteryHealth": 97,
-    "status": "Ready for Sale",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 50700,
@@ -1450,7 +1450,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26018",
     "sku": "TFD-26018-APP",
     "batteryHealth": 82,
-    "status": "QC Pending",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 29640,
@@ -1498,7 +1498,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26019",
     "sku": "TFD-26019-SAM",
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 51480,
@@ -1546,7 +1546,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26020",
     "sku": "TFD-26020-SAM",
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 23400,
@@ -1611,7 +1611,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26021",
     "sku": "TFD-26021-SAM",
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 9360,
@@ -1676,7 +1676,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26022",
     "sku": "TFD-26022-SAM",
-    "status": "Ready for Sale",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 54600,
@@ -1772,7 +1772,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26024",
     "sku": "TFD-26024-SAM",
-    "status": "Ready for Sale",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 27300,
@@ -1820,7 +1820,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26025",
     "sku": "TFD-26025-SAM",
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 37440,
@@ -1885,7 +1885,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26026",
     "sku": "TFD-26026-SAM",
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 7020,
@@ -1933,7 +1933,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26027",
     "sku": "TFD-26027-SAM",
-    "status": "Reserved",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 45240,
@@ -1981,7 +1981,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26028",
     "sku": "TFD-26028-SAM",
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 54600,
@@ -2046,7 +2046,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26029",
     "sku": "TFD-26029-SAM",
-    "status": "Ready for Sale",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 24180,
@@ -2094,7 +2094,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26030",
     "sku": "TFD-26030-ONE",
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 28860,
@@ -2159,7 +2159,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26031",
     "sku": "TFD-26031-ONE",
-    "status": "Ready for Sale",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 14040,
@@ -2207,7 +2207,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26032",
     "sku": "TFD-26032-ONE",
-    "status": "QC Pending",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 21840,
@@ -2255,7 +2255,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26033",
     "sku": "TFD-26033-MOT",
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 13260,
@@ -2303,7 +2303,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26034",
     "sku": "TFD-26034-MOT",
-    "status": "Reserved",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 8580,
@@ -2351,7 +2351,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26035",
     "sku": "TFD-26035-REA",
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 12480,
@@ -2417,7 +2417,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26036",
     "sku": "TFD-26036-APP",
     "batteryHealth": 82,
-    "status": "Ready for Sale",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 13260,
@@ -2513,7 +2513,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26038",
     "sku": "TFD-26038-POC",
-    "status": "Ready for Sale",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 11700,
@@ -2561,7 +2561,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26039",
     "sku": "TFD-26039-GOO",
-    "status": "QC Pending",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 28860,
@@ -2609,7 +2609,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26040",
     "sku": "TFD-26040-GOO",
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 19500,
@@ -2674,7 +2674,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26041",
     "sku": "TFD-26041-XIA",
-    "status": "Reserved",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 8580,
@@ -2722,7 +2722,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26042",
     "sku": "TFD-26042-VIV",
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 36660,
@@ -2788,7 +2788,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26043",
     "sku": "TFD-26043-APP",
     "batteryHealth": 85,
-    "status": "Ready for Sale",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 8580,
@@ -2886,7 +2886,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26045",
     "sku": "TFD-26045-APP",
     "batteryHealth": 91,
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 35100,
@@ -2952,7 +2952,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26046",
     "sku": "TFD-26046-APP",
     "batteryHealth": 94,
-    "status": "QC Pending",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 49140,
@@ -3000,7 +3000,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26047",
     "sku": "TFD-26047-VIV",
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 20280,
@@ -3048,7 +3048,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26048",
     "sku": "TFD-26048-MOT",
-    "status": "Reserved",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 8580,
@@ -3097,7 +3097,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26049",
     "sku": "TFD-26049-APP",
     "batteryHealth": 85,
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 35100,
@@ -3162,7 +3162,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26050",
     "sku": "TFD-26050-SAM",
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 41340,
@@ -3276,7 +3276,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26052",
     "sku": "TFD-26052-OPP",
-    "status": "Ready for Sale",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 10530,
@@ -3324,7 +3324,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26053",
     "sku": "TFD-26053-VIV",
-    "status": "QC Pending",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 28860,
@@ -3372,7 +3372,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26054",
     "sku": "TFD-26054-REA",
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 11700,
@@ -3420,7 +3420,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26055",
     "sku": "TFD-26055-POC",
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 8580,
@@ -3485,7 +3485,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26056",
     "sku": "TFD-26056-REA",
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 10530,
@@ -3550,7 +3550,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26057",
     "sku": "TFD-26057-SAM",
-    "status": "Ready for Sale",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 9360,
@@ -3646,7 +3646,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26059",
     "sku": "TFD-26059-SAM",
-    "status": "Ready for Sale",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 10530,
@@ -3694,7 +3694,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26060",
     "sku": "TFD-26060-VIV",
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 11700,
@@ -3759,7 +3759,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26061",
     "sku": "TFD-26061-XIA",
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 13650,
@@ -3807,7 +3807,7 @@ export const initialDevices: Device[] = [
     "imei2": "",
     "serialNumber": "SN26062",
     "sku": "TFD-26062-SAM",
-    "status": "Reserved",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 81900,
@@ -3856,7 +3856,7 @@ export const initialDevices: Device[] = [
     "serialNumber": "SN26063",
     "sku": "TFD-26063-APP",
     "batteryHealth": 91,
-    "status": "Under Repair",
+    "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
     "costs": {
       "purchasePrice": 17940,

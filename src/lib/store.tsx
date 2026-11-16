@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import {
   Device,
+  DeviceStatus,
   PurchaseOrder,
   SalesOrder,
   StockMovement,
@@ -102,6 +103,7 @@ interface AppContextType {
   addDevice: (device: Partial<Device>) => Device;
   updateDevice: (id: string, updates: Partial<Device>) => void;
   deleteDevice: (id: string) => void;
+  setAllDevicesInStock: () => void;
 
   addPurchase: (purchase: Partial<PurchaseOrder>) => PurchaseOrder;
   addSale: (sale: Partial<SalesOrder>) => SalesOrder;
@@ -253,7 +255,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // LocalStorage keys for cross-tab & session persistence
   const STORAGE_KEYS = {
-    devices: "thefundu_devices_v5",
+    devices: "thefundu_devices_v7",
     repairs: "thefundu_repairs_v5",
     qcInspections: "thefundu_qc_v5",
     warehouses: "thefundu_stores_v5",
@@ -275,10 +277,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
-      const storedDevs = localStorage.getItem(STORAGE_KEYS.devices);
+      const storedDevs = localStorage.getItem(STORAGE_KEYS.devices) || localStorage.getItem("thefundu_devices_v5");
       if (storedDevs) {
         const parsed = JSON.parse(storedDevs);
-        if (Array.isArray(parsed) && parsed.length > 0) setDevices(parsed);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Set all devices to "In Stock"
+          const allInStock = parsed.map((d: Device) => ({ ...d, status: "In Stock" as DeviceStatus }));
+          setDevices(allInStock);
+        }
+      } else {
+        setDevices(initialDevices.map((d: Device) => ({ ...d, status: "In Stock" as DeviceStatus })));
       }
       const storedRepairs = localStorage.getItem(STORAGE_KEYS.repairs);
       if (storedRepairs) {
@@ -588,6 +596,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const deleteDevice = (id: string) => {
     setDevices((prev) => prev.filter((d) => d.id !== id));
     showToast(`Device ${id} removed from active inventory.`, "info");
+  };
+
+  const setAllDevicesInStock = () => {
+    setDevices((prev) =>
+      prev.map((dev) => ({
+        ...dev,
+        status: "In Stock" as DeviceStatus,
+      }))
+    );
+    showToast("All smartphones updated to 'In Stock' status!", "success");
   };
 
   // Purchase Order
@@ -1584,6 +1602,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         addDevice,
         updateDevice,
         deleteDevice,
+        setAllDevicesInStock,
         addPurchase,
         addSale,
         updateSalesDeliveryStatus,

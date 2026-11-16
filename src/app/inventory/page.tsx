@@ -47,7 +47,7 @@ import { exportGSTRule32AuditCSV } from "@/lib/exportGSTRule32";
 import { formatINR, formatDate, getStatusBadgeColor } from "@/lib/utils";
 
 export default function InventoryPage() {
-  const { devices, warehouses, buybacks, updateDevice, deleteDevice, transferWarehouseStock, showToast, isCashierMode } = useApp();
+  const { devices, warehouses, buybacks, updateDevice, deleteDevice, setAllDevicesInStock, transferWarehouseStock, showToast, isCashierMode } = useApp();
 
   // Search & Filters State
   const [searchQuery, setSearchQuery] = useState("");
@@ -361,6 +361,17 @@ export default function InventoryPage() {
           >
             <Upload className="h-3.5 w-3.5" />
             <span>Import Excel</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={setAllDevicesInStock}
+            className="gap-1.5 border-emerald-300 text-emerald-700 bg-emerald-50/50 hover:bg-emerald-100 dark:border-emerald-800 dark:text-emerald-300 dark:bg-emerald-950/40"
+            title="Set status of all phones in inventory to 'In Stock'"
+          >
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>All Phones In Stock</span>
           </Button>
 
           <Button
