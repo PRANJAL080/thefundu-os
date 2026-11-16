@@ -103,16 +103,16 @@ export function TopNav({ onOpenGlobalSearch, onOpenBarcodeScanner }: TopNavProps
   return (
     <header className="sticky top-0 z-20 flex h-16 w-full items-center justify-between border-b border-slate-200/80 bg-white/95 px-6 backdrop-blur dark:border-slate-800/80 dark:bg-slate-950/95">
       {/* Left: Global Search trigger & Quick Date Filter */}
-      <div className="flex items-center gap-4 flex-1 max-w-xl">
+      <div className="flex items-center gap-3 flex-1 min-w-0 flex-nowrap">
         <button
           onClick={onOpenGlobalSearch}
-          className="flex h-9 w-full max-w-sm items-center justify-between rounded-lg border border-slate-200 bg-slate-50/70 px-3 text-xs text-slate-500 hover:bg-slate-100 hover:text-slate-800 dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-400 dark:hover:bg-slate-900 transition-all shadow-xs"
+          className="flex h-9 w-full max-w-xs md:max-w-sm items-center justify-between rounded-lg border border-slate-200 bg-slate-50/70 px-3 text-xs text-slate-500 hover:bg-slate-100 hover:text-slate-800 dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-400 dark:hover:bg-slate-900 transition-all shadow-xs shrink-0"
         >
           <div className="flex items-center gap-2">
-            <Search className="h-3.5 w-3.5 text-slate-400" />
-            <span>Search IMEI, SKU, customer, PO, repairs...</span>
+            <Search className="h-3.5 w-3.5 text-slate-400 shrink-0" />
+            <span className="truncate">Search IMEI, SKU, customer, PO...</span>
           </div>
-          <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-slate-200 bg-white px-1.5 py-0.5 font-mono text-[10px] text-slate-500 dark:border-slate-700 dark:bg-slate-800">
+          <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-slate-200 bg-white px-1.5 py-0.5 font-mono text-[10px] text-slate-500 dark:border-slate-700 dark:bg-slate-800 shrink-0">
             <span>⌘</span>K
           </kbd>
         </button>
@@ -133,7 +133,7 @@ export function TopNav({ onOpenGlobalSearch, onOpenBarcodeScanner }: TopNavProps
         )}
 
         {/* Date Filter Badges */}
-        <div className="hidden xl:flex items-center bg-slate-100 dark:bg-slate-900 p-0.5 rounded-lg border border-slate-200/60 dark:border-slate-800">
+        <div className="hidden 2xl:flex items-center bg-slate-100 dark:bg-slate-900 p-0.5 rounded-lg border border-slate-200/60 dark:border-slate-800 shrink-0">
           {dateOptions.map((opt) => (
             <button
               key={opt.value}

@@ -114,6 +114,22 @@ export interface Device {
     network: string;
     osVersion: string;
   };
+  customerKyc?: {
+    sellerName: string;
+    sellerPhone: string;
+    sellerEmail?: string;
+    sellerAddress?: string;
+    sellerIdType: 'Aadhaar' | 'PAN' | 'Driving License';
+    sellerIdNumber: string;
+    sellerIdPhotoFront?: string;
+    sellerIdPhotoBack?: string;
+    sellerPhoto?: string;
+    payoutAmount: number;
+    payoutMethod: 'UPI' | 'Cash' | 'Bank Transfer';
+    payoutDate: string;
+    ceirStatus: 'Clean' | 'Flagged';
+    ownershipDeclarationSigned: boolean;
+  };
 }
 
 export interface PurchaseOrder {

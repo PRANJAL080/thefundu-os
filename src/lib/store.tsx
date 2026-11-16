@@ -537,6 +537,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         network: newDev.specifications?.network || "5G Dual SIM",
         osVersion: newDev.specifications?.osVersion || "Latest OS",
       },
+      customerKyc: newDev.customerKyc,
       activityTimeline: [
         {
           id: "ACT-" + Date.now(),
@@ -1427,6 +1428,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     if (autoInwardToInventory) {
       const newDev = addDevice({
+        id: fullBB.inwardDeviceId,
         brand: fullBB.brand,
         model: fullBB.model,
         storage: fullBB.storage,
@@ -1434,9 +1436,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
         imei1: fullBB.imei1,
         imei2: fullBB.imei2,
         batteryHealth: fullBB.batteryHealth,
-        status: "QC Pending",
+        status: (buyback as any).status || "In Stock",
         warehouse: fullBB.storeLocation,
         supplierName: `Customer Buyback (${fullBB.sellerName})`,
+        customerKyc: {
+          sellerName: fullBB.sellerName,
+          sellerPhone: fullBB.sellerPhone,
+          sellerEmail: fullBB.sellerEmail,
+          sellerAddress: fullBB.sellerAddress,
+          sellerIdType: fullBB.sellerIdType,
+          sellerIdNumber: fullBB.sellerIdNumber,
+          sellerIdPhotoFront: fullBB.sellerIdPhotoFront,
+          sellerIdPhotoBack: fullBB.sellerIdPhotoBack,
+          sellerPhoto: fullBB.sellerPhoto,
+          payoutAmount: fullBB.finalOfferedPrice,
+          payoutMethod: fullBB.payoutMethod,
+          payoutDate: fullBB.date,
+          ceirStatus: fullBB.ceirStatus,
+          ownershipDeclarationSigned: fullBB.ownershipDeclarationSigned,
+        },
         costs: {
           purchasePrice: fullBB.finalOfferedPrice,
           repairCost: 0,
@@ -1445,8 +1463,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
           logisticsCost: 200,
           otherCost: 200,
           totalLandedCost: fullBB.finalOfferedPrice + 1300,
-          sellingPrice: Math.round(fullBB.finalOfferedPrice * 1.25),
-          projectedProfit: Math.round(fullBB.finalOfferedPrice * 0.25) - 1300,
+          sellingPrice: (buyback as any).costs?.sellingPrice || Math.round(fullBB.finalOfferedPrice * 1.25),
+          projectedProfit: ((buyback as any).costs?.sellingPrice || Math.round(fullBB.finalOfferedPrice * 1.25)) - (fullBB.finalOfferedPrice + 1300),
           profitMarginPercent: 20,
         },
       });
