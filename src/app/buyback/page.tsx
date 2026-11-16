@@ -21,6 +21,10 @@ import {
   Lock,
   Layers,
   ChevronRight,
+  Camera,
+  Image as ImageIcon,
+  Trash2,
+  CreditCard,
 } from "lucide-react";
 import { useApp } from "@/lib/store";
 import { BuybackRecord } from "@/lib/types";
@@ -28,8 +32,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { formatINR, formatDate } from "@/lib/utils";
+import { formatINR, formatDate, compressImage } from "@/lib/utils";
 import { COMPANY_CONFIG } from "@/lib/company-config";
+import { BuybackKycReportModal } from "@/components/buyback/BuybackKycReportModal";
 
 // Base price map for algorithmic valuation
 const MODEL_BASE_PRICES: Record<string, number> = {
@@ -76,10 +81,42 @@ export default function BuybackDeskPage() {
   // Step 3: Legal & Police Verification
   const [sellerName, setSellerName] = useState("Rohit Shukla");
   const [sellerPhone, setSellerPhone] = useState("9839012345");
+  const [sellerEmail, setSellerEmail] = useState("rohit.shukla@gmail.com");
+  const [sellerAddress, setSellerAddress] = useState("ED-476, Sector-Q, Aliganj, Lucknow, UP 226024");
   const [sellerIdType, setSellerIdType] = useState<"Aadhaar" | "PAN" | "Driving License">("Aadhaar");
   const [sellerIdNumber, setSellerIdNumber] = useState("5421-8902-1244");
+  const [sellerIdPhotoFront, setSellerIdPhotoFront] = useState<string>("");
+  const [sellerIdPhotoBack, setSellerIdPhotoBack] = useState<string>("");
+  const [sellerPhoto, setSellerPhoto] = useState<string>("");
   const [ownershipSigned, setOwnershipSigned] = useState(false);
   const [payoutMethod, setPayoutMethod] = useState<"UPI" | "Cash" | "Bank Transfer">("UPI");
+
+  // Report Modal State
+  const [selectedReportRecord, setSelectedReportRecord] = useState<BuybackRecord | null>(null);
+  const [isReportOpen, setIsReportOpen] = useState(false);
+
+  // File Input Refs
+  const aadhaarFrontRef = React.useRef<HTMLInputElement | null>(null);
+  const aadhaarBackRef = React.useRef<HTMLInputElement | null>(null);
+  const customerPhotoRef = React.useRef<HTMLInputElement | null>(null);
+
+  const handleKycImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setter: (val: string) => void,
+    label: string
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const compressed = await compressImage(file, 800, 0.75);
+      setter(compressed);
+      showToast(`${label} uploaded and attached to verification file!`, "success");
+    } catch {
+      showToast(`Failed to upload ${label}. Please try again.`, "error");
+    } finally {
+      if (e.target) e.target.value = "";
+    }
+  };
 
   // Dynamic Valuation Algorithm
   const valuation = useMemo(() => {
@@ -159,8 +196,13 @@ export default function BuybackDeskPage() {
         payoutMethod,
         sellerName,
         sellerPhone,
+        sellerEmail,
+        sellerAddress,
         sellerIdType,
         sellerIdNumber,
+        sellerIdPhotoFront,
+        sellerIdPhotoBack,
+        sellerPhoto,
         policeVerificationStatus: "Cleared",
         ceirStatus: "Clean",
         ownershipDeclarationSigned: true,
@@ -170,8 +212,11 @@ export default function BuybackDeskPage() {
       true // auto inward to inventory!
     );
 
+    setSelectedReportRecord(record);
+    setIsReportOpen(true);
+
     showToast(
-      `Buyback ${record.id} finalized! Payout of ${formatINR(valuation.finalOfferedPrice)} initiated & phone inwarded to inventory.`,
+      `Buyback ${record.id} finalized! Payout of ${formatINR(valuation.finalOfferedPrice)} initiated & phone inwarded to inventory. Aadhaar Report generated!`,
       "success"
     );
   };
@@ -550,13 +595,116 @@ export default function BuybackDeskPage() {
               </div>
 
               <div>
+                <label className="font-semibold block mb-1">Residential Address *</label>
+                <Input
+                  required
+                  placeholder="e.g. ED-476, Sector-Q, Aliganj, Lucknow"
+                  value={sellerAddress}
+                  onChange={(e) => setSellerAddress(e.target.value)}
+                  className="h-8 text-xs font-medium"
+                />
+              </div>
+
+              <div>
                 <label className="font-semibold block mb-1">{sellerIdType} Number *</label>
                 <Input
                   required
+                  placeholder="e.g. 5421-8902-1244"
                   value={sellerIdNumber}
                   onChange={(e) => setSellerIdNumber(e.target.value)}
-                  className="h-8 text-xs font-mono"
+                  className="h-8 text-xs font-mono font-bold tracking-wider"
                 />
+              </div>
+
+              {/* Aadhaar Photo Attachment Section */}
+              <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-[11px] text-slate-800 dark:text-slate-200 flex items-center gap-1.5 uppercase tracking-wider">
+                    <CreditCard className="h-3.5 w-3.5 text-blue-600" />
+                    <span>Attach Aadhaar Card Proof</span>
+                  </span>
+                  <span className="text-[10px] text-slate-400">Printed in Police Report</span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  {/* Front */}
+                  <input
+                    type="file"
+                    ref={aadhaarFrontRef}
+                    onChange={(e) => handleKycImageUpload(e, setSellerIdPhotoFront, "Aadhaar Card Front")}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                  <div>
+                    {sellerIdPhotoFront ? (
+                      <div className="relative rounded-lg overflow-hidden border border-emerald-300 dark:border-emerald-700 aspect-video group bg-white dark:bg-slate-800">
+                        <img src={sellerIdPhotoFront} alt="Front" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setSellerIdPhotoFront("")}
+                            className="p-1 rounded bg-rose-600 text-white"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </button>
+                        </div>
+                        <span className="absolute bottom-1 left-1 bg-black/70 text-white text-[8px] font-bold px-1 rounded">
+                          Aadhaar Front ✓
+                        </span>
+                      </div>
+                    ) : (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => aadhaarFrontRef.current?.click()}
+                        className="w-full h-14 border-dashed border-slate-300 flex flex-col items-center justify-center text-[10px] gap-1 hover:border-fundu-500"
+                      >
+                        <Camera className="h-3.5 w-3.5 text-slate-500" />
+                        <span>Upload Aadhaar Front</span>
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Back */}
+                  <input
+                    type="file"
+                    ref={aadhaarBackRef}
+                    onChange={(e) => handleKycImageUpload(e, setSellerIdPhotoBack, "Aadhaar Card Back")}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                  <div>
+                    {sellerIdPhotoBack ? (
+                      <div className="relative rounded-lg overflow-hidden border border-emerald-300 dark:border-emerald-700 aspect-video group bg-white dark:bg-slate-800">
+                        <img src={sellerIdPhotoBack} alt="Back" className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setSellerIdPhotoBack("")}
+                            className="p-1 rounded bg-rose-600 text-white"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </button>
+                        </div>
+                        <span className="absolute bottom-1 left-1 bg-black/70 text-white text-[8px] font-bold px-1 rounded">
+                          Aadhaar Back ✓
+                        </span>
+                      </div>
+                    ) : (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => aadhaarBackRef.current?.click()}
+                        className="w-full h-14 border-dashed border-slate-300 flex flex-col items-center justify-center text-[10px] gap-1 hover:border-fundu-500"
+                      >
+                        <Camera className="h-3.5 w-3.5 text-slate-500" />
+                        <span>Upload Aadhaar Back</span>
+                      </Button>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Legal Declaration Checkbox */}
@@ -622,6 +770,7 @@ export default function BuybackDeskPage() {
                 <th className="p-3">CEIR Check</th>
                 <th className="p-3">Payout</th>
                 <th className="p-3">Inward Stock ID</th>
+                <th className="p-3 text-center">Aadhaar Police Report</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -638,7 +787,9 @@ export default function BuybackDeskPage() {
                   </td>
                   <td className="p-3">
                     <p className="font-semibold text-slate-800 dark:text-slate-200">{bb.sellerName}</p>
-                    <p className="text-[10px] text-slate-400 font-mono">{bb.sellerPhone}</p>
+                    <p className="text-[10px] text-slate-400 font-mono">
+                      {bb.sellerPhone} • {bb.sellerIdType}: {bb.sellerIdNumber}
+                    </p>
                   </td>
                   <td className="p-3 text-right font-bold text-emerald-600 dark:text-emerald-400">
                     {formatINR(bb.finalOfferedPrice)}
@@ -657,12 +808,34 @@ export default function BuybackDeskPage() {
                   <td className="p-3 font-mono text-xs text-fundu-600 font-semibold">
                     {bb.inwardDeviceId || "Auto-Inwarded"}
                   </td>
+                  <td className="p-3 text-center">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedReportRecord(bb);
+                        setIsReportOpen(true);
+                      }}
+                      className="h-7 text-xs font-semibold gap-1 text-blue-600 border-blue-200 hover:bg-blue-50 dark:border-blue-800 dark:hover:bg-blue-950/40"
+                      title="Print Official Second-Hand Mobile Purchase Voucher with Aadhaar KYC"
+                    >
+                      <Printer className="h-3 w-3" />
+                      <span>Print KYC Report</span>
+                    </Button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </CardContent>
       </Card>
+
+      {/* Official Buyback & Aadhaar Police CEIR Report Modal */}
+      <BuybackKycReportModal
+        record={selectedReportRecord}
+        isOpen={isReportOpen}
+        onClose={() => setIsReportOpen(false)}
+      />
     </div>
   );
 }

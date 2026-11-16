@@ -46,6 +46,7 @@ export default function SalesOrdersPage() {
   // New Order Form State
   const [customerName, setCustomerName] = useState("Vikrant Batra");
   const [customerPhone, setCustomerPhone] = useState("+91 98200 44109");
+  const [customerAadhaar, setCustomerAadhaar] = useState("");
   const [customerEmail, setCustomerEmail] = useState("vikrant.b@gmail.com");
   const [customerAddress, setCustomerAddress] = useState("102 Sea Green, Bandra West, Mumbai 400050");
   const [deviceId, setDeviceId] = useState(devices[0]?.id || "Fun-26001");
@@ -81,6 +82,7 @@ export default function SalesOrdersPage() {
       typeOfSale,
       customerName,
       customerPhone,
+      customerAadhaar: customerAadhaar.trim() || undefined,
       customerEmail,
       customerAddress,
       deviceId,
@@ -441,12 +443,22 @@ export default function SalesOrdersPage() {
               />
             </div>
             <div>
-              <label className="font-semibold block mb-1">Shipping / Delivery Address *</label>
+              <label className="font-semibold block mb-1">Customer Aadhaar No. (Optional)</label>
               <Input
-                value={customerAddress}
-                onChange={(e) => setCustomerAddress(e.target.value)}
+                placeholder="12-digit Aadhaar UID"
+                className="font-mono"
+                value={customerAadhaar}
+                onChange={(e) => setCustomerAadhaar(e.target.value)}
               />
             </div>
+          </div>
+
+          <div>
+            <label className="font-semibold block mb-1">Shipping / Delivery Address *</label>
+            <Input
+              value={customerAddress}
+              onChange={(e) => setCustomerAddress(e.target.value)}
+            />
           </div>
 
           <div>

@@ -331,6 +331,7 @@ export function CompanyInvoiceSheet({
     order?.customerAddress ||
     "Gomti nagar, Gomti nagar , Gomti nagar , Lucknow, Uttar Pradesh, 226010, Lucknow, Uttar Pradesh, India, 226010";
   const customerGstin = customCustomer?.gstin || order?.customerGstin || "URP (Unregistered)";
+  const customerAadhaar = order?.customerAadhaar || (customCustomer as any)?.aadhaar;
   const placeOfSupply = customCustomer?.placeOfSupply || order?.placeOfSupply || "Uttar Pradesh (09)";
 
   // Phone Specifications - STRICTLY WITHOUT GRADING (No A+, No Grade tags)
@@ -514,7 +515,7 @@ export function CompanyInvoiceSheet({
               <p className="font-bold text-[10px]">{customerName}</p>
               <p>Ph: {customerPhone} &nbsp; {customerEmail}</p>
               <p>{customerAddress}</p>
-              <p>GSTIN: {customerGstin} &nbsp;&nbsp;&nbsp; Place of Supply: {placeOfSupply}</p>
+              <p>GSTIN: {customerGstin} {customerAadhaar ? <span> &nbsp;&nbsp;&nbsp; Aadhaar: {customerAadhaar}</span> : null} &nbsp;&nbsp;&nbsp; Place of Supply: {placeOfSupply}</p>
             </div>
           </div>
         </div>

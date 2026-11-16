@@ -153,6 +153,7 @@ export interface SalesOrder {
   customerPhone: string;
   customerEmail: string;
   customerAddress: string;
+  customerAadhaar?: string;
   customerGstin?: string;
   placeOfSupply?: string;
   date: string;
@@ -433,8 +434,13 @@ export interface BuybackRecord {
   payoutMethod: 'UPI' | 'Cash' | 'Bank Transfer';
   sellerName: string;
   sellerPhone: string;
+  sellerEmail?: string;
+  sellerAddress?: string;
   sellerIdType: 'Aadhaar' | 'PAN' | 'Driving License';
   sellerIdNumber: string;
+  sellerIdPhotoFront?: string;
+  sellerIdPhotoBack?: string;
+  sellerPhoto?: string;
   policeVerificationStatus: 'Cleared' | 'Pending';
   ceirStatus: 'Clean' | 'Flagged';
   ownershipDeclarationSigned: boolean;
