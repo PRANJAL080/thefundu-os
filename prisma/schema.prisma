@@ -1,0 +1,341 @@
+// This is your Prisma schema file for TheFundu Inventory OS
+// Esterline Bonaparte Corporation Private Limited (Brand: TheFundu)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DeviceGrade {
+  A_PLUS  @map("A+")
+  A       @map("A")
+  B       @map("B")
+  C       @map("C")
+  D       @map("D")
+  SCRAP   @map("Scrap")
+}
+
+enum DeviceStatus {
+  IN_STOCK        @map("In Stock")
+  QC_PENDING      @map("QC Pending")
+  UNDER_REPAIR    @map("Under Repair")
+  READY_FOR_SALE  @map("Ready for Sale")
+  RESERVED        @map("Reserved")
+  SOLD            @map("Sold")
+  DAMAGED         @map("Damaged")
+  RETURNED        @map("Returned")
+}
+
+enum VendorTier {
+  TIER_1_STRATEGIC @map("Tier 1 (Strategic Partner)")
+  TIER_2_WHOLESALE @map("Tier 2 (Preferred Wholesale)")
+  TIER_3_SPOT_BUY  @map("Tier 3 (Spot Buy Partner)")
+}
+
+enum VendorCategory {
+  ENTERPRISE_BUYBACK     @map("Enterprise Buyback Aggregator")
+  REGIONAL_WHOLESALE     @map("Regional Wholesale Stockist")
+  CORPORATE_ITAD         @map("Corporate ITAD & Liquidation")
+  RETAIL_FRANCHISE       @map("Retail Franchise Sourcing")
+  DIRECT_OEM_EXCHANGE    @map("Direct OEM Exchange")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  INVENTORY_MANAGER
+  QC_INSPECTOR
+  HARDWARE_TECHNICIAN
+  SALES_EXECUTIVE
+  ACCOUNTANT
+}
+
+// -------------------------------------------------------------
+// 1. SERIALIZED SMARTPHONE HANDSET (CORE ASSET)
+// -------------------------------------------------------------
+model Device {
+  id              String        @id // e.g. Fun-26001
+  brand           String        // Apple, Samsung, Google
+  model           String        // iPhone 15 Pro Max
+  storage         String        // 256GB
+  ram             String?       // 8GB
+  colour          String        // Natural Titanium
+  imei1           String        @unique // Primary 15-digit IMEI
+  imei2           String?       // Secondary / eSIM IMEI
+  serialNumber    String?       // Apple/OEM hardware serial
+  sku             String?       // Internal stock keeping unit
+
+  // Hardware Condition
+  batteryHealth   Int           @default(90) // OEM percentage
+  grade           DeviceGrade   @default(A)
+  status          DeviceStatus  @default(QC_PENDING)
+
+  // Financials (Confidential Sourcing Cost X)
+  purchasePrice   Decimal       @db.Decimal(10, 2) // X (Hidden on customer invoices)
+  repairCost      Decimal       @default(0) @db.Decimal(10, 2)
+  testingCost     Decimal       @default(250) @db.Decimal(10, 2)
+  logisticsCost   Decimal       @default(350) @db.Decimal(10, 2)
+  sellingPrice    Decimal       @db.Decimal(10, 2) // Y (Customer retail price)
+  expectedMargin  Decimal?      @db.Decimal(10, 2) // Z = Y - X
+
+  // Sourcing & Location
+  purchaseDate    DateTime      @default(now())
+  supplierId      String?
+  supplier        Supplier?     @relation(fields: [supplierId], references: [id])
+  warehouseId     String?
+  warehouse       Warehouse?    @relation(fields: [warehouseId], references: [id])
+  consignmentId   String?
+  consignment     Consignment?  @relation(fields: [consignmentId], references: [id])
+
+  // Media
+  images          String[]      // URLs from Cloud Storage (S3 / R2)
+
+  // Relations
+  qcInspections   QCInspection[]
+  repairJobs      RepairJob[]
+  salesOrders     SalesOrder[]
+  stockMovements  StockMovement[]
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([imei1])
+  @@index([status])
+  @@index([warehouseId])
+  @@index([brand, model])
+}
+
+// -------------------------------------------------------------
+// 2. SUPPLIERS & VENDORS
+// -------------------------------------------------------------
+model Supplier {
+  id                  String          @id // SUP-001
+  name                String          // Cashify B2B
+  company             String          // Manak Waste Management Ltd
+  contactPerson       String
+  email               String
+  phone               String
+  address             String
+  gstNumber           String?
+  pan                 String?
+  category            VendorCategory  @default(ENTERPRISE_BUYBACK)
+  tier                VendorTier      @default(TIER_1_STRATEGIC)
+  paymentTerms        String          @default("Net 15")
+  creditLimit         Decimal         @default(3000000) @db.Decimal(12, 2)
+  outstandingBalance  Decimal         @default(0) @db.Decimal(12, 2)
+  qcPassRate          Decimal         @default(96.5) @db.Decimal(5, 2)
+  kycVerified         Boolean         @default(true)
+
+  // Bank Particulars
+  bankName            String?
+  accountNumber       String?
+  ifscCode            String?
+  upiId               String?
+
+  devices             Device[]
+  consignments        Consignment[]
+  payouts             VendorPayout[]
+  disputes            VendorDispute[]
+
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+}
+
+// -------------------------------------------------------------
+// 3. INWARD CONSIGNMENT LOTS
+// -------------------------------------------------------------
+model Consignment {
+  id                String       @id // LOT-2026-BOM-88
+  supplierId        String
+  supplier          Supplier     @relation(fields: [supplierId], references: [id])
+  warehouseId       String
+  warehouse         Warehouse    @relation(fields: [warehouseId], references: [id])
+  date              DateTime     @default(now())
+  totalDevices      Int
+  qcPassedCount     Int          @default(0)
+  qcRejectedCount   Int          @default(0)
+  totalValue        Decimal      @db.Decimal(12, 2)
+  settlementStatus  String       @default("Pending QC") // QC Completed, Settlement Approved, Paid
+  devices           Device[]
+
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+}
+
+// -------------------------------------------------------------
+// 4. 13-POINT QUALITY CHECK (QC INSPECTIONS)
+// -------------------------------------------------------------
+model QCInspection {
+  id                    String       @id // QC-9912
+  deviceId              String
+  device                Device       @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  inspectorName         String
+  inspectionDate        DateTime     @default(now())
+  batteryHealthPercent  Int
+  gradeAssigned         DeviceGrade
+
+  // 13-Point Checkpoints (Boolean flags)
+  displayPassed         Boolean      @default(true)
+  touchscreenPassed     Boolean      @default(true)
+  batteryPassed         Boolean      @default(true)
+  faceIdPassed          Boolean      @default(true)
+  fingerprintPassed     Boolean      @default(true)
+  camerasPassed         Boolean      @default(true)
+  speakersPassed        Boolean      @default(true)
+  microphonePassed      Boolean      @default(true)
+  chargingPortPassed    Boolean      @default(true)
+  simNetworkPassed      Boolean      @default(true)
+  wifiPassed            Boolean      @default(true)
+  bluetoothPassed       Boolean      @default(true)
+  chassisPassed         Boolean      @default(true)
+
+  status                String       @default("Approved") // Approved, Needs Repair, Rejected
+  notes                 String?
+  images                String[]
+
+  createdAt             DateTime     @default(now())
+}
+
+// -------------------------------------------------------------
+// 5. HARDWARE REPAIR JOBS
+// -------------------------------------------------------------
+model RepairJob {
+  id                  String       @id // REP-8826
+  deviceId            String
+  device              Device       @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  technicianName      String
+  problemDescription  String
+  partsReplaced       String[]
+  repairCost          Decimal      @default(0) @db.Decimal(10, 2)
+  status              String       @default("Pending") // In Progress, Awaiting Parts, Quality Passed
+  startDate           DateTime     @default(now())
+  completionDate      DateTime?
+  notes               String?
+
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+}
+
+// -------------------------------------------------------------
+// 6. SALES ORDERS & GST RULE 32(5) TAX INVOICES
+// -------------------------------------------------------------
+model SalesOrder {
+  id                  String       @id // SO-2026-901
+  invoiceNumber       String       @unique // INVMUM260001362
+  invoiceDate         DateTime     @default(now())
+
+  // Customer Particulars
+  customerName        String
+  customerPhone       String
+  customerEmail       String?
+  customerAddress     String
+  customerGstin       String?
+  placeOfSupply       String       @default("Maharashtra")
+
+  // Handset Relation
+  deviceId            String
+  device              Device       @relation(fields: [deviceId], references: [id])
+  imei                String
+
+  // Financials
+  sellingPrice        Decimal      @db.Decimal(10, 2) // Y
+  discount            Decimal      @default(0) @db.Decimal(10, 2)
+  finalAmount         Decimal      @db.Decimal(10, 2) // Y - D
+
+  // GST Rule 32(5) Margin Scheme Breakdown
+  marginProfitZ       Decimal      @db.Decimal(10, 2) // Y - D - X
+  marginTaxAmount     Decimal      @db.Decimal(10, 2) // 18% on Z
+  marginCgst          Decimal      @db.Decimal(10, 2) // 9%
+  marginSgst          Decimal      @db.Decimal(10, 2) // 9%
+  marginIgst          Decimal      @default(0) @db.Decimal(10, 2)
+
+  // Payment
+  paymentMethod       String       @default("csh_razor_pay")
+  paymentMode         String       @default("UPI")
+  transactionId       String?
+  gatewayTxnId        String?
+  paymentStatus       String       @default("Completed")
+
+  // Warranty
+  warrantyDays        Int          @default(180)
+  warrantyExpiryDate  DateTime
+  deliveryStatus      String       @default("Packed")
+
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  @@index([invoiceNumber])
+  @@index([customerPhone])
+}
+
+// -------------------------------------------------------------
+// 7. WAREHOUSE HUBS & STOCK MOVEMENTS
+// -------------------------------------------------------------
+model Warehouse {
+  id                  String       @id // WH-BOM-01
+  name                String       @unique // Mumbai Central Hub
+  code                String       @unique // BOM-HUB
+  address             String
+  managerName         String
+  managerPhone        String?
+  totalCapacity       Int          @default(2500)
+
+  devices             Device[]
+  consignments        Consignment[]
+
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+}
+
+model StockMovement {
+  id                  String       @id @default(cuid())
+  date                DateTime     @default(now())
+  type                String       // Inward / Outward
+  reason              String       // Purchase Received, Sold, Transfer, RTV
+  deviceId            String
+  device              Device       @relation(fields: [deviceId], references: [id])
+  fromLocation        String
+  toLocation          String
+  quantity            Int          @default(1)
+  value               Decimal      @db.Decimal(10, 2)
+  initiatedBy         String
+
+  createdAt           DateTime     @default(now())
+}
+
+// -------------------------------------------------------------
+// 8. VENDOR PAYOUTS & RTV DISPUTES
+// -------------------------------------------------------------
+model VendorPayout {
+  id                  String       @id // PAY-9921
+  supplierId          String
+  supplier            Supplier     @relation(fields: [supplierId], references: [id])
+  date                DateTime     @default(now())
+  amount              Decimal      @db.Decimal(12, 2)
+  mode                String       @default("NEFT/RTGS")
+  utrNumber           String       @unique
+  tdsDeducted         Decimal      @default(0) @db.Decimal(10, 2) // Section 194Q
+  status              String       @default("Processed")
+  invoiceRef          String?
+
+  createdAt           DateTime     @default(now())
+}
+
+model VendorDispute {
+  id                  String       @id // RTV-441
+  supplierId          String
+  supplier            Supplier     @relation(fields: [supplierId], references: [id])
+  deviceId            String
+  deviceModel         String
+  imei                String
+  issueType           String       // iCloud Lock, Fake Screen, Water Damage
+  detectedAt          DateTime     @default(now())
+  status              String       @default("RTV Dispatched")
+  claimedAmount       Decimal      @db.Decimal(10, 2)
+  resolutionDate      DateTime?
+
+  createdAt           DateTime     @default(now())
+}
