@@ -26,6 +26,8 @@ import { TabsList, TabTrigger } from "@/components/ui/tabs";
 import { formatINR, formatDate, getGradeBadgeColor, getStatusBadgeColor } from "@/lib/utils";
 import { DeviceStatus } from "@/lib/types";
 import { InvoiceModal } from "@/components/invoice/InvoiceModal";
+import { EditDeviceModal } from "@/components/inventory/EditDeviceModal";
+import { Edit } from "lucide-react";
 
 export default function DeviceDetailPage() {
   const params = useParams();
@@ -47,6 +49,7 @@ export default function DeviceDetailPage() {
     | "timeline"
   >("overview");
   const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   if (!device) {
     return (
@@ -99,6 +102,17 @@ export default function DeviceDetailPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsEditOpen(true)}
+            className="gap-1.5 text-xs font-semibold text-blue-600 border-blue-200 hover:bg-blue-50 dark:hover:bg-blue-950/40"
+            title="Edit all specifications, price, IMEI and information"
+          >
+            <Edit className="h-3.5 w-3.5" />
+            <span>Edit Handset Details</span>
+          </Button>
+
           <Button
             variant="fundu"
             size="sm"
@@ -353,6 +367,13 @@ export default function DeviceDetailPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Edit Device Modal */}
+      <EditDeviceModal
+        device={device}
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+      />
 
       {/* Tax Invoice Modal */}
       <InvoiceModal

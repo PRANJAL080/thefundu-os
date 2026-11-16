@@ -32,6 +32,7 @@ import { formatINR, formatDate, getGradeBadgeColor, getStatusBadgeColor } from "
 import { useApp } from "@/lib/store";
 import { InvoiceModal } from "@/components/invoice/InvoiceModal";
 import { ThermalStickerModal } from "@/components/inventory/ThermalBarcodeSticker";
+import { EditDeviceModal } from "@/components/inventory/EditDeviceModal";
 
 interface DeviceDetailsModalProps {
   device: Device | null;
@@ -60,6 +61,7 @@ export function DeviceDetailsModal({
   const [editStatus, setEditStatus] = useState<DeviceStatus | null>(null);
   const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
   const [isStickerOpen, setIsStickerOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   if (!device) return null;
 
@@ -119,6 +121,17 @@ export function DeviceDetailsModal({
 
         {/* Current Status Pill with quick changer & Invoice Button */}
         <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsEditModalOpen(true)}
+            className="gap-1.5 text-xs font-semibold text-blue-600 border-blue-200 hover:bg-blue-50 dark:hover:bg-blue-950/40"
+            title="Edit all specifications, price, IMEI and information"
+          >
+            <Edit2 className="h-3.5 w-3.5" />
+            <span>Edit Handset Details</span>
+          </Button>
+
           <Button
             variant="outline"
             size="sm"
@@ -682,6 +695,13 @@ export function DeviceDetailsModal({
           </div>
         )}
       </div>
+
+      {/* Edit Device Modal */}
+      <EditDeviceModal
+        device={device}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+      />
 
       {/* Tax Invoice & Warranty Certificate Modal */}
       <InvoiceModal

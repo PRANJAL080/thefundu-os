@@ -37,6 +37,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { DeviceDetailsModal } from "@/components/inventory/DeviceDetailsModal";
+import { EditDeviceModal } from "@/components/inventory/EditDeviceModal";
 import { ImportExcelModal } from "@/components/inventory/ImportExcelModal";
 import { InvoiceModal } from "@/components/invoice/InvoiceModal";
 import { ThermalStickerModal } from "@/components/inventory/ThermalBarcodeSticker";
@@ -73,6 +74,8 @@ export default function InventoryPage() {
   const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
   const [stickerDevices, setStickerDevices] = useState<Device[]>([]);
   const [isStickerOpen, setIsStickerOpen] = useState(false);
+  const [selectedEditDevice, setSelectedEditDevice] = useState<Device | null>(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   // Brand list with counts
   const brandList = useMemo(() => {
@@ -476,6 +479,24 @@ export default function InventoryPage() {
               <span>Generate Tax Bill</span>
             </Button>
 
+            {selectedIds.length === 1 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const dev = devices.find((d) => d.id === selectedIds[0]);
+                  if (dev) {
+                    setSelectedEditDevice(dev);
+                    setIsEditOpen(true);
+                  }
+                }}
+                className="h-7 text-xs px-2.5 gap-1.5 text-blue-300 border-blue-700 bg-blue-950/60 hover:bg-blue-900"
+              >
+                <Edit className="h-3 w-3" />
+                <span>Edit Handset Details</span>
+              </Button>
+            )}
+
             <Button
               variant="outline"
               size="sm"
@@ -639,6 +660,17 @@ export default function InventoryPage() {
                         <div className="flex items-center justify-center gap-1">
                           <button
                             onClick={() => {
+                              setSelectedEditDevice(dev);
+                              setIsEditOpen(true);
+                            }}
+                            className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/40 rounded-md transition-colors"
+                            title="Edit Device Information"
+                          >
+                            <Edit className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                          </button>
+
+                          <button
+                            onClick={() => {
                               setStickerDevices([dev]);
                               setIsStickerOpen(true);
                             }}
@@ -741,6 +773,13 @@ export default function InventoryPage() {
         device={selectedDevice}
         isOpen={isDetailsOpen}
         onClose={() => setIsDetailsOpen(false)}
+      />
+
+      {/* Edit Device Modal */}
+      <EditDeviceModal
+        device={selectedEditDevice}
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
       />
 
       {/* Import Modal */}
