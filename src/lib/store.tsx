@@ -485,7 +485,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Device CRUD
   const addDevice = (newDev: Partial<Device>): Device => {
     const nextNumber = 26000 + devices.length;
-    const id = `Fun-${nextNumber}`;
+    const id = (newDev.id && newDev.id.trim()) ? newDev.id.trim() : `Fun-${nextNumber}`;
     const purchasePrice = Number(newDev.costs?.purchasePrice || 0);
     const repairCost = Number(newDev.costs?.repairCost || 0);
     const testingCost = Number(newDev.costs?.testingCost || 500);
@@ -571,16 +571,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const updateDevice = (id: string, updates: Partial<Device>) => {
+    const targetId = updates.id && updates.id.trim() ? updates.id.trim() : id;
     setDevices((prev) =>
       prev.map((dev) => {
         if (dev.id === id) {
-          const updated = { ...dev, ...updates };
+          const updated = { ...dev, ...updates, id: targetId };
           return updated;
         }
         return dev;
       })
     );
-    showToast(`Device ${id} updated successfully.`, "info");
+    showToast(`Device ${targetId} updated successfully.`, "info");
   };
 
   const deleteDevice = (id: string) => {

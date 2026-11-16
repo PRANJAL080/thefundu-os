@@ -64,6 +64,7 @@ export function EditDeviceModal({ device, isOpen, onClose }: EditDeviceModalProp
   const { updateDevice, warehouses, currentUser, showToast } = useApp();
 
   // Form States
+  const [deviceId, setDeviceId] = useState("");
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
   const [storage, setStorage] = useState("128GB");
@@ -102,6 +103,7 @@ export function EditDeviceModal({ device, isOpen, onClose }: EditDeviceModalProp
   // Load device into form when opened
   useEffect(() => {
     if (device && isOpen) {
+      setDeviceId(device.id || "");
       setBrand(device.brand || "Apple");
       setModel(device.model || "");
       setStorage(device.storage || "128GB");
@@ -153,6 +155,11 @@ export function EditDeviceModal({ device, isOpen, onClose }: EditDeviceModalProp
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!deviceId.trim()) {
+      showToast("Handset ID / Fun Code is required.", "error");
+      return;
+    }
+
     if (!imei1.trim()) {
       showToast("Primary IMEI 1 is required.", "error");
       return;
@@ -189,6 +196,7 @@ export function EditDeviceModal({ device, isOpen, onClose }: EditDeviceModalProp
       : device.images || [];
 
     updateDevice(device.id, {
+      id: deviceId.trim(),
       brand: brand.trim(),
       model: model.trim(),
       storage,
@@ -215,7 +223,7 @@ export function EditDeviceModal({ device, isOpen, onClose }: EditDeviceModalProp
       activityTimeline: [newActivity, ...(device.activityTimeline || [])],
     });
 
-    showToast(`Handset ${device.id} (${brand} ${model}) updated successfully!`, "success");
+    showToast(`Handset ${deviceId.trim()} (${brand} ${model}) updated successfully!`, "success");
     onClose();
   };
 
@@ -311,6 +319,29 @@ export function EditDeviceModal({ device, isOpen, onClose }: EditDeviceModalProp
           {/* TAB 1: GENERAL & IDENTIFICATION */}
           {activeTab === "general" && (
             <div className="space-y-5">
+              {/* Handset Code / Fun ID Section */}
+              <div className="p-3.5 rounded-xl bg-blue-50/80 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                <div>
+                  <label className="block text-xs font-bold text-blue-900 dark:text-blue-200 uppercase tracking-wider flex items-center gap-1.5">
+                    <Tag className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                    <span>Inventory ID / Fun Code</span>
+                    <span className="text-rose-500">*</span>
+                  </label>
+                  <p className="text-[11px] text-blue-700/90 dark:text-blue-300 mt-0.5">
+                    Handset stock code (e.g. <strong>Fun-26052</strong>) displayed under the device title across inventory tables, tax invoices & barcode labels.
+                  </p>
+                </div>
+                <div className="w-full sm:w-64 shrink-0">
+                  <Input
+                    placeholder="e.g. Fun-26052"
+                    value={deviceId}
+                    onChange={(e) => setDeviceId(e.target.value)}
+                    className="text-xs h-9 font-mono font-bold tracking-wider bg-white dark:bg-slate-900 border-blue-300 dark:border-blue-700 text-blue-900 dark:text-blue-100 focus:ring-blue-500 shadow-xs"
+                    required
+                  />
+                </div>
+              </div>
+
               {/* Brand and Model */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>

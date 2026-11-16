@@ -30,6 +30,7 @@ import { DeviceGrade, DeviceStatus, WarehouseLocation } from "@/lib/types";
 
 // Zod Schema
 const phoneFormSchema = z.object({
+  customId: z.string().optional(),
   brand: z.string().min(1, "Brand is required"),
   model: z.string().min(1, "Model is required"),
   storage: z.string().min(1, "Storage is required"),
@@ -70,7 +71,7 @@ type PhoneFormData = z.infer<typeof phoneFormSchema>;
 
 export default function AddNewPhonePage() {
   const router = useRouter();
-  const { addDevice, suppliers, warehouses, showToast } = useApp();
+  const { addDevice, devices, suppliers, warehouses, showToast } = useApp();
 
   const [imageUrls, setImageUrls] = useState<string[]>([
     "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80",
@@ -85,6 +86,7 @@ export default function AddNewPhonePage() {
   } = useForm<PhoneFormData>({
     resolver: zodResolver(phoneFormSchema),
     defaultValues: {
+      customId: `Fun-${26000 + (devices?.length || 0)}`,
       brand: "Apple",
       model: "iPhone 15",
       storage: "128GB",
@@ -142,6 +144,7 @@ export default function AddNewPhonePage() {
 
   const onSubmit = (data: PhoneFormData) => {
     addDevice({
+      id: data.customId?.trim(),
       brand: data.brand,
       model: data.model,
       storage: data.storage,
@@ -312,6 +315,25 @@ export default function AddNewPhonePage() {
             <CardDescription>IMEI 1 & 2, factory serial number, and barcode SKU</CardDescription>
           </CardHeader>
           <CardContent className="pt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+            {/* Handset Code / Fun ID */}
+            <div className="sm:col-span-2 md:col-span-4 p-3 rounded-lg bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <label className="font-bold text-blue-900 dark:text-blue-200 block text-xs uppercase tracking-wider">
+                  Handset Inventory ID / Fun Code *
+                </label>
+                <p className="text-[11px] text-blue-700/80 dark:text-blue-400 mt-0.5">
+                  The stock identifier (e.g. <strong>Fun-26052</strong>) printed under the handset name across inventory tables, tax invoices & barcode labels.
+                </p>
+              </div>
+              <div className="w-full sm:w-64 shrink-0">
+                <Input
+                  placeholder="e.g. Fun-26052"
+                  className="font-mono text-xs font-bold tracking-wider bg-white dark:bg-slate-900 border-blue-300 dark:border-blue-700 text-blue-900 dark:text-blue-100"
+                  {...register("customId")}
+                />
+              </div>
+            </div>
+
             {/* IMEI 1 */}
             <div>
               <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
