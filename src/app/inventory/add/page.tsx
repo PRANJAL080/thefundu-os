@@ -25,7 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useApp } from "@/lib/store";
-import { formatINR } from "@/lib/utils";
+import { formatINR, compressImage } from "@/lib/utils";
 import { DeviceGrade, DeviceStatus, WarehouseLocation } from "@/lib/types";
 
 // Zod Schema
@@ -76,6 +76,33 @@ export default function AddNewPhonePage() {
   const [imageUrls, setImageUrls] = useState<string[]>([
     "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80",
   ]);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setIsUploading(true);
+    try {
+      const newImgs: string[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file.type.startsWith("image/")) {
+          const compressed = await compressImage(file, 800, 0.75);
+          newImgs.push(compressed);
+        }
+      }
+      if (newImgs.length > 0) {
+        setImageUrls((prev) => [...newImgs, ...prev]);
+        showToast(`${newImgs.length} photo(s) attached successfully!`, "success");
+      }
+    } catch (err) {
+      showToast("Failed to upload image. Please try another.", "error");
+    } finally {
+      setIsUploading(false);
+      if (e.target) e.target.value = "";
+    }
+  };
 
   const {
     register,
@@ -628,23 +655,43 @@ export default function AddNewPhonePage() {
         {/* SECTION F: MEDIA & INSPECTION PHOTOS */}
         <Card>
           <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800">
-            <CardTitle className="text-sm flex items-center justify-between">
+            <CardTitle className="text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <ImageIcon className="h-4 w-4 text-fundu-600" />
                 <span>Section F: Media & Inspection Photos</span>
               </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleSimulatedImageAdd}
-                className="gap-1 text-xs"
-              >
-                <UploadCloud className="h-3.5 w-3.5" />
-                <span>Upload Another Photo</span>
-              </Button>
+              <div className="flex items-center gap-2">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                />
+                <Button
+                  type="button"
+                  variant="fundu"
+                  size="sm"
+                  disabled={isUploading}
+                  onClick={() => fileInputRef.current?.click()}
+                  className="gap-1.5 text-xs shadow-xs"
+                >
+                  <UploadCloud className="h-3.5 w-3.5" />
+                  <span>{isUploading ? "Uploading..." : "Upload Photos (Browse...)"}</span>
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSimulatedImageAdd}
+                  className="gap-1 text-xs"
+                >
+                  <span>Sample</span>
+                </Button>
+              </div>
             </CardTitle>
-            <CardDescription>Attach high-res photos of device front, back, chassis and inspection certificate</CardDescription>
+            <CardDescription>Upload real photos from phone/computer or inspection certificate</CardDescription>
           </CardHeader>
           <CardContent className="pt-4 text-xs">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

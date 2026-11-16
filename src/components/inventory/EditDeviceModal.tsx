@@ -19,13 +19,18 @@ import {
   Layers,
   Image as ImageIcon,
   Sparkles,
+  UploadCloud,
+  Camera,
+  Trash2,
+  Plus,
+  Check,
 } from "lucide-react";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Device, DeviceStatus, WarehouseLocation } from "@/lib/types";
 import { useApp } from "@/lib/store";
-import { formatINR } from "@/lib/utils";
+import { formatINR, compressImage } from "@/lib/utils";
 
 interface EditDeviceModalProps {
   device: Device | null;
@@ -87,10 +92,15 @@ export function EditDeviceModal({ device, isOpen, onClose }: EditDeviceModalProp
   const [logisticsCost, setLogisticsCost] = useState<number>(0);
   const [otherCost, setOtherCost] = useState<number>(0);
 
-  // Supplier & Specs
+  // Supplier & Specs & Photos
   const [supplierName, setSupplierName] = useState("");
   const [purchaseDate, setPurchaseDate] = useState("");
+  const [images, setImages] = useState<string[]>([]);
   const [imageUrl, setImageUrl] = useState("");
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
+
   const [chipset, setChipset] = useState("");
   const [screenSize, setScreenSize] = useState("");
   const [cameraSpecs, setCameraSpecs] = useState("");
@@ -127,7 +137,10 @@ export function EditDeviceModal({ device, isOpen, onClose }: EditDeviceModalProp
 
       setSupplierName(device.supplierName || "");
       setPurchaseDate(device.purchaseDate || new Date().toISOString().split("T")[0]);
-      setImageUrl(device.images?.[0] || "");
+      
+      const loadedImages = device.images && device.images.length > 0 ? [...device.images] : [];
+      setImages(loadedImages);
+      setImageUrl(loadedImages[0] || "");
 
       setChipset(device.specifications?.chipset || "");
       setScreenSize(device.specifications?.screenSize || "");
@@ -136,6 +149,64 @@ export function EditDeviceModal({ device, isOpen, onClose }: EditDeviceModalProp
       setOsVersion(device.specifications?.osVersion || "");
     }
   }, [device, isOpen, warehouses]);
+
+  // Image Upload Handlers
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    setIsUploading(true);
+    try {
+      const newImgs: string[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file.type.startsWith("image/")) {
+          const compressedBase64 = await compressImage(file, 800, 0.75);
+          newImgs.push(compressedBase64);
+        }
+      }
+      if (newImgs.length > 0) {
+        setImages((prev) => [...newImgs, ...prev]);
+        setImageUrl(newImgs[0]);
+        showToast(`${newImgs.length} handset photo(s) uploaded successfully!`, "success");
+      }
+    } catch (err) {
+      showToast("Failed to upload image. Please try another file.", "error");
+    } finally {
+      setIsUploading(false);
+      if (e.target) e.target.value = "";
+    }
+  };
+
+  const handleAddImageUrl = () => {
+    if (!imageUrl.trim()) return;
+    if (!images.includes(imageUrl.trim())) {
+      setImages((prev) => [imageUrl.trim(), ...prev]);
+      showToast("Photo link added successfully!", "info");
+    }
+    setShowUrlInput(false);
+  };
+
+  const handleRemoveImage = (indexToRemove: number) => {
+    setImages((prev) => {
+      const updated = prev.filter((_, idx) => idx !== indexToRemove);
+      if (indexToRemove === 0) {
+        setImageUrl(updated[0] || "");
+      }
+      return updated;
+    });
+    showToast("Photo removed.", "info");
+  };
+
+  const handleSetPrimaryImage = (indexToPrimary: number) => {
+    setImages((prev) => {
+      const target = prev[indexToPrimary];
+      const rest = prev.filter((_, idx) => idx !== indexToPrimary);
+      const updated = [target, ...rest];
+      setImageUrl(target);
+      return updated;
+    });
+    showToast("Set as primary handset photo.", "info");
+  };
 
   if (!device) return null;
 
@@ -191,9 +262,11 @@ export function EditDeviceModal({ device, isOpen, onClose }: EditDeviceModalProp
       details: `Modified details: ${brand} ${model} (${storage}, ${colour}). Status: ${status}. Landed ₹${totalLandedCost.toLocaleString()}, Selling ₹${Number(sellingPrice).toLocaleString()}.`,
     };
 
-    const updatedImages = imageUrl.trim()
-      ? [imageUrl.trim(), ...(device.images?.slice(1) || [])]
-      : device.images || [];
+    const finalImages = images.length > 0
+      ? images
+      : imageUrl.trim()
+        ? [imageUrl.trim()]
+        : (device.images || []);
 
     updateDevice(device.id, {
       id: deviceId.trim(),
@@ -212,7 +285,7 @@ export function EditDeviceModal({ device, isOpen, onClose }: EditDeviceModalProp
       costs: updatedCosts,
       supplierName: supplierName.trim(),
       purchaseDate,
-      images: updatedImages,
+      images: finalImages,
       specifications: {
         chipset: chipset.trim() || device.specifications?.chipset || "Multi-core Mobile Processor",
         screenSize: screenSize.trim() || device.specifications?.screenSize || '6.1" OLED Retina Display',
@@ -233,8 +306,23 @@ export function EditDeviceModal({ device, isOpen, onClose }: EditDeviceModalProp
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/60">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-blue-100 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800 flex items-center justify-center text-blue-600 dark:text-blue-400">
-              <Smartphone className="h-5 w-5" />
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="relative h-12 w-12 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center overflow-hidden shrink-0 cursor-pointer group shadow-xs"
+              title="Click to upload/change photo from device"
+            >
+              {images[0] || imageUrl ? (
+                <img
+                  src={images[0] || imageUrl}
+                  alt="Handset preview"
+                  className="h-full w-full object-cover group-hover:scale-105 transition-transform"
+                />
+              ) : (
+                <Smartphone className="h-6 w-6 text-slate-400" />
+              )}
+              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
+                <Camera className="h-4 w-4" />
+              </div>
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -246,7 +334,7 @@ export function EditDeviceModal({ device, isOpen, onClose }: EditDeviceModalProp
                 </span>
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Update IMEI, brand, model, selling price, purchase cost, store outlet & specs. Changes persist instantly.
+                Update photos, IMEI, brand, model, selling price, purchase cost, store outlet & specs.
               </p>
             </div>
           </div>
@@ -340,6 +428,138 @@ export function EditDeviceModal({ device, isOpen, onClose }: EditDeviceModalProp
                     required
                   />
                 </div>
+              </div>
+
+              {/* Handset Photo Upload Section */}
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+                      <ImageIcon className="h-4 w-4 text-fundu-600 dark:text-fundu-400" />
+                      <span>Handset Photos / Picture</span>
+                    </h4>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      Upload real handset photos directly from your computer or phone gallery.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileUpload}
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                    />
+                    <Button
+                      type="button"
+                      variant="fundu"
+                      size="sm"
+                      disabled={isUploading}
+                      onClick={() => fileInputRef.current?.click()}
+                      className="gap-1.5 text-xs font-semibold shadow-xs"
+                    >
+                      <UploadCloud className="h-3.5 w-3.5" />
+                      <span>{isUploading ? "Uploading..." : "Upload Photo (Browse...)"}</span>
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowUrlInput((v) => !v)}
+                      className="text-xs"
+                    >
+                      <span>Web Link</span>
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Web URL input toggle */}
+                {showUrlInput && (
+                  <div className="flex items-center gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+                    <Input
+                      placeholder="https://images.unsplash.com/... or paste image URL"
+                      value={imageUrl}
+                      onChange={(e) => setImageUrl(e.target.value)}
+                      className="text-xs h-8"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleAddImageUrl}
+                      className="h-8 text-xs shrink-0"
+                    >
+                      Add URL
+                    </Button>
+                  </div>
+                )}
+
+                {/* Photo Previews & Thumbnails */}
+                {images.length > 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3 pt-1">
+                    {images.map((imgSrc, idx) => (
+                      <div
+                        key={idx}
+                        className={`relative rounded-xl overflow-hidden border aspect-square group bg-white dark:bg-slate-800 shadow-xs ${
+                          idx === 0
+                            ? "border-fundu-500 ring-2 ring-fundu-400/40"
+                            : "border-slate-200 dark:border-slate-700"
+                        }`}
+                      >
+                        <img
+                          src={imgSrc}
+                          alt={`Handset ${idx + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+
+                        {idx === 0 && (
+                          <span className="absolute top-1 left-1 bg-fundu-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xs">
+                            Primary
+                          </span>
+                        )}
+
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-1">
+                          {idx !== 0 && (
+                            <button
+                              type="button"
+                              onClick={() => handleSetPrimaryImage(idx)}
+                              className="px-1.5 py-0.5 rounded bg-white/90 text-slate-900 hover:bg-white text-[10px] font-semibold"
+                              title="Set as primary"
+                            >
+                              Primary
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(idx)}
+                            className="p-1 rounded bg-rose-600 text-white hover:bg-rose-700"
+                            title="Delete photo"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    className="p-5 border-2 border-dashed border-slate-200 dark:border-slate-800 hover:border-fundu-400 dark:hover:border-fundu-600 rounded-xl flex flex-col items-center justify-center cursor-pointer transition-colors bg-white/40 dark:bg-slate-900/40"
+                  >
+                    <div className="h-9 w-9 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 mb-1.5">
+                      <UploadCloud className="h-4 w-4" />
+                    </div>
+                    <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                      Click here to choose & upload photos from your device
+                    </p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">
+                      Supports PNG, JPG, JPEG, WEBP from your phone gallery or computer
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Brand and Model */}
@@ -881,39 +1101,109 @@ export function EditDeviceModal({ device, isOpen, onClose }: EditDeviceModalProp
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5">
-                  <ImageIcon className="h-3.5 w-3.5 text-slate-400" />
-                  <span>Primary Handset Photo (URL)</span>
-                </label>
-                <Input
-                  placeholder="https://images.unsplash.com/..."
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  className="text-xs h-9"
-                />
-                <p className="text-[11px] text-slate-400 mt-1">
-                  Direct link to image file for catalog & invoice thumbnail.
-                </p>
+              {/* Handset Photo Upload in Tab 4 */}
+              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+                      <ImageIcon className="h-4 w-4 text-fundu-600 dark:text-fundu-400" />
+                      <span>Handset Photos & Inspection Gallery</span>
+                    </h4>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      Upload from phone or computer disk. First photo is used as main catalog thumbnail.
+                    </p>
+                  </div>
 
-                {imageUrl && (
-                  <div className="mt-3 flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
-                    <div className="h-14 w-14 rounded-lg overflow-hidden border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 shrink-0">
-                      <img
-                        src={imageUrl}
-                        alt="Preview"
-                        className="h-full w-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLElement).style.display = "none";
-                        }}
-                      />
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="fundu"
+                      size="sm"
+                      disabled={isUploading}
+                      onClick={() => fileInputRef.current?.click()}
+                      className="gap-1.5 text-xs font-semibold shadow-xs"
+                    >
+                      <UploadCloud className="h-3.5 w-3.5" />
+                      <span>{isUploading ? "Uploading..." : "Upload Photo (Browse...)"}</span>
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+                  <Input
+                    placeholder="Or paste external image URL..."
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                    className="text-xs h-8"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAddImageUrl}
+                    className="h-8 text-xs shrink-0"
+                  >
+                    Add URL
+                  </Button>
+                </div>
+
+                {images.length > 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3 pt-1">
+                    {images.map((imgSrc, idx) => (
+                      <div
+                        key={idx}
+                        className={`relative rounded-xl overflow-hidden border aspect-square group bg-white dark:bg-slate-800 shadow-xs ${
+                          idx === 0
+                            ? "border-fundu-500 ring-2 ring-fundu-400/40"
+                            : "border-slate-200 dark:border-slate-700"
+                        }`}
+                      >
+                        <img
+                          src={imgSrc}
+                          alt={`Handset ${idx + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+
+                        {idx === 0 && (
+                          <span className="absolute top-1 left-1 bg-fundu-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-xs">
+                            Primary
+                          </span>
+                        )}
+
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-1">
+                          {idx !== 0 && (
+                            <button
+                              type="button"
+                              onClick={() => handleSetPrimaryImage(idx)}
+                              className="px-1.5 py-0.5 rounded bg-white/90 text-slate-900 hover:bg-white text-[10px] font-semibold"
+                              title="Set as primary"
+                            >
+                              Primary
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(idx)}
+                            className="p-1 rounded bg-rose-600 text-white hover:bg-rose-700"
+                            title="Delete photo"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div
+                    onClick={() => fileInputRef.current?.click()}
+                    className="p-5 border-2 border-dashed border-slate-200 dark:border-slate-800 hover:border-fundu-400 dark:hover:border-fundu-600 rounded-xl flex flex-col items-center justify-center cursor-pointer transition-colors bg-white/40 dark:bg-slate-900/40"
+                  >
+                    <div className="h-9 w-9 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 mb-1.5">
+                      <UploadCloud className="h-4 w-4" />
                     </div>
-                    <div className="text-xs text-slate-600 dark:text-slate-300">
-                      <span className="font-semibold block">Photo Preview</span>
-                      <span className="text-[11px] text-slate-400 truncate max-w-sm block">
-                        {imageUrl}
-                      </span>
-                    </div>
+                    <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                      No photos uploaded yet. Click here to select photos from your device.
+                    </p>
                   </div>
                 )}
               </div>
