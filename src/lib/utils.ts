@@ -128,22 +128,24 @@ export function compressImage(file: File, maxDimension = 800, quality = 0.75): P
 
 /**
  * Intelligent smartphone search matching algorithm.
- * Handles colloquial queries like "apple 16" (brand + model number),
- * "samsung s 26" / "s26" / "s 26" (brand + series + model number),
- * IMEI, ID, SKU, storage, and colour.
+ * Handles:
+ * - "apple 16" -> all Apple iPhone 16 phones
+ * - "apple 12 pro" -> strictly Apple iPhone 12 Pro (NOT other 128GB iPhone generations)
+ * - "samsung s 26" / "samsung s26" / "s 26" / "s26" -> all Samsung Galaxy S26 phones
+ * - IMEI 1 & 2, SKU, Inventory ID, colours, storage
  */
 export function matchesDeviceSearch(dev: Device, query: string): boolean {
   if (!query || !query.trim()) return true;
 
   const rawQ = query.trim().toLowerCase();
 
-  // 1. Direct IMEI, SKU, or Inventory ID matching
+  // 1. Direct IMEI exact/partial match, SKU, or Inventory ID
   if (
     (dev.imei1 && dev.imei1.includes(rawQ)) ||
     (dev.imei2 && dev.imei2.includes(rawQ)) ||
     (dev.sku && dev.sku.toLowerCase().includes(rawQ)) ||
     (dev.id && dev.id.toLowerCase() === rawQ) ||
-    (dev.id && dev.id.toLowerCase().replace(/[^0-9]/g, "").endsWith(rawQ.replace(/[^0-9]/g, "")))
+    (dev.id && dev.id.toLowerCase().replace(/[^0-9]/g, "").endsWith(rawQ))
   ) {
     return true;
   }
@@ -153,83 +155,57 @@ export function matchesDeviceSearch(dev: Device, query: string): boolean {
   const storage = (dev.storage || "").toLowerCase();
   const colour = (dev.colour || "").toLowerCase();
 
-  // Primary searchable text representing this handset
-  const brandModelText = `${brand} ${model} ${storage} ${colour}`.toLowerCase();
-  const collapsedBrandModel = brandModelText.replace(/[^a-z0-9]/g, "");
-
-  // Direct substring match
-  if (brandModelText.includes(rawQ)) return true;
-
   // 2. Normalize letter-number spacing: e.g. "s 26" -> "s26", "s 24" -> "s24", "a 54" -> "a54"
   const normalizedQ = rawQ
     .replace(/\b([a-z])\s+(\d+)\b/gi, "$1$2")
     .trim();
 
-  if (brandModelText.includes(normalizedQ)) return true;
-
-  // 3. Multi-token smart matching (e.g. "apple 16" -> ["apple", "16"], "samsung s 26" -> ["samsung", "s26"])
+  // 3. Multi-token smart matching:
   const tokens = normalizedQ.split(/\s+/).filter(Boolean);
 
   const allTokensMatch = tokens.every((token) => {
-    // Direct match in brand/model/storage/colour
-    if (brandModelText.includes(token)) return true;
-
-    // Token inside collapsed string (e.g. "s26" inside "galaxys26ultra")
-    const cleanToken = token.replace(/[^a-z0-9]/g, "");
-    if (cleanToken && collapsedBrandModel.includes(cleanToken)) return true;
-
-    // Check letter + digits like "s26" or "s24" or "z6"
-    const letterDigit = token.match(/^([a-z]+)(\d+)$/i);
-    if (letterDigit) {
-      const [, prefix, num] = letterDigit;
-      const numRegex = new RegExp(`(?:^|[^0-9])${num}(?:[^0-9]|$)`, "i");
-      if (numRegex.test(model)) {
-        if (prefix === "s" && (brand.includes("samsung") || model.includes("galaxy") || model.includes("s"))) {
-          return true;
-        }
-        if (prefix === "a" && (brand.includes("samsung") || model.includes("a"))) {
-          return true;
-        }
-        if (prefix === "z" && (brand.includes("samsung") || model.includes("z") || model.includes("fold") || model.includes("flip"))) {
+    // A) Purely numeric token (e.g. "12", "16", "13", "14", "15", "26"):
+    // Must match as a discrete number in the MODEL name (e.g. \b12\b in "iPhone 12 Pro")
+    // or as exact storage capacity (e.g. "128", "256", "512", "64")
+    if (/^\d+$/.test(token)) {
+      const modelNumRegex = new RegExp(`(?:^|[^0-9])${token}(?:[^0-9]|$)`, "i");
+      if (modelNumRegex.test(model)) {
+        return true;
+      }
+      if (["32", "64", "128", "256", "512", "1024"].includes(token)) {
+        const storageNumRegex = new RegExp(`(?:^|[^0-9])${token}(?:gb|tb|[^0-9]|$)`, "i");
+        if (storageNumRegex.test(storage)) {
           return true;
         }
       }
+      return false;
     }
+
+    // B) Letter + digit series token (e.g. "s26", "s24", "a54", "z6"):
+    const letterDigit = token.match(/^([a-z]+)(\d+)$/i);
+    if (letterDigit) {
+      const [, prefix, num] = letterDigit;
+      const cleanModel = model.replace(/[^a-z0-9]/g, "");
+      if (cleanModel.includes(token)) return true;
+
+      const numRegex = new RegExp(`(?:^|[^0-9])${num}(?:[^0-9]|$)`, "i");
+      if (numRegex.test(model)) {
+        if (prefix === "s" && (brand.includes("samsung") || model.includes("s"))) return true;
+        if (prefix === "a" && (brand.includes("samsung") || model.includes("a"))) return true;
+        if (prefix === "z" && (brand.includes("samsung") || model.includes("z") || model.includes("fold") || model.includes("flip"))) return true;
+      }
+      return false;
+    }
+
+    // C) Word token (e.g. "apple", "iphone", "pro", "max", "samsung", "galaxy", "ultra", "pink"):
+    if (brand.includes(token)) return true;
+    if (model.includes(token)) return true;
+    if (storage.includes(token)) return true;
+    if (colour.includes(token)) return true;
 
     return false;
   });
 
-  if (allTokensMatch) return true;
-
-  // 4. Check raw tokens for multi-word query without letter-number merging
-  const rawTokens = rawQ.split(/\s+/).filter(Boolean);
-  if (rawTokens.length > 1) {
-    const allRawMatch = rawTokens.every((t) => {
-      if (brandModelText.includes(t)) return true;
-      const clean = t.replace(/[^a-z0-9]/g, "");
-      return clean && collapsedBrandModel.includes(clean);
-    });
-    if (allRawMatch) return true;
-  }
-
-  // 5. Special Colloquial Aliases:
-  // "apple 16" or "apple16" -> any Apple device with "16" in model
-  if (rawQ.includes("apple") && rawQ.includes("16")) {
-    if (brand.includes("apple") && (model.includes("16") || collapsedBrandModel.includes("16"))) {
-      return true;
-    }
-  }
-
-  // "samsung s 26" or "samsung s26" or "s 26" or "s26" -> any Samsung device with "26" in model
-  if (
-    (rawQ.includes("samsung") && (rawQ.includes("26") || rawQ.includes("s26") || rawQ.includes("s 26"))) ||
-    /\b(s\s*26)\b/i.test(rawQ)
-  ) {
-    if (brand.includes("samsung") && (model.includes("26") || collapsedBrandModel.includes("s26") || collapsedBrandModel.includes("26"))) {
-      return true;
-    }
-  }
-
-  return false;
+  return allTokensMatch;
 }
 
