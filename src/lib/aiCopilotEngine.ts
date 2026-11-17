@@ -20,12 +20,114 @@ interface StoreContext {
 }
 
 /**
+ * Intelligent Devanagari Hindi & Hinglish Transliteration and Normalization
+ * Converts Hindi speech/text into standard smartphone search tokens.
+ * Handles speech-to-text variations like "सैमसंग इज़ 24 अल्ट्रा" -> "samsung s24 ultra".
+ */
+export function transliterateAndNormalizeHindi(input: string): string {
+  if (!input) return "";
+  let s = input.trim();
+
+  // 1. Devanagari numerals to standard digits: ०-९ -> 0-9
+  const devanagariDigits: Record<string, string> = {
+    "०": "0", "१": "1", "२": "2", "३": "3", "४": "4",
+    "५": "5", "६": "6", "७": "7", "८": "8", "९": "9",
+  };
+  s = s.replace(/[०-९]/g, (d) => devanagariDigits[d] || d);
+
+  // 2. Hindi Spoken Numbers to Digits
+  s = s.replace(/(?:^|\s+)सोलह(?:\s+|$)/gi, " 16 ");
+  s = s.replace(/(?:^|\s+)पंद्रह(?:\s+|$)/gi, " 15 ");
+  s = s.replace(/(?:^|\s+)चौदह(?:\s+|$)/gi, " 14 ");
+  s = s.replace(/(?:^|\s+)तेरह(?:\s+|$)/gi, " 13 ");
+  s = s.replace(/(?:^|\s+)बारह(?:\s+|$)/gi, " 12 ");
+  s = s.replace(/(?:^|\s+)ग्यारह(?:\s+|$)/gi, " 11 ");
+  s = s.replace(/(?:^|\s+)दस(?:\s+|$)/gi, " 10 ");
+  s = s.replace(/(?:^|\s+)(?:चौबीस|चौबिस)(?:\s+|$)/gi, " 24 ");
+  s = s.replace(/(?:^|\s+)(?:तेईस|तेइस)(?:\s+|$)/gi, " 23 ");
+  s = s.replace(/(?:^|\s+)(?:छब्बीस|छब्बिस)(?:\s+|$)/gi, " 26 ");
+  s = s.replace(/(?:^|\s+)(?:बाईस|बाइस)(?:\s+|$)/gi, " 22 ");
+  s = s.replace(/(?:^|\s+)(?:इक्कीस|इकीस)(?:\s+|$)/gi, " 21 ");
+  s = s.replace(/(?:^|\s+)बीस(?:\s+|$)/gi, " 20 ");
+  s = s.replace(/(?:^|\s+)तीस(?:\s+|$)/gi, " 30 ");
+  s = s.replace(/(?:^|\s+)चालीस(?:\s+|$)/gi, " 40 ");
+  s = s.replace(/(?:^|\s+)पचास(?:\s+|$)/gi, " 50 ");
+  s = s.replace(/(?:^|\s+)साठ(?:\s+|$)/gi, " 60 ");
+  s = s.replace(/(?:^|\s+)सत्तर(?:\s+|$)/gi, " 70 ");
+  s = s.replace(/(?:^|\s+)अस्सी(?:\s+|$)/gi, " 80 ");
+  s = s.replace(/(?:^|\s+)नब्बे(?:\s+|$)/gi, " 90 ");
+  s = s.replace(/(?:^|\s+)सौ(?:\s+|$)/gi, " 100 ");
+  s = s.replace(/(?:^|\s+)(?:हजार|हज़ार)(?:\s+|$)/gi, "000 ");
+  s = s.replace(/(?:^|\s+)लाख(?:\s+|$)/gi, "00000 ");
+
+  // 3. Brand Names transliteration
+  s = s.replace(/सैमसंग|सामसंग/gi, "samsung");
+  s = s.replace(/ऐप्पल|एप्पल|एपिल/gi, "apple");
+  s = s.replace(/आईफोन|आइफोन/gi, "iphone");
+  s = s.replace(/वनप्लस|वन\s*प्लस/gi, "oneplus");
+  s = s.replace(/गूगल|गुगल/gi, "google");
+  s = s.replace(/पिक्सेल|पिक्सल/gi, "pixel");
+  s = s.replace(/शाओमी|श्योमी/gi, "xiaomi");
+  s = s.replace(/रेडमी/gi, "redmi");
+  s = s.replace(/पोको/gi, "poco");
+  s = s.replace(/वीवो|विवो/gi, "vivo");
+  s = s.replace(/ओप्पो|ओपो/gi, "oppo");
+  s = s.replace(/रियलमी|रियल\s*मी/gi, "realme");
+  s = s.replace(/मोटोरोला|मोटो/gi, "motorola");
+  s = s.replace(/नथिंग/gi, "nothing");
+  s = s.replace(/आईकू|इकू/gi, "iqoo");
+  s = s.replace(/इनफिनिक्स/gi, "infinix");
+  s = s.replace(/टेक्नो/gi, "tecno");
+  s = s.replace(/लावा/gi, "lava");
+  s = s.replace(/नोकिया/gi, "nokia");
+  s = s.replace(/सोनी/gi, "sony");
+  s = s.replace(/हॉनर|ऑनर/gi, "honor");
+  s = s.replace(/आसुस/gi, "asus");
+
+  // 4. Model Terms and Letter-Series (Handle Speech-to-Text variants of "S" like "एस", "इज़", "इस", "इज")
+  s = s.replace(/(?:^|\s+)(?:एस|इज़|इस|इज|स)(?:\s+|$)/gi, " s ");
+  s = s.replace(/अल्ट्रा|अलट्रा/gi, "ultra");
+  s = s.replace(/प्रो/gi, "pro");
+  s = s.replace(/मैक्स|मेक्स/gi, "max");
+  s = s.replace(/प्लस/gi, "plus");
+  s = s.replace(/मिनी/gi, "mini");
+  s = s.replace(/गैलेक्सी|गेलेक्सी/gi, "galaxy");
+  s = s.replace(/फोल्ड/gi, "fold");
+  s = s.replace(/फ्लिप/gi, "flip");
+  s = s.replace(/नोट/gi, "note");
+  s = s.replace(/जीबी|जी\s*बी/gi, "gb");
+  s = s.replace(/टीबी|टी\s*बी/gi, "tb");
+  s = s.replace(/रैम/gi, "ram");
+
+  // 5. Intent and Business keywords
+  s = s.replace(/स्टॉक|स्टाक/gi, "stock");
+  s = s.replace(/सस्ता|सस्ते/gi, "sasta cheapest");
+  s = s.replace(/महंगा|महंगे|मेहंगा/gi, "mehenga expensive");
+  s = s.replace(/बैटरी/gi, "battery");
+  s = s.replace(/कीमत|दाम|रेट|प्राइस|मूल्य/gi, "price");
+  s = s.replace(/लखनऊ/gi, "lucknow");
+  s = s.replace(/दिल्ली/gi, "delhi");
+  s = s.replace(/नया\s*फोन|फोन\s*ऐड/gi, "add phone");
+  s = s.replace(/बायबैक|खरीदना|खरीद/gi, "buyback");
+  s = s.replace(/इनवॉइस|बिल|रसीद/gi, "invoice");
+  s = s.replace(/क्लोजिंग|हिसाब/gi, "closing");
+
+  // 6. Join letter-series with numbers: e.g. "s 24" -> "s24", "s 26" -> "s26", "a 54" -> "a54"
+  s = s.replace(/\b([a-z])\s+(\d+)\b/gi, (m, p1, p2) => p1 + p2);
+
+  // Normalize extra spaces
+  return s.replace(/\s+/g, " ").trim();
+}
+
+/**
  * Intelligent Hindi & Hinglish AI Natural Language Processor for TheFundu OS
  * Understands Hindi, English, and Hinglish queries about stock, valuation, sales, and navigation.
  */
 export function processAiStoreQuery(rawQuery: string, ctx: StoreContext): AiCopilotResponse {
   const q = rawQuery.trim();
-  const lower = q.toLowerCase();
+  const normalized = transliterateAndNormalizeHindi(q);
+  const lower = normalized.toLowerCase();
+  const originalLower = q.toLowerCase();
 
   const { devices, sales, purchases, buybacks } = ctx;
 
@@ -33,10 +135,10 @@ export function processAiStoreQuery(rawQuery: string, ctx: StoreContext): AiCopi
   if (
     lower.includes("add phone") ||
     lower.includes("naya phone") ||
-    lower.includes("phone add") ||
     lower.includes("phone intake") ||
     lower.includes("stock inward") ||
-    lower.includes("phone enter")
+    originalLower.includes("नया फोन") ||
+    originalLower.includes("ऐड")
   ) {
     return {
       query: q,
@@ -53,7 +155,9 @@ export function processAiStoreQuery(rawQuery: string, ctx: StoreContext): AiCopi
     lower.includes("purana phone") ||
     lower.includes("customer purchase") ||
     lower.includes("phone khareedna") ||
-    lower.includes("trade in")
+    lower.includes("trade in") ||
+    originalLower.includes("बायबैक") ||
+    originalLower.includes("खरीद")
   ) {
     return {
       query: q,
@@ -70,7 +174,9 @@ export function processAiStoreQuery(rawQuery: string, ctx: StoreContext): AiCopi
     lower.includes("bill") ||
     lower.includes("tax invoice") ||
     lower.includes("bill banao") ||
-    lower.includes("gst bill")
+    lower.includes("gst bill") ||
+    originalLower.includes("बिल") ||
+    originalLower.includes("इनवॉइस")
   ) {
     return {
       query: q,
@@ -82,12 +188,13 @@ export function processAiStoreQuery(rawQuery: string, ctx: StoreContext): AiCopi
   }
 
   if (
-    lower.includes("day end") ||
     lower.includes("closing") ||
+    lower.includes("day end") ||
     lower.includes("z-slip") ||
     lower.includes("dukan band") ||
     lower.includes("hisab") ||
-    lower.includes("closing report")
+    originalLower.includes("क्लोजिंग") ||
+    originalLower.includes("दुकान बंद")
   ) {
     return {
       query: q,
@@ -106,7 +213,9 @@ export function processAiStoreQuery(rawQuery: string, ctx: StoreContext): AiCopi
     lower.includes("kitna maal") ||
     lower.includes("stock value") ||
     lower.includes("inventory value") ||
-    lower.includes("total value")
+    lower.includes("total value") ||
+    originalLower.includes("कुल कितने") ||
+    originalLower.includes("टोटल स्टॉक")
   ) {
     const inStockDevices = devices.filter((d) => d.status === "In Stock");
     const totalPurchaseCost = inStockDevices.reduce(
@@ -137,7 +246,9 @@ export function processAiStoreQuery(rawQuery: string, ctx: StoreContext): AiCopi
     lower.includes("aaj kitna bika") ||
     lower.includes("revenue") ||
     lower.includes("profit") ||
-    lower.includes("kamai")
+    lower.includes("kamai") ||
+    originalLower.includes("बिक्री") ||
+    originalLower.includes("कमाई")
   ) {
     const totalSalesAmount = sales.reduce((sum, s) => sum + (s.finalAmount || s.sellingPrice || 0), 0);
     const totalSalesCount = sales.length;
@@ -188,7 +299,9 @@ export function processAiStoreQuery(rawQuery: string, ctx: StoreContext): AiCopi
     lower.includes("theek hone") ||
     lower.includes("under qc") ||
     lower.includes("qc pending") ||
-    lower.includes("damaged")
+    lower.includes("damaged") ||
+    originalLower.includes("रिपेयर") ||
+    originalLower.includes("खराब")
   ) {
     const underRepair = devices.filter((d) => d.status === "QC Pending" || d.status === "Damaged");
     return {
@@ -200,8 +313,8 @@ export function processAiStoreQuery(rawQuery: string, ctx: StoreContext): AiCopi
     };
   }
 
-  // 6. Battery Health Filter (e.g. "battery 85 se zyada", "achhi battery", "battery health")
-  const batteryMatch = lower.match(/(\d{2})\s*%/i) || lower.match(/battery.*?(\d{2})/i);
+  // 6. Battery Health Filter (e.g. "battery 85 se zyada", "achhi battery", "बैटरी 80 से ऊपर")
+  const batteryMatch = lower.match(/(\d{2})\s*%/i) || lower.match(/battery.*?(\d{2})/i) || lower.match(/(\d{2})\s*(?:se|ke).*?battery/i);
   if (lower.includes("battery") && batteryMatch) {
     const threshold = parseInt(batteryMatch[1], 10);
     const matches = devices.filter((d) => (d.batteryHealth || 0) >= threshold);
@@ -218,7 +331,8 @@ export function processAiStoreQuery(rawQuery: string, ctx: StoreContext): AiCopi
     lower.includes("sabse mehenga") ||
     lower.includes("highest price") ||
     lower.includes("most expensive") ||
-    lower.includes("top price")
+    lower.includes("top price") ||
+    originalLower.includes("सबसे महंगा")
   ) {
     const sorted = [...devices].sort((a, b) => b.costs.sellingPrice - a.costs.sellingPrice);
     const top = sorted.slice(0, 4);
@@ -236,7 +350,8 @@ export function processAiStoreQuery(rawQuery: string, ctx: StoreContext): AiCopi
     lower.includes("cheapest") ||
     lower.includes("lowest price") ||
     lower.includes("kam budget") ||
-    lower.includes("budget phone")
+    lower.includes("budget phone") ||
+    originalLower.includes("सबसे सस्ता")
   ) {
     const inStock = devices.filter((d) => d.status === "In Stock");
     const sorted = [...inStock].sort((a, b) => a.costs.sellingPrice - b.costs.sellingPrice);
@@ -290,40 +405,84 @@ export function processAiStoreQuery(rawQuery: string, ctx: StoreContext): AiCopi
 
   // 11. Search by Brand / Model / Storage / Discrete tokens
   // Strip common conversational filler words in Hindi & English
+  const fillerWords = [
+    "ke", "ki", "ka", "ko", "me", "mai", "hain", "hai", "kya", "kitne", "kitna",
+    "kaun", "se", "wale", "wala", "wali", "dikhao", "batao", "show", "phones", "phone",
+    "smartphone", "smartphones", "devices", "device", "stock", "in", "the", "for", "please",
+    "chahiye", "dekhein", "karein", "kaise", "hoga"
+  ];
+
   const cleanTokens = lower
     .replace(/[?,.!]/g, "")
     .split(/\s+/)
-    .filter(
-      (w) =>
-        ![
-          "ke", "ki", "ka", "me", "mai", "hain", "hai", "kya", "kitne", "kitna",
-          "kaun", "se", "wale", "wala", "dikhao", "batao", "show", "phones", "phone",
-          "smartphone", "smartphones", "devices", "device", "stock", "in", "the", "for", "please"
-        ].includes(w)
-    );
+    .filter((w) => w && !fillerWords.includes(w));
 
-  const matched = devices.filter((d) => {
-    // If user asked about a specific brand e.g. "Apple", "Samsung", "OnePlus"
-    const brandMatch = cleanTokens.some((t) => d.brand.toLowerCase().includes(t));
-    const searchMatch = matchesDeviceSearch(d, q);
-    return brandMatch || searchMatch;
-  });
+  // A) Match using normalized multi-token search
+  let matched = devices.filter((d) => matchesDeviceSearch(d, normalized));
+
+  // B) If no exact multi-token match, try matching clean non-filler tokens
+  if (matched.length === 0 && cleanTokens.length > 0) {
+    matched = devices.filter((d) => {
+      const brand = d.brand.toLowerCase();
+      const model = d.model.toLowerCase();
+      const storage = d.storage.toLowerCase();
+
+      // Check if all significant tokens match
+      return cleanTokens.every((token) => {
+        if (/^\d+$/.test(token)) {
+          const modelNumRegex = new RegExp(`(?:^|[^0-9])${token}(?:[^0-9]|$)`, "i");
+          return modelNumRegex.test(model) || storage.includes(token);
+        }
+        return brand.includes(token) || model.includes(token) || storage.includes(token);
+      });
+    });
+  }
+
+  // C) If still no match, but a known brand was recognized (e.g. Samsung, Apple, OnePlus),
+  // match phones of that brand!
+  const recognizedBrand = [
+    "samsung", "apple", "oneplus", "google", "xiaomi", "redmi", "poco",
+    "vivo", "oppo", "realme", "motorola", "nothing", "iqoo", "infinix"
+  ].find((b) => lower.includes(b));
 
   if (matched.length > 0) {
     const inStockCount = matched.filter((d) => d.status === "In Stock").length;
+
+    // Compose a detailed, personalized answer mentioning exact handset names
+    let detailsText = "";
+    if (matched.length === 1) {
+      const single = matched[0];
+      detailsText = `\n\n📌 **${single.brand} ${single.model} (${single.storage})**\n- Colour: **${single.colour}**\n- Status: **${single.status}**\n- Selling Price: **${formatINR(single.costs.sellingPrice)}**`;
+    } else if (matched.length <= 4) {
+      detailsText = "\n\n" + matched.map((m, idx) => `${idx + 1}. **${m.brand} ${m.model}** (${m.storage}, ${m.colour}) - **${formatINR(m.costs.sellingPrice)}**`).join("\n");
+    }
+
     return {
       query: q,
-      answerHindi: `Aapke search ke anusaar kul **${matched.length} handsets** mile hain (jinme se **${inStockCount} In Stock** hain).`,
+      answerHindi: `Hamare stock me aapki query ke mutabiq **${matched.length} handsets** mile hain (jinme se **${inStockCount} In Stock** hain):${detailsText}`,
       spokenHindi: `Aapke search ke mutabiq ${matched.length} phone mile hain, jinme se ${inStockCount} in stock hain.`,
       devices: matched,
     };
   }
 
-  // 12. Fallback Generic Help
+  // D) If requested specific model was not found, but brand was recognized:
+  if (recognizedBrand) {
+    const brandCapitalized = recognizedBrand.charAt(0).toUpperCase() + recognizedBrand.slice(1);
+    const brandPhones = devices.filter((d) => d.brand.toLowerCase() === recognizedBrand && d.status === "In Stock");
+
+    return {
+      query: q,
+      answerHindi: `Is samay store me *"**${q}**"* exact variant In Stock nahi hai, lekin **${brandCapitalized}** ke ye popular models currently available hain:`,
+      spokenHindi: `${brandCapitalized} ka ye specific model abhi nahi hai, par baki ${brandCapitalized} phones available hain.`,
+      devices: brandPhones.slice(0, 4),
+    };
+  }
+
+  // 12. Fallback Generic Help (devices: [] so no wrong/random phones are shown!)
   return {
     query: q,
-    answerHindi: `Mujhe aapki query *"**${q}**"* ke liye direct handset nahi mila. Aap mujhse bolkar ya type karke pooch sakte hain:\n- *"Apple ke 128GB wale kitne phone hain?"*\n- *"Sabse sasta phone dikhao"*\n- *"85% se zyada battery health wale phone"*\n- *"Total inventory value kitni hai?"*\n- *"Naya phone add karne ka form kholo"*`,
+    answerHindi: `Mujhe aapki query *"**${q}**"* ke liye direct handset nahi mila.\n\nAap mujhse bolkar ya type karke pooch sakte hain:\n- *"Samsung S24 Ultra dikhao"*\n- *"Apple ke 128GB wale phone kitne hain?"*\n- *"Sabse sasta phone kaun sa hai?"*\n- *"Total inventory value kitni hai?"*\n- *"Naya phone add karne ka form kholo"*`,
     spokenHindi: "Kripya phone ka brand, model ya price bata kar dobara poochiye.",
-    devices: devices.slice(0, 3),
+    devices: [],
   };
 }
