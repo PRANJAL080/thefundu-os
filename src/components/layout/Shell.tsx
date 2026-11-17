@@ -6,6 +6,7 @@ import { Sidebar } from "./Sidebar";
 import { TopNav } from "./TopNav";
 import { GlobalSearch } from "@/components/common/GlobalSearch";
 import { QuickBarcodeScannerModal } from "@/components/common/QuickBarcodeScannerModal";
+import { AiVoiceCopilotModal } from "@/components/common/AiVoiceCopilotModal";
 import { ThermalStickerModal } from "@/components/inventory/ThermalBarcodeSticker";
 import { DeviceDetailsModal } from "@/components/inventory/DeviceDetailsModal";
 import { InvoiceModal } from "@/components/invoice/InvoiceModal";
@@ -17,6 +18,7 @@ import { CheckCircle2, AlertCircle, Info, X } from "lucide-react";
 export function Shell({ children }: { children: React.ReactNode }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [isAiCopilotOpen, setIsAiCopilotOpen] = useState(false);
 
   // Cross-app modal states
   const [stickerDevices, setStickerDevices] = useState<Device[]>([]);
@@ -34,12 +36,15 @@ export function Shell({ children }: { children: React.ReactNode }) {
   // Public routes (Customers scanning QR codes on phone boxes/invoices) bypass staff login
   const isPublicRoute = pathname?.startsWith("/verify");
 
-  // Listen for global F2 hotkey to open USB barcode gun scanner
+  // Listen for global hotkeys: F2 (Barcode Gun), F3 (AI Copilot)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "F2") {
         e.preventDefault();
         setIsScannerOpen((prev) => !prev);
+      } else if (e.key === "F3") {
+        e.preventDefault();
+        setIsAiCopilotOpen((prev) => !prev);
       }
     };
 
@@ -77,6 +82,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <TopNav
           onOpenGlobalSearch={() => setIsSearchOpen(true)}
           onOpenBarcodeScanner={() => setIsScannerOpen(true)}
+          onOpenAiCopilot={() => setIsAiCopilotOpen(true)}
         />
 
         <main className="flex-1 overflow-y-auto px-6 py-6 lg:px-8">
@@ -94,6 +100,15 @@ export function Shell({ children }: { children: React.ReactNode }) {
       <QuickBarcodeScannerModal
         isOpen={isScannerOpen}
         onClose={() => setIsScannerOpen(false)}
+        onOpenDeviceProfile={handleOpenDetails}
+        onPrintSticker={handleOpenSticker}
+        onGenerateInvoice={handleOpenInvoice}
+      />
+
+      {/* Global F3 AI Voice & Hindi Copilot Dialog */}
+      <AiVoiceCopilotModal
+        isOpen={isAiCopilotOpen}
+        onClose={() => setIsAiCopilotOpen(false)}
         onOpenDeviceProfile={handleOpenDetails}
         onPrintSticker={handleOpenSticker}
         onGenerateInvoice={handleOpenInvoice}

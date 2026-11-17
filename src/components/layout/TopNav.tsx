@@ -17,6 +17,8 @@ import {
   LogOut,
   ExternalLink,
   ScanLine,
+  Sparkles,
+  Mic,
   Lock,
   KeyRound,
   Wrench,
@@ -35,9 +37,10 @@ import { Input } from "@/components/ui/input";
 interface TopNavProps {
   onOpenGlobalSearch: () => void;
   onOpenBarcodeScanner?: () => void;
+  onOpenAiCopilot?: () => void;
 }
 
-export function TopNav({ onOpenGlobalSearch, onOpenBarcodeScanner }: TopNavProps) {
+export function TopNav({ onOpenGlobalSearch, onOpenBarcodeScanner, onOpenAiCopilot }: TopNavProps) {
   const {
     theme,
     toggleTheme,
@@ -128,6 +131,22 @@ export function TopNav({ onOpenGlobalSearch, onOpenBarcodeScanner }: TopNavProps
             <span>Scan Gun</span>
             <kbd className="hidden md:inline-flex items-center px-1 py-0.5 bg-white dark:bg-slate-800 border border-fundu-200 dark:border-fundu-700 rounded text-[9px] font-mono leading-none">
               F2
+            </kbd>
+          </button>
+        )}
+
+        {/* TheFundu AI Voice & Hindi Copilot Trigger */}
+        {onOpenAiCopilot && (
+          <button
+            onClick={onOpenAiCopilot}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-r from-violet-600 via-indigo-600 to-fundu-600 hover:from-violet-700 hover:to-fundu-700 rounded-lg transition-all shadow-xs shrink-0"
+            title="Ask TheFundu AI Copilot in Hindi or English (Voice / Mic) [Press F3]"
+          >
+            <Sparkles className="h-3.5 w-3.5 text-amber-300" />
+            <span className="hidden sm:inline">AI Copilot</span>
+            <Mic className="h-3 w-3 text-white/90" />
+            <kbd className="hidden md:inline-flex items-center px-1 py-0.5 bg-white/20 border border-white/30 rounded text-[9px] font-mono leading-none">
+              F3
             </kbd>
           </button>
         )}
