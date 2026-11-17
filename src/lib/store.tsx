@@ -255,7 +255,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // LocalStorage keys for cross-tab & session persistence
   const STORAGE_KEYS = {
-    devices: "thefundu_devices_v7",
+    devices: "thefundu_devices_v9",
     repairs: "thefundu_repairs_v5",
     qcInspections: "thefundu_qc_v5",
     warehouses: "thefundu_stores_v5",
@@ -277,7 +277,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
-      const storedDevs = localStorage.getItem(STORAGE_KEYS.devices) || localStorage.getItem("thefundu_devices_v5");
+      const storedDevs = localStorage.getItem(STORAGE_KEYS.devices);
       if (storedDevs) {
         const parsed = JSON.parse(storedDevs);
         if (Array.isArray(parsed) && parsed.length > 0) {

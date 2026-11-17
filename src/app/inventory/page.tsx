@@ -44,7 +44,7 @@ import { ThermalStickerModal } from "@/components/inventory/ThermalBarcodeSticke
 import { CustomerPurchaseModal } from "@/components/inventory/CustomerPurchaseModal";
 import { BuybackKycReportModal } from "@/components/buyback/BuybackKycReportModal";
 import { exportGSTRule32AuditCSV } from "@/lib/exportGSTRule32";
-import { formatINR, formatDate, getStatusBadgeColor } from "@/lib/utils";
+import { formatINR, formatDate, getStatusBadgeColor, matchesDeviceSearch } from "@/lib/utils";
 
 export default function InventoryPage() {
   const { devices, warehouses, buybacks, updateDevice, deleteDevice, setAllDevicesInStock, transferWarehouseStock, showToast, isCashierMode } = useApp();
@@ -95,17 +95,7 @@ export default function InventoryPage() {
   const filteredDevices = useMemo(() => {
     return devices
       .filter((dev) => {
-        const q = searchQuery.toLowerCase().trim();
-        const matchesSearch =
-          !q ||
-          dev.id.toLowerCase().includes(q) ||
-          dev.brand.toLowerCase().includes(q) ||
-          dev.model.toLowerCase().includes(q) ||
-          dev.imei1.includes(q) ||
-          (dev.imei2 && dev.imei2.includes(q)) ||
-          dev.sku.toLowerCase().includes(q) ||
-          dev.colour.toLowerCase().includes(q);
-
+        const matchesSearch = matchesDeviceSearch(dev, searchQuery);
         const matchesBrand = brandFilter === "all" || dev.brand.toLowerCase() === brandFilter.toLowerCase();
         const matchesStatus = statusFilter === "all" || dev.status === statusFilter;
         const matchesStore = storeFilter === "all" || dev.warehouse.includes(storeFilter);

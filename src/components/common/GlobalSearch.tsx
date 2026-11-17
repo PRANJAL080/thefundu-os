@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { useApp } from "@/lib/store";
 import { Badge } from "@/components/ui/badge";
-import { formatINR } from "@/lib/utils";
+import { formatINR, matchesDeviceSearch } from "@/lib/utils";
 
 interface GlobalSearchProps {
   isOpen: boolean;
@@ -56,15 +56,7 @@ export function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
     }
 
     return {
-      devices: devices.filter(
-        (d) =>
-          d.brand.toLowerCase().includes(q) ||
-          d.model.toLowerCase().includes(q) ||
-          d.id.toLowerCase().includes(q) ||
-          d.imei1.includes(q) ||
-          (d.imei2 && d.imei2.includes(q)) ||
-          d.sku.toLowerCase().includes(q)
-      ),
+      devices: devices.filter((d) => matchesDeviceSearch(d, q)),
       suppliers: suppliers.filter(
         (s) =>
           s.name.toLowerCase().includes(q) ||
