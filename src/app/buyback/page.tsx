@@ -27,7 +27,7 @@ import {
   CreditCard,
 } from "lucide-react";
 import { useApp } from "@/lib/store";
-import { BuybackRecord } from "@/lib/types";
+import { BuybackRecord, SMARTPHONE_BRANDS } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -268,12 +268,13 @@ export default function BuybackDeskPage() {
                   <select
                     value={brand}
                     onChange={(e) => setBrand(e.target.value)}
-                    className="w-full h-9 rounded-lg border border-slate-200 bg-white px-2.5 text-xs dark:border-slate-800 dark:bg-slate-900"
+                    className="w-full h-9 rounded-lg border border-slate-200 bg-white px-2.5 text-xs dark:border-slate-800 dark:bg-slate-900 font-medium"
                   >
-                    <option value="Apple">Apple</option>
-                    <option value="Samsung">Samsung</option>
-                    <option value="OnePlus">OnePlus</option>
-                    <option value="Google">Google Pixel</option>
+                    {SMARTPHONE_BRANDS.map((b) => (
+                      <option key={b} value={b}>
+                        {b}
+                      </option>
+                    ))}
                   </select>
                 </div>
 

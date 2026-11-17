@@ -26,7 +26,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useApp } from "@/lib/store";
 import { formatINR, compressImage } from "@/lib/utils";
-import { DeviceGrade, DeviceStatus, WarehouseLocation } from "@/lib/types";
+import { DeviceGrade, DeviceStatus, WarehouseLocation, SMARTPHONE_BRANDS } from "@/lib/types";
 
 // Zod Schema
 const phoneFormSchema = z.object({
@@ -42,7 +42,7 @@ const phoneFormSchema = z.object({
   serialNumber: z.string().min(3, "Serial number is required"),
   sku: z.string().optional(),
 
-  batteryHealth: z.coerce.number().min(50, "Battery health must be >= 50").max(100, "Max 100"),
+  batteryHealth: z.coerce.number().min(0, "Battery health must be >= 0").max(100, "Max 100").optional().default(100),
   displayCheck: z.boolean().default(true),
   touchCheck: z.boolean().default(true),
   cameraCheck: z.boolean().default(true),
@@ -73,6 +73,7 @@ export default function AddNewPhonePage() {
   const router = useRouter();
   const { addDevice, devices, suppliers, warehouses, showToast } = useApp();
 
+  const [isCustomBrand, setIsCustomBrand] = useState(false);
   const [imageUrls, setImageUrls] = useState<string[]>([
     "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80",
   ]);
@@ -272,15 +273,52 @@ export default function AddNewPhonePage() {
           <CardContent className="pt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs">
             {/* Brand */}
             <div>
-              <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
-                Brand *
-              </label>
-              <select
-                {...register("brand")}
-                className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
-              >
-                <option value="Apple">Apple</option>
-              </select>
+              <div className="flex items-center justify-between mb-1">
+                <label className="font-semibold text-slate-700 dark:text-slate-300 block">
+                  Brand *
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsCustomBrand(!isCustomBrand);
+                    if (!isCustomBrand) setValue("brand", "");
+                    else setValue("brand", "Apple");
+                  }}
+                  className="text-[10px] text-fundu-600 hover:underline font-semibold"
+                >
+                  {isCustomBrand ? "← Select from list" : "+ Custom Brand"}
+                </button>
+              </div>
+
+              {isCustomBrand ? (
+                <Input
+                  placeholder="Type brand (e.g. Lava, Nothing)"
+                  {...register("brand")}
+                  autoFocus
+                />
+              ) : (
+                <select
+                  {...register("brand")}
+                  onChange={(e) => {
+                    if (e.target.value === "Other") {
+                      setIsCustomBrand(true);
+                      setValue("brand", "");
+                    } else {
+                      setValue("brand", e.target.value);
+                    }
+                  }}
+                  className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 font-medium"
+                >
+                  {SMARTPHONE_BRANDS.map((b) => (
+                    <option key={b} value={b}>
+                      {b}
+                    </option>
+                  ))}
+                </select>
+              )}
+              {errors.brand && (
+                <p className="text-rose-500 text-[10px] mt-1">{errors.brand.message}</p>
+              )}
             </div>
 
             {/* Model */}
@@ -289,7 +327,7 @@ export default function AddNewPhonePage() {
                 Model Name *
               </label>
               <Input
-                placeholder="e.g. iPhone 15 Pro Max"
+                placeholder="e.g. iPhone 15 Pro Max, Galaxy S26 Ultra"
                 {...register("model")}
               />
               {errors.model && (
@@ -304,13 +342,21 @@ export default function AddNewPhonePage() {
               </label>
               <select
                 {...register("storage")}
-                className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
+                className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 font-medium"
               >
+                <option value="32GB">32GB</option>
                 <option value="64GB">64GB</option>
                 <option value="128GB">128GB</option>
                 <option value="256GB">256GB</option>
                 <option value="512GB">512GB</option>
                 <option value="1TB">1TB</option>
+                <option value="64/4">64GB / 4GB RAM</option>
+                <option value="128/6">128GB / 6GB RAM</option>
+                <option value="128/8">128GB / 8GB RAM</option>
+                <option value="256/8">256GB / 8GB RAM</option>
+                <option value="256/12">256GB / 12GB RAM</option>
+                <option value="512/12">512GB / 12GB RAM</option>
+                <option value="512/16">512GB / 16GB RAM</option>
               </select>
             </div>
 
@@ -426,13 +472,14 @@ export default function AddNewPhonePage() {
           <CardContent className="pt-4 space-y-4 text-xs">
             <div className="max-w-xs">
               <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">
-                Battery Health Percentage (50-100%) *
+                Battery Health Percentage {watch("brand") === "Apple" ? "(Apple iOS %)" : "(Optional for Android)"}
               </label>
               <div className="flex items-center gap-3">
                 <Input
                   type="number"
-                  min={50}
+                  min={0}
                   max={100}
+                  placeholder="e.g. 88"
                   {...register("batteryHealth")}
                 />
                 <span className="font-bold text-slate-700 dark:text-slate-300">%</span>

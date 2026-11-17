@@ -26,7 +26,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useApp } from "@/lib/store";
-import { BuybackRecord, Device, DeviceStatus, WarehouseLocation } from "@/lib/types";
+import { BuybackRecord, Device, DeviceStatus, WarehouseLocation, SMARTPHONE_BRANDS } from "@/lib/types";
 import { COMPANY_CONFIG } from "@/lib/company-config";
 import { formatINR, compressImage } from "@/lib/utils";
 
@@ -36,19 +36,7 @@ interface CustomerPurchaseModalProps {
   onSuccess: (buybackRecord: BuybackRecord, newDevice: Device) => void;
 }
 
-const COMMON_BRANDS = [
-  "Apple",
-  "Samsung",
-  "OnePlus",
-  "Google",
-  "Xiaomi",
-  "Vivo",
-  "Oppo",
-  "Realme",
-  "Motorola",
-  "Nothing",
-  "iQOO",
-];
+const COMMON_BRANDS = SMARTPHONE_BRANDS;
 
 const STORAGE_OPTIONS = ["32GB", "64GB", "128GB", "256GB", "512GB", "1TB"];
 

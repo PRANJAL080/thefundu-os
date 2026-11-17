@@ -1,5 +1,31 @@
 export type DeviceGrade = 'A+' | 'A' | 'B' | 'C' | 'D' | 'Scrap';
 
+export const SMARTPHONE_BRANDS = [
+  "Apple",
+  "Samsung",
+  "OnePlus",
+  "Google Pixel",
+  "Xiaomi",
+  "Redmi",
+  "POCO",
+  "Vivo",
+  "Oppo",
+  "Realme",
+  "Motorola",
+  "Nothing",
+  "iQOO",
+  "Infinix",
+  "Tecno",
+  "Honor",
+  "Asus",
+  "Sony",
+  "Nokia",
+  "Lava",
+  "Other",
+] as const;
+
+export type SmartphoneBrand = typeof SMARTPHONE_BRANDS[number] | string;
+
 export type DeviceStatus = 
   | 'In Stock' 
   | 'Reserved' 

@@ -28,7 +28,7 @@ import {
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Device, DeviceStatus, WarehouseLocation } from "@/lib/types";
+import { Device, DeviceStatus, WarehouseLocation, SMARTPHONE_BRANDS } from "@/lib/types";
 import { useApp } from "@/lib/store";
 import { formatINR, compressImage } from "@/lib/utils";
 
@@ -38,19 +38,7 @@ interface EditDeviceModalProps {
   onClose: () => void;
 }
 
-const COMMON_BRANDS = [
-  "Apple",
-  "Samsung",
-  "OnePlus",
-  "Google",
-  "Xiaomi",
-  "Vivo",
-  "Oppo",
-  "Realme",
-  "Motorola",
-  "Nothing",
-  "iQOO",
-];
+const COMMON_BRANDS: readonly string[] = SMARTPHONE_BRANDS;
 
 const STORAGE_OPTIONS = ["32GB", "64GB", "128GB", "256GB", "512GB", "1TB"];
 const RAM_OPTIONS = ["3GB", "4GB", "6GB", "8GB", "12GB", "16GB"];
