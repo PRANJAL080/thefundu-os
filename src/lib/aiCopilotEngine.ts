@@ -219,7 +219,7 @@ export function processAiStoreQuery(rawQuery: string, ctx: StoreContext): AiCopi
   ) {
     return {
       query: q,
-      answerHindi: "TheFundu Warranty & Bill Policy:\n\n1. 📜 **Original Bill Anivarya Hai:** Warranty claim karne ke liye Physical Original Tax Invoice hona strictly mandatory hai. **Agar original bill nahi hoga to warranty claim accept nahi kiya jayega.**\n2. 🚫 **Damage Voidance:** Screen crack, liquid/water damage, electrical burn, ya unauthorized repair hone par warranty void ho jati hai.\n3. ⏱️ **180 Days Protection:** Certified smartphones par 180 din ki full diagnostic warranty cover milti hai.",
+      answerHindi: "TheFundu Simple Terms & Conditions:\n\n1. **No Physical / Liquid Damage:** Screen crack, liquid, burn, ya unauthorized repair par warranty void hoti hai.\n2. **Original Bill Mandatory:** Warranty claim ke liye Original Bill strictly anivarya hai. **Bina original bill ke claim accept nahi hoga.**\n3. **Lucknow Jurisdiction:** Sabhi legal mamle exclusively Lucknow jurisdiction ke under aate hain.\n4. **No Cash Refund:** Bika hua samaan cash refund nahi hoga (GST Rule 32(5) Margin Scheme).\n5. **Support & Service:** TheFundu Store visit karein ya WhatsApp karein: +91 6390616616 (10 AM - 8 PM).",
       spokenHindi: "TheFundu policy ke mutabiq bina original bill ke warranty claim accept nahi hogi.",
       devices: [],
       navigation: { label: "View Warranty Policy Details", href: "/verify" },

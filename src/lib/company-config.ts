@@ -94,11 +94,11 @@ export type SaleTypeCode = (typeof COMPANY_CONFIG.saleTypes)[number]["code"];
  * Formatted in authoritative legal English from board resolution & company policies.
  */
 export const DEFAULT_INVOICE_TERMS: string[] = [
-  "1. Physical, Liquid & Burn Damage Voidance: Handset warranty is strictly void if the device suffers physical impact, accidental breakage, display/screen crack, liquid ingress or water submersion, electrical burn/short-circuit, or unauthorized internal tampering.",
-  "2. Mandatory Original Tax Invoice For Warranty: Physical presentation of this original tax invoice/bill is strictly mandatory for any warranty claim. In the absence of the original bill, NO warranty claim will be entertained or accepted under any circumstances (ओरिजिनल बिल न होने पर कोई भी वारंटी क्लेम मान्य नहीं होगी). Warranty is non-transferable and applicable strictly to the purchaser named on this bill.",
-  "3. Exclusive Lucknow Jurisdiction: All disputes, claims, and legal proceedings arising out of or related to this transaction or product shall be subject exclusively to the jurisdiction of competent courts situated in Lucknow, Uttar Pradesh, India, where the company's registered corporate office is located.",
-  "4. Value of Supply & No Cash Returns: Goods once sold cannot be returned for cash refund. Value of supply is determined under Section 15(5) of the CGST Act, 2017 read with Rule 32(5) (Margin Scheme). GST input tax credit is not available under margin scheme valuation.",
-  "5. Authorized Service Support: For warranty claims, diagnostic inspection, or service queries, visit your nearest authorized TheFundu Store Outlet or contact Call & WhatsApp: +91 6390616616 | Email: support@thefundu.com (Mon-Sat, 10:00 AM - 08:00 PM).",
+  "1. No Physical / Liquid Damage: Warranty does not cover physical breakage, screen crack, water damage, burn, or unauthorized repair.",
+  "2. Original Bill Mandatory: Original tax invoice is strictly required for warranty claims. Without original bill, warranty claim will NOT be accepted.",
+  "3. Lucknow Jurisdiction: All legal disputes are subject exclusively to Lucknow jurisdiction only.",
+  "4. No Cash Refund: Goods once sold cannot be returned for cash refund. Billed under GST Rule 32(5) Margin Scheme.",
+  "5. Support & Service: For warranty or service, visit TheFundu Store or Call / WhatsApp: +91 6390616616 (Mon-Sat, 10 AM - 8 PM).",
 ];
 
 /**

@@ -935,7 +935,7 @@ export default function SettingsPage() {
                     <span>Statutory Invoice Terms &amp; Warranty Policy</span>
                   </CardTitle>
                   <CardDescription className="text-[11px]">
-                    Authoritative English clauses covering physical/water/burn voidance, authorized purchaser only, and exclusive Lucknow jurisdiction.
+                    Simple and clear warranty terms, mandatory original bill policy, and exclusive Lucknow jurisdiction.
                   </CardDescription>
                 </div>
               </div>
@@ -944,9 +944,9 @@ export default function SettingsPage() {
               <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-amber-900 dark:text-amber-300 flex items-start gap-2.5 text-[11px]">
                 <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5 text-amber-600" />
                 <div>
-                  <p className="font-bold">Authoritative Legal Clauses (Printed on All Invoices)</p>
+                  <p className="font-bold">Simple &amp; Clear Terms (Printed on Customer Bills)</p>
                   <p className="text-[10.5px] mt-0.5">
-                    1. Damage / Water / Burn voidance &nbsp;|&nbsp; 2. Authorized Person Only with Tax Bill &nbsp;|&nbsp; 3. Exclusive Lucknow, Uttar Pradesh Jurisdiction.
+                    1. No Physical / Liquid Damage &nbsp;|&nbsp; 2. Original Bill Mandatory &nbsp;|&nbsp; 3. Lucknow Jurisdiction &nbsp;|&nbsp; 4. No Cash Refund &nbsp;|&nbsp; 5. Support &amp; Service.
                   </p>
                 </div>
               </div>
