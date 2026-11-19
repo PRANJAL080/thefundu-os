@@ -372,12 +372,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
         try {
           const parsed = JSON.parse(storedInvoiceSettings);
           if (parsed && parsed.companyLegalName) {
-            // Update terms to new clean concise format
+            // Update terms to new clean concise format with repair timeline
             if (Array.isArray(parsed.termsAndConditions)) {
-              const isOldVerbose = parsed.termsAndConditions.some((t: string) => 
+              const needsUpdate = parsed.termsAndConditions.some((t: string) => 
                 t.includes("Voidance") || t.includes("Exclusive Lucknow Jurisdiction") || t.includes("1800") || t.includes("Liquid Ingress")
-              );
-              if (isOldVerbose) {
+              ) || !parsed.termsAndConditions.some((t: string) => t.includes("Repair Timeline"));
+
+              if (needsUpdate) {
                 parsed.termsAndConditions = DEFAULT_INVOICE_TERMS;
               }
             }

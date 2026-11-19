@@ -219,7 +219,7 @@ export function processAiStoreQuery(rawQuery: string, ctx: StoreContext): AiCopi
   ) {
     return {
       query: q,
-      answerHindi: "TheFundu Simple Terms & Conditions:\n\n1. **No Physical / Liquid Damage:** Screen crack, liquid, burn, ya unauthorized repair par warranty void hoti hai.\n2. **Original Bill Mandatory:** Warranty claim ke liye Original Bill strictly anivarya hai. **Bina original bill ke claim accept nahi hoga.**\n3. **Lucknow Jurisdiction:** Sabhi legal mamle exclusively Lucknow jurisdiction ke under aate hain.\n4. **No Cash Refund:** Bika hua samaan cash refund nahi hoga (GST Rule 32(5) Margin Scheme).\n5. **Support & Service:** TheFundu Store visit karein ya WhatsApp karein: +91 6390616616 (10 AM - 8 PM).",
+      answerHindi: "TheFundu Simple Terms & Conditions:\n\n1. **No Physical / Liquid Damage:** Screen crack, liquid, burn, ya unauthorized repair par warranty void hoti hai.\n2. **Original Bill Mandatory:** Warranty claim ke liye Original Bill strictly anivarya hai. **Bina original bill ke claim accept nahi hoga.**\n3. **Repair Timeline:** Phone repair timeline spare parts ki availability par depend karti hai.\n4. **Lucknow Jurisdiction:** Sabhi legal mamle exclusively Lucknow jurisdiction ke under aate hain.\n5. **No Cash Refund:** Bika hua samaan cash refund nahi hoga (GST Rule 32(5) Margin Scheme).\n6. **Support & Service:** TheFundu Store visit karein ya WhatsApp karein: +91 6390616616 (10 AM - 8 PM).",
       spokenHindi: "TheFundu policy ke mutabiq bina original bill ke warranty claim accept nahi hogi.",
       devices: [],
       navigation: { label: "View Warranty Policy Details", href: "/verify" },

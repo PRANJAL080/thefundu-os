@@ -946,7 +946,7 @@ export default function SettingsPage() {
                 <div>
                   <p className="font-bold">Simple &amp; Clear Terms (Printed on Customer Bills)</p>
                   <p className="text-[10.5px] mt-0.5">
-                    1. No Physical / Liquid Damage &nbsp;|&nbsp; 2. Original Bill Mandatory &nbsp;|&nbsp; 3. Lucknow Jurisdiction &nbsp;|&nbsp; 4. No Cash Refund &nbsp;|&nbsp; 5. Support &amp; Service.
+                    1. No Physical / Liquid Damage &nbsp;|&nbsp; 2. Original Bill Mandatory &nbsp;|&nbsp; 3. Repair Timeline &nbsp;|&nbsp; 4. Lucknow Jurisdiction &nbsp;|&nbsp; 5. No Cash Refund &nbsp;|&nbsp; 6. Support &amp; Service.
                   </p>
                 </div>
               </div>
