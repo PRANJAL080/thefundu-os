@@ -14,8 +14,12 @@ export interface SupabaseConfig {
 
 export function getSupabaseEnvConfig(): SupabaseConfig {
   return {
-    url: process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-    anonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
+    url:
+      process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      "https://bnrscvsfcgnbsfbbwbgf.supabase.co",
+    anonKey:
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJucnNjdnNmY2duYnNmYmJ3YmdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ3MjM5NjMsImV4cCI6MjExMDI5OTk2M30.MO1Fwb2-7hZnxcuw2AYtHDG5CmibiC82ZvGwzWaEEj4",
     serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
     databaseUrl: process.env.DATABASE_URL || "",
   };

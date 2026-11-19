@@ -271,10 +271,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // LocalStorage keys for cross-tab & session persistence
   const STORAGE_KEYS = {
-    devices: "thefundu_devices_v9",
+    devices: "thefundu_devices_v10",
     repairs: "thefundu_repairs_v5",
     qcInspections: "thefundu_qc_v5",
-    warehouses: "thefundu_stores_v5",
+    warehouses: "thefundu_stores_v6",
     sales: "thefundu_sales_v5",
     purchases: "thefundu_purchases_v5",
     spareParts: "thefundu_spareparts_v5",

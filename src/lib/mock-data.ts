@@ -9,16 +9,16 @@ import {
 export const initialWarehouses: Warehouse[] = [
   {
     id: "STR-LKO-01",
-    name: "Lucknow Aliganj Flagship Store (LKO-01)",
+    name: "Lucknow Store (LKO-01)",
     code: "LKO-01",
     city: "Lucknow",
-    location: "Sector-Q, Aliganj, Lucknow",
-    address: "ED-476, Sector-Q, Aliganj, Aliganj (Lucknow), Uttar Pradesh, India, 226024.",
+    location: "Gomti Nagar, Lucknow",
+    address: "Gomti Nagar, Lucknow",
+    currentStockUnits: 75,
     managerName: "Abhay Verma",
     managerPhone: "+91 79919 90508",
     totalCapacity: 2000,
-    currentStockUnits: 64,
-    totalStockValue: 3450000,
+    totalStockValue: 4250000,
     underRepairUnits: 2,
     qcPendingUnits: 5,
     status: "Active",
@@ -3910,6 +3910,375 @@ export const initialDevices: Device[] = [
         "afterImages": []
       }
     ]
+  },
+  {
+    "id": "Fun-26064",
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "storage": "256GB",
+    "colour": "Natural Titanium",
+    "imei1": "359078245961126",
+    "serialNumber": "SN26064",
+    "sku": "TFD-26064-APP",
+    "batteryHealth": 90,
+    "grade": "A",
+    "status": "In Stock",
+    "warehouse": "Lucknow Store (LKO-01)",
+    "costs": {
+      "purchasePrice": 68000,
+      "repairCost": 0,
+      "testingCost": 250,
+      "packagingCost": 0,
+      "logisticsCost": 350,
+      "otherCost": 0,
+      "totalLandedCost": 68600,
+      "sellingPrice": 79999,
+      "projectedProfit": 11399,
+      "profitMarginPercent": 14
+    },
+    "supplierId": "SUP-001",
+    "supplierName": "Esterline Bonaparte Corporation Private Limited",
+    "purchaseDate": "2026-11-14",
+    "images": [
+      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+    ],
+    "activityTimeline": [],
+    "repairHistory": [],
+    "specifications": {
+      "chipset": "Flagship High-Performance Octa-Core Processor",
+      "screenSize": "6.7 inch High Refresh Rate OLED HDR Display",
+      "cameraSpecs": "50MP Triple Studio Grade Matrix Camera",
+      "network": "5G Dual SIM VoLTE Supported",
+      "osVersion": "Certified Production Clean OS"
+    }
+  },
+  {
+    "id": "Fun-26065",
+    "brand": "Samsung",
+    "model": "Galaxy S23 FE",
+    "storage": "128GB",
+    "colour": "Mint",
+    "imei1": "354928190284918",
+    "serialNumber": "SN26065",
+    "sku": "TFD-26065-SAM",
+    "batteryHealth": 90,
+    "grade": "A",
+    "status": "In Stock",
+    "warehouse": "Lucknow Store (LKO-01)",
+    "costs": {
+      "purchasePrice": 28000,
+      "repairCost": 0,
+      "testingCost": 250,
+      "packagingCost": 0,
+      "logisticsCost": 350,
+      "otherCost": 0,
+      "totalLandedCost": 28600,
+      "sellingPrice": 34999,
+      "projectedProfit": 6399,
+      "profitMarginPercent": 18
+    },
+    "supplierId": "SUP-001",
+    "supplierName": "Esterline Bonaparte Corporation Private Limited",
+    "purchaseDate": "2026-11-14",
+    "images": [
+      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+    ],
+    "activityTimeline": [],
+    "repairHistory": [],
+    "specifications": {
+      "chipset": "Flagship High-Performance Octa-Core Processor",
+      "screenSize": "6.7 inch High Refresh Rate OLED HDR Display",
+      "cameraSpecs": "50MP Triple Studio Grade Matrix Camera",
+      "network": "5G Dual SIM VoLTE Supported",
+      "osVersion": "Certified Production Clean OS"
+    }
+  },
+  {
+    "id": "Fun-26066",
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "storage": "128GB",
+    "colour": "Midnight",
+    "imei1": "353920194820188",
+    "serialNumber": "SN26066",
+    "sku": "TFD-26066-APP",
+    "batteryHealth": 90,
+    "grade": "A",
+    "status": "In Stock",
+    "warehouse": "Lucknow Store (LKO-01)",
+    "costs": {
+      "purchasePrice": 31000,
+      "repairCost": 0,
+      "testingCost": 250,
+      "packagingCost": 0,
+      "logisticsCost": 350,
+      "otherCost": 0,
+      "totalLandedCost": 31600,
+      "sellingPrice": 38999,
+      "projectedProfit": 7399,
+      "profitMarginPercent": 19
+    },
+    "supplierId": "SUP-001",
+    "supplierName": "Esterline Bonaparte Corporation Private Limited",
+    "purchaseDate": "2026-11-14",
+    "images": [
+      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+    ],
+    "activityTimeline": [],
+    "repairHistory": [],
+    "specifications": {
+      "chipset": "Flagship High-Performance Octa-Core Processor",
+      "screenSize": "6.7 inch High Refresh Rate OLED HDR Display",
+      "cameraSpecs": "50MP Triple Studio Grade Matrix Camera",
+      "network": "5G Dual SIM VoLTE Supported",
+      "osVersion": "Certified Production Clean OS"
+    }
+  },
+  {
+    "id": "Fun-26067",
+    "brand": "OnePlus",
+    "model": "OnePlus 11R",
+    "storage": "128GB",
+    "colour": "Galactic Silver",
+    "imei1": "352910492819288",
+    "serialNumber": "SN26067",
+    "sku": "TFD-26067-OP",
+    "batteryHealth": 90,
+    "grade": "A",
+    "status": "In Stock",
+    "warehouse": "Lucknow Store (LKO-01)",
+    "costs": {
+      "purchasePrice": 24000,
+      "repairCost": 0,
+      "testingCost": 250,
+      "packagingCost": 0,
+      "logisticsCost": 350,
+      "otherCost": 0,
+      "totalLandedCost": 24600,
+      "sellingPrice": 29999,
+      "projectedProfit": 5399,
+      "profitMarginPercent": 18
+    },
+    "supplierId": "SUP-001",
+    "supplierName": "Esterline Bonaparte Corporation Private Limited",
+    "purchaseDate": "2026-11-14",
+    "images": [
+      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+    ],
+    "activityTimeline": [],
+    "repairHistory": [],
+    "specifications": {
+      "chipset": "Flagship High-Performance Octa-Core Processor",
+      "screenSize": "6.7 inch High Refresh Rate OLED HDR Display",
+      "cameraSpecs": "50MP Triple Studio Grade Matrix Camera",
+      "network": "5G Dual SIM VoLTE Supported",
+      "osVersion": "Certified Production Clean OS"
+    }
+  },
+  {
+    "id": "Fun-26068",
+    "brand": "Vivo",
+    "model": "Vivo V30 Pro",
+    "storage": "256GB",
+    "colour": "Classic Black",
+    "imei1": "351920492810288",
+    "serialNumber": "SN26068",
+    "sku": "TFD-26068-VIV",
+    "batteryHealth": 90,
+    "grade": "A",
+    "status": "In Stock",
+    "warehouse": "Lucknow Store (LKO-01)",
+    "costs": {
+      "purchasePrice": 26000,
+      "repairCost": 0,
+      "testingCost": 250,
+      "packagingCost": 0,
+      "logisticsCost": 350,
+      "otherCost": 0,
+      "totalLandedCost": 26600,
+      "sellingPrice": 32999,
+      "projectedProfit": 6399,
+      "profitMarginPercent": 19
+    },
+    "supplierId": "SUP-001",
+    "supplierName": "Esterline Bonaparte Corporation Private Limited",
+    "purchaseDate": "2026-11-14",
+    "images": [
+      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+    ],
+    "activityTimeline": [],
+    "repairHistory": [],
+    "specifications": {
+      "chipset": "Flagship High-Performance Octa-Core Processor",
+      "screenSize": "6.7 inch High Refresh Rate OLED HDR Display",
+      "cameraSpecs": "50MP Triple Studio Grade Matrix Camera",
+      "network": "5G Dual SIM VoLTE Supported",
+      "osVersion": "Certified Production Clean OS"
+    }
+  },
+  {
+    "id": "Fun-26069",
+    "brand": "Realme",
+    "model": "Realme 12 Pro+",
+    "storage": "256GB",
+    "colour": "Submarine Blue",
+    "imei1": "357281902849188",
+    "serialNumber": "SN26069",
+    "sku": "TFD-26069-REA",
+    "batteryHealth": 90,
+    "grade": "A",
+    "status": "In Stock",
+    "warehouse": "Lucknow Store (LKO-01)",
+    "costs": {
+      "purchasePrice": 21000,
+      "repairCost": 0,
+      "testingCost": 250,
+      "packagingCost": 0,
+      "logisticsCost": 350,
+      "otherCost": 0,
+      "totalLandedCost": 21600,
+      "sellingPrice": 26999,
+      "projectedProfit": 5399,
+      "profitMarginPercent": 20
+    },
+    "supplierId": "SUP-001",
+    "supplierName": "Esterline Bonaparte Corporation Private Limited",
+    "purchaseDate": "2026-11-14",
+    "images": [
+      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+    ],
+    "activityTimeline": [],
+    "repairHistory": [],
+    "specifications": {
+      "chipset": "Flagship High-Performance Octa-Core Processor",
+      "screenSize": "6.7 inch High Refresh Rate OLED HDR Display",
+      "cameraSpecs": "50MP Triple Studio Grade Matrix Camera",
+      "network": "5G Dual SIM VoLTE Supported",
+      "osVersion": "Certified Production Clean OS"
+    }
+  },
+  {
+    "id": "Fun-26070",
+    "brand": "Xiaomi",
+    "model": "Redmi Note 13 Pro+",
+    "storage": "256GB",
+    "colour": "Fusion Purple",
+    "imei1": "356920194820188",
+    "serialNumber": "SN26070",
+    "sku": "TFD-26070-RED",
+    "batteryHealth": 90,
+    "grade": "A",
+    "status": "In Stock",
+    "warehouse": "Lucknow Store (LKO-01)",
+    "costs": {
+      "purchasePrice": 22000,
+      "repairCost": 0,
+      "testingCost": 250,
+      "packagingCost": 0,
+      "logisticsCost": 350,
+      "otherCost": 0,
+      "totalLandedCost": 22600,
+      "sellingPrice": 27999,
+      "projectedProfit": 5399,
+      "profitMarginPercent": 19
+    },
+    "supplierId": "SUP-001",
+    "supplierName": "Esterline Bonaparte Corporation Private Limited",
+    "purchaseDate": "2026-11-14",
+    "images": [
+      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+    ],
+    "activityTimeline": [],
+    "repairHistory": [],
+    "specifications": {
+      "chipset": "Flagship High-Performance Octa-Core Processor",
+      "screenSize": "6.7 inch High Refresh Rate OLED HDR Display",
+      "cameraSpecs": "50MP Triple Studio Grade Matrix Camera",
+      "network": "5G Dual SIM VoLTE Supported",
+      "osVersion": "Certified Production Clean OS"
+    }
+  },
+  {
+    "id": "Fun-26071",
+    "brand": "Motorola",
+    "model": "Moto Edge 50 Pro",
+    "storage": "256GB",
+    "colour": "Black Beauty",
+    "imei1": "355920194820188",
+    "serialNumber": "SN26071",
+    "sku": "TFD-26071-MOT",
+    "batteryHealth": 90,
+    "grade": "A",
+    "status": "In Stock",
+    "warehouse": "Lucknow Store (LKO-01)",
+    "costs": {
+      "purchasePrice": 25000,
+      "repairCost": 0,
+      "testingCost": 250,
+      "packagingCost": 0,
+      "logisticsCost": 350,
+      "otherCost": 0,
+      "totalLandedCost": 25600,
+      "sellingPrice": 31999,
+      "projectedProfit": 6399,
+      "profitMarginPercent": 20
+    },
+    "supplierId": "SUP-001",
+    "supplierName": "Esterline Bonaparte Corporation Private Limited",
+    "purchaseDate": "2026-11-14",
+    "images": [
+      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+    ],
+    "activityTimeline": [],
+    "repairHistory": [],
+    "specifications": {
+      "chipset": "Flagship High-Performance Octa-Core Processor",
+      "screenSize": "6.7 inch High Refresh Rate OLED HDR Display",
+      "cameraSpecs": "50MP Triple Studio Grade Matrix Camera",
+      "network": "5G Dual SIM VoLTE Supported",
+      "osVersion": "Certified Production Clean OS"
+    }
+  },
+  {
+    "id": "Fun-26072",
+    "brand": "OnePlus",
+    "model": "OnePlus 12",
+    "storage": "256GB",
+    "colour": "Flowy Emerald",
+    "imei1": "357281902849102",
+    "serialNumber": "SN26072",
+    "sku": "TFD-26072-OP",
+    "batteryHealth": 90,
+    "grade": "A",
+    "status": "In Stock",
+    "warehouse": "Lucknow Store (LKO-01)",
+    "costs": {
+      "purchasePrice": 42000,
+      "repairCost": 0,
+      "testingCost": 250,
+      "packagingCost": 0,
+      "logisticsCost": 350,
+      "otherCost": 0,
+      "totalLandedCost": 42600,
+      "sellingPrice": 52000,
+      "projectedProfit": 9400,
+      "profitMarginPercent": 18
+    },
+    "supplierId": "SUP-001",
+    "supplierName": "Esterline Bonaparte Corporation Private Limited",
+    "purchaseDate": "2026-11-14",
+    "images": [
+      "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=600&q=80"
+    ],
+    "activityTimeline": [],
+    "repairHistory": [],
+    "specifications": {
+      "chipset": "Flagship High-Performance Octa-Core Processor",
+      "screenSize": "6.7 inch High Refresh Rate OLED HDR Display",
+      "cameraSpecs": "50MP Triple Studio Grade Matrix Camera",
+      "network": "5G Dual SIM VoLTE Supported",
+      "osVersion": "Certified Production Clean OS"
+    }
   },
   {
     "id": "Fun-26081",
