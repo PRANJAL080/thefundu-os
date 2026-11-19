@@ -246,6 +246,26 @@ export function processAiStoreQuery(rawQuery: string, ctx: StoreContext): AiCopi
     };
   }
 
+  // Customer KYC, Aadhaar & Dual Address Intent
+  if (
+    lower.includes("aadhaar") ||
+    lower.includes("aadhar") ||
+    lower.includes("address") ||
+    lower.includes("pata") ||
+    lower.includes("permanent") ||
+    originalLower.includes("आधार") ||
+    originalLower.includes("एड्रेस") ||
+    originalLower.includes("पता")
+  ) {
+    return {
+      query: q,
+      answerHindi: "TheFundu Tax Invoice Desk me **Local Address**, **Permanent Address**, aur **Aadhaar Card No (12-digit UID)** teeno options live hain:\n\n- **Aadhaar UID:** 12-digit format me enter kar sakte hain jo bill par print hota hai.\n- **Local Address:** Delivery & current residence address.\n- **Permanent Address:** Hometown/Aadhaar address (1-click 'Same as Local' toggle ke saath).",
+      spokenHindi: "TheFundu bill me Local Address, Permanent Address aur Aadhaar number enter kar sakte hain.",
+      devices: [],
+      navigation: { label: "Open Tax Invoice Desk", href: "/invoice" },
+    };
+  }
+
   // 2. High-Level Inventory Metrics / Valuation / Store Overview
   if (
     lower.includes("total stock") ||

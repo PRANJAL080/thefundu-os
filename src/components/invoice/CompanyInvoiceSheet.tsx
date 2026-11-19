@@ -16,6 +16,9 @@ export interface CompanyInvoiceSheetProps {
     phone: string;
     email: string;
     address: string;
+    localAddress?: string;
+    permanentAddress?: string;
+    aadhaar?: string;
     gstin?: string;
     placeOfSupply?: string;
   };
@@ -332,12 +335,22 @@ export function CompanyInvoiceSheet({
   const customerName = customCustomer?.name || order?.customerName || "Abhay verma";
   const customerPhone = customCustomer?.phone || order?.customerPhone || "7991990508";
   const customerEmail = customCustomer?.email || order?.customerEmail || "abhayverma7380@gmail.com";
-  const customerAddress =
+  const customerLocalAddress =
+    customCustomer?.localAddress ||
+    order?.customerLocalAddress ||
     customCustomer?.address ||
     order?.customerAddress ||
-    "Gomti nagar, Gomti nagar , Gomti nagar , Lucknow, Uttar Pradesh, 226010, Lucknow, Uttar Pradesh, India, 226010";
+    "Gomti nagar, Lucknow, Uttar Pradesh, 226010";
+  const customerPermanentAddress =
+    customCustomer?.permanentAddress ||
+    order?.customerPermanentAddress ||
+    customerLocalAddress;
+  const customerAddress = customerLocalAddress;
   const customerGstin = customCustomer?.gstin || order?.customerGstin || "URP (Unregistered)";
-  const customerAadhaar = order?.customerAadhaar || (customCustomer as any)?.aadhaar;
+  const customerAadhaar =
+    customCustomer?.aadhaar ||
+    order?.customerAadhaar ||
+    "";
   const placeOfSupply = customCustomer?.placeOfSupply || order?.placeOfSupply || "Uttar Pradesh (09)";
 
   // Phone Specifications - STRICTLY WITHOUT GRADING (No A+, No Grade tags)
@@ -518,16 +531,22 @@ export function CompanyInvoiceSheet({
       </div>
 
       {/* BILL TO & SHIP TO SECTION */}
-      <div className="border-x border-b border-black flex text-[9px]">
+      <div className="border-x border-b border-black flex text-[8.5px] leading-tight">
         {/* Bill To */}
         <div className="w-1/2 p-1.5 border-r border-black space-y-0.5">
           <div className="flex">
-            <span className="font-bold w-12">Bill To</span>
-            <div className="flex-1">
-              <p className="font-bold text-[10px]">{customerName}</p>
-              <p>Ph: {customerPhone} &nbsp; {customerEmail}</p>
-              <p>{customerAddress}</p>
-              <p>GSTIN: {customerGstin} {customerAadhaar ? <span> &nbsp;&nbsp;&nbsp; Aadhaar: {customerAadhaar}</span> : null} &nbsp;&nbsp;&nbsp; Place of Supply: {placeOfSupply}</p>
+            <span className="font-bold w-14 shrink-0 text-black">Bill To:</span>
+            <div className="flex-1 space-y-0.5">
+              <p className="font-bold text-[10px] text-black">{customerName}</p>
+              <p><span className="font-semibold">Ph:</span> {customerPhone} {customerEmail ? <span>&nbsp;|&nbsp; <span className="font-semibold">Email:</span> {customerEmail}</span> : null}</p>
+              {customerAadhaar ? (
+                <p className="font-mono"><span className="font-sans font-bold">Aadhaar No:</span> {customerAadhaar}</p>
+              ) : null}
+              <p><span className="font-semibold">Local Address:</span> {customerLocalAddress}</p>
+              {customerPermanentAddress ? (
+                <p><span className="font-semibold">Permanent Address:</span> {customerPermanentAddress}</p>
+              ) : null}
+              <p><span className="font-semibold">GSTIN:</span> {customerGstin} &nbsp;|&nbsp; <span className="font-semibold">Place of Supply:</span> {placeOfSupply}</p>
             </div>
           </div>
         </div>
@@ -535,10 +554,16 @@ export function CompanyInvoiceSheet({
         {/* Ship To */}
         <div className="w-1/2 p-1.5 space-y-0.5">
           <div className="flex">
-            <span className="font-bold w-12">Ship To</span>
-            <div className="flex-1">
-              <p className="font-bold text-[10px]">{customerName} &nbsp;&nbsp; Ph: {customerPhone}</p>
-              <p>{customerAddress}</p>
+            <span className="font-bold w-14 shrink-0 text-black">Ship To:</span>
+            <div className="flex-1 space-y-0.5">
+              <p className="font-bold text-[10px] text-black">{customerName} &nbsp;&nbsp; <span className="font-normal text-[8.5px] font-semibold">Ph: {customerPhone}</span></p>
+              <p><span className="font-semibold">Delivery Address:</span> {customerLocalAddress}</p>
+              {customerPermanentAddress && customerPermanentAddress !== customerLocalAddress ? (
+                <p><span className="font-semibold">Permanent Address:</span> {customerPermanentAddress}</p>
+              ) : null}
+              {customerAadhaar ? (
+                <p className="font-mono text-[8px]"><span className="font-sans font-semibold">Buyer KYC UID:</span> {customerAadhaar}</p>
+              ) : null}
             </div>
           </div>
         </div>

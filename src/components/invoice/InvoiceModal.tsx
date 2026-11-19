@@ -28,6 +28,9 @@ interface InvoiceModalProps {
     phone: string;
     email: string;
     address: string;
+    localAddress?: string;
+    permanentAddress?: string;
+    aadhaar?: string;
     gstin?: string;
     placeOfSupply?: string;
   };

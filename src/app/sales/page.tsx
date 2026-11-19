@@ -48,7 +48,9 @@ export default function SalesOrdersPage() {
   const [customerPhone, setCustomerPhone] = useState("+91 98200 44109");
   const [customerAadhaar, setCustomerAadhaar] = useState("");
   const [customerEmail, setCustomerEmail] = useState("vikrant.b@gmail.com");
-  const [customerAddress, setCustomerAddress] = useState("102 Sea Green, Bandra West, Mumbai 400050");
+  const [customerLocalAddress, setCustomerLocalAddress] = useState("102 Sea Green, Bandra West, Mumbai 400050");
+  const [customerPermanentAddress, setCustomerPermanentAddress] = useState("102 Sea Green, Bandra West, Mumbai 400050");
+  const [isSameAddress, setIsSameAddress] = useState(true);
   const [deviceId, setDeviceId] = useState(devices[0]?.id || "Fun-26001");
   const [channel, setChannel] = useState<SalesChannelCode>("FSO");
   const [typeOfSale, setTypeOfSale] = useState<SaleTypeCode>("B2C");
@@ -87,7 +89,9 @@ export default function SalesOrdersPage() {
       customerPhone,
       customerAadhaar: customerAadhaar.trim() || undefined,
       customerEmail,
-      customerAddress,
+      customerAddress: customerLocalAddress,
+      customerLocalAddress,
+      customerPermanentAddress,
       deviceId,
       deviceModel: dev ? `${dev.brand} ${dev.model} (${dev.storage}) Refurbished ${dev.colour && dev.colour !== "Default Edition" ? dev.colour : ""}`.replace(/\s+/g, " ").trim() : "Smartphone",
       imei: dev ? dev.imei1 : "354928198421092",
@@ -461,21 +465,61 @@ export default function SalesOrdersPage() {
               />
             </div>
             <div>
-              <label className="font-semibold block mb-1">Customer Aadhaar No. (Optional)</label>
+              <label className="font-semibold block mb-1">Customer Aadhaar No. (12-Digit UID)</label>
               <Input
-                placeholder="12-digit Aadhaar UID"
-                className="font-mono"
+                placeholder="e.g. 5482 9102 3847"
+                className="font-mono tracking-wider"
                 value={customerAadhaar}
-                onChange={(e) => setCustomerAadhaar(e.target.value)}
+                onChange={(e) => {
+                  const cleaned = e.target.value.replace(/[^\d]/g, "").slice(0, 12);
+                  const formatted = cleaned.replace(/(\d{4})(?=\d)/g, "$1 ");
+                  setCustomerAadhaar(formatted);
+                }}
+                maxLength={14}
               />
             </div>
           </div>
 
-          <div>
-            <label className="font-semibold block mb-1">Shipping / Delivery Address *</label>
+          <div className="space-y-1.5">
+            <label className="font-semibold block text-slate-800 dark:text-slate-200">
+              📍 Local / Delivery Address *
+            </label>
             <Input
-              value={customerAddress}
-              onChange={(e) => setCustomerAddress(e.target.value)}
+              value={customerLocalAddress}
+              onChange={(e) => {
+                const val = e.target.value;
+                setCustomerLocalAddress(val);
+                if (isSameAddress) setCustomerPermanentAddress(val);
+              }}
+              placeholder="Local address, city, pincode"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <label className="font-semibold block text-slate-800 dark:text-slate-200">
+                🏠 Permanent Address *
+              </label>
+              <label className="flex items-center gap-1.5 text-[11px] text-fundu-700 dark:text-fundu-400 font-semibold cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={isSameAddress}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setIsSameAddress(checked);
+                    if (checked) setCustomerPermanentAddress(customerLocalAddress);
+                  }}
+                  className="rounded border-slate-300 text-fundu-600 focus:ring-fundu-500 h-3.5 w-3.5"
+                />
+                <span>Same as Local</span>
+              </label>
+            </div>
+            <Input
+              value={customerPermanentAddress}
+              disabled={isSameAddress}
+              onChange={(e) => setCustomerPermanentAddress(e.target.value)}
+              placeholder="Permanent address (Aadhaar/Hometown)"
+              className={isSameAddress ? "bg-slate-50 dark:bg-slate-800/50 text-slate-500" : ""}
             />
           </div>
 

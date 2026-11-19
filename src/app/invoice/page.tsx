@@ -68,11 +68,37 @@ export default function InvoiceGeneratorPage() {
   const [customerName, setCustomerName] = useState("Abhay verma");
   const [customerPhone, setCustomerPhone] = useState("7991990508");
   const [customerEmail, setCustomerEmail] = useState("abhayverma7380@gmail.com");
-  const [customerAddress, setCustomerAddress] = useState(
-    "Gomti nagar, Gomti nagar , Gomti nagar , Lucknow, Uttar Pradesh, 226010, Lucknow, Uttar Pradesh, India, 226010"
+  const [customerAadhaar, setCustomerAadhaar] = useState("");
+  const [customerLocalAddress, setCustomerLocalAddress] = useState(
+    "Gomti nagar, Lucknow, Uttar Pradesh, 226010"
   );
+  const [customerPermanentAddress, setCustomerPermanentAddress] = useState(
+    "Gomti nagar, Lucknow, Uttar Pradesh, 226010"
+  );
+  const [isSameAddress, setIsSameAddress] = useState(true);
   const [customerGstin, setCustomerGstin] = useState("");
   const [placeOfSupply, setPlaceOfSupply] = useState("Uttar Pradesh");
+
+  // Address & Aadhaar handler helpers
+  const handleLocalAddressChange = (addr: string) => {
+    setCustomerLocalAddress(addr);
+    if (isSameAddress) {
+      setCustomerPermanentAddress(addr);
+    }
+  };
+
+  const handleSameAddressToggle = (checked: boolean) => {
+    setIsSameAddress(checked);
+    if (checked) {
+      setCustomerPermanentAddress(customerLocalAddress);
+    }
+  };
+
+  const handleAadhaarChange = (val: string) => {
+    const cleaned = val.replace(/[^\d]/g, "").slice(0, 12);
+    const formatted = cleaned.replace(/(\d{4})(?=\d)/g, "$1 ");
+    setCustomerAadhaar(formatted);
+  };
 
   // -------------------------------------------------------------
   // GST RULE 32(5) MARGIN SCHEME COMMERCIALS:
@@ -209,7 +235,12 @@ Have a wonderful experience with your device!`;
       customerName,
       customerPhone,
       customerEmail,
-      customerAddress,
+      customerAddress: customerLocalAddress,
+      customerLocalAddress,
+      customerPermanentAddress,
+      customerAadhaar: customerAadhaar.trim() || undefined,
+      customerGstin,
+      placeOfSupply,
       channel,
       typeOfSale,
       invoiceNumber,
@@ -606,30 +637,99 @@ Have a wonderful experience with your device!`;
           {/* Card 3: Customer Details */}
           <Card>
             <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <User className="h-4 w-4 text-fundu-600" />
-                <span>3. Buyer / Customer Information</span>
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <User className="h-4 w-4 text-fundu-600" />
+                  <span>3. Buyer / Customer Information</span>
+                </CardTitle>
+                <Badge variant="outline" size="sm" className="text-[10px]">
+                  KYC &amp; Invoice Billing
+                </Badge>
+              </div>
             </CardHeader>
             <CardContent className="pt-3 space-y-3 text-xs">
               <div>
                 <label className="font-semibold block mb-1">Customer Full Name *</label>
-                <Input value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
+                <Input
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  placeholder="Full legal customer name"
+                />
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="font-semibold block mb-1">Mobile Number *</label>
-                  <Input value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} />
+                  <Input
+                    value={customerPhone}
+                    onChange={(e) => setCustomerPhone(e.target.value)}
+                    placeholder="10-digit mobile number"
+                  />
                 </div>
                 <div>
                   <label className="font-semibold block mb-1">Email Address</label>
-                  <Input value={customerEmail} onChange={(e) => setCustomerEmail(e.target.value)} />
+                  <Input
+                    value={customerEmail}
+                    onChange={(e) => setCustomerEmail(e.target.value)}
+                    placeholder="customer@email.com"
+                  />
                 </div>
               </div>
+
+              {/* AADHAAR CARD FIELD */}
               <div>
-                <label className="font-semibold block mb-1">Delivery Address *</label>
-                <Input value={customerAddress} onChange={(e) => setCustomerAddress(e.target.value)} />
+                <div className="flex items-center justify-between mb-1">
+                  <label className="font-semibold flex items-center gap-1.5 text-slate-800 dark:text-slate-200">
+                    <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+                    <span>Aadhaar Card Number (12-Digit UID)</span>
+                  </label>
+                  <span className="text-[10px] text-slate-400">Government KYC</span>
+                </div>
+                <Input
+                  value={customerAadhaar}
+                  onChange={(e) => handleAadhaarChange(e.target.value)}
+                  placeholder="e.g. 5482 9102 3847"
+                  className="font-mono tracking-wider font-semibold"
+                  maxLength={14}
+                />
               </div>
+
+              {/* LOCAL / CURRENT ADDRESS */}
+              <div>
+                <label className="font-semibold block mb-1 text-slate-800 dark:text-slate-200">
+                  📍 Local / Current Address * <span className="text-[10.5px] font-normal text-slate-500">(स्थानीय पता / Delivery Address)</span>
+                </label>
+                <Input
+                  value={customerLocalAddress}
+                  onChange={(e) => handleLocalAddressChange(e.target.value)}
+                  placeholder="House/Flat No, Area, Landmark, City, Pincode"
+                />
+              </div>
+
+              {/* PERMANENT ADDRESS */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <label className="font-semibold block text-slate-800 dark:text-slate-200">
+                    🏠 Permanent Address * <span className="text-[10.5px] font-normal text-slate-500">(स्थायी पता / Aadhaar Address)</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 text-[11px] text-fundu-700 dark:text-fundu-400 font-semibold cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={isSameAddress}
+                      onChange={(e) => handleSameAddressToggle(e.target.checked)}
+                      className="rounded border-slate-300 text-fundu-600 focus:ring-fundu-500 h-3.5 w-3.5"
+                    />
+                    <span>Same as Local Address</span>
+                  </label>
+                </div>
+                <Input
+                  value={customerPermanentAddress}
+                  disabled={isSameAddress}
+                  onChange={(e) => setCustomerPermanentAddress(e.target.value)}
+                  placeholder="Permanent village / hometown / Aadhaar address"
+                  className={isSameAddress ? "bg-slate-50 dark:bg-slate-800/50 text-slate-500" : ""}
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="font-semibold block mb-1">Customer GSTIN (Optional)</label>
@@ -839,7 +939,10 @@ Have a wonderful experience with your device!`;
                   name: customerName,
                   phone: customerPhone,
                   email: customerEmail,
-                  address: customerAddress,
+                  address: customerLocalAddress,
+                  localAddress: customerLocalAddress,
+                  permanentAddress: customerPermanentAddress,
+                  aadhaar: customerAadhaar,
                   gstin: customerGstin,
                   placeOfSupply,
                 }}

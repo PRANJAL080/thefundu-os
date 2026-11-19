@@ -195,6 +195,8 @@ export interface SalesOrder {
   customerPhone: string;
   customerEmail: string;
   customerAddress: string;
+  customerLocalAddress?: string;
+  customerPermanentAddress?: string;
   customerAadhaar?: string;
   customerGstin?: string;
   placeOfSupply?: string;
