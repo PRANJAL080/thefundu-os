@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   FileText,
   Printer,
@@ -95,9 +95,19 @@ export default function InvoiceGeneratorPage() {
   const storeCode = currentStore?.code || "LKO-01";
   const cleanStoreCode = storeCode.replace(/-/g, "");
 
-  // Selected device for invoicing (defaults to Fun-26001 or first device)
-  const [selectedDeviceId, setSelectedDeviceId] = useState<string>(devices[0]?.id || "Fun-26001");
-  const selectedDevice = devices.find((d) => d.id === selectedDeviceId) || devices[0];
+  // Active In-Stock devices available for billing (automatically excludes Sold handsets!)
+  const inStockDevices = useMemo(() => {
+    return devices.filter((d) => d.status === "In Stock" || d.status === "Ready for Sale");
+  }, [devices]);
+
+  // Selected device for invoicing (defaults to first in-stock handset)
+  const [selectedDeviceId, setSelectedDeviceId] = useState<string>(
+    devices.find((d) => d.status === "In Stock" || d.status === "Ready for Sale")?.id || devices[0]?.id || "Fun-26001"
+  );
+  const selectedDevice =
+    devices.find((d) => d.id === selectedDeviceId) ||
+    inStockDevices[0] ||
+    devices[0];
 
   // Customer State
   const [customerName, setCustomerName] = useState("Abhay verma");
@@ -244,7 +254,7 @@ export default function InvoiceGeneratorPage() {
     if (!selectedDevice) return null;
     const cleanTitle = `${selectedDevice.brand} ${selectedDevice.model} (${selectedDevice.storage}) Refurbished ${selectedDevice.colour && selectedDevice.colour !== "Default Edition" ? selectedDevice.colour : ""}`.replace(/\s+/g, " ").trim();
 
-    return addSale({
+    const recordedSale = addSale({
       customerName,
       customerPhone,
       customerEmail,
@@ -281,6 +291,20 @@ export default function InvoiceGeneratorPage() {
       storeName: currentStore.name,
       storeCode: currentStore.code,
     });
+
+    // Automatically advance the desk to the next available in-stock handset
+    const nextInStock = devices.find(
+      (d) =>
+        (d.status === "In Stock" || d.status === "Ready for Sale") &&
+        d.id !== selectedDevice.id
+    );
+    if (nextInStock) {
+      setTimeout(() => {
+        handleDeviceChange(nextInStock.id);
+      }, 50);
+    }
+
+    return recordedSale;
   };
 
   const handlePrint = () => {
@@ -323,9 +347,13 @@ Have a wonderful experience with your device!`;
 
   const handleSaveAndIssue = () => {
     if (!selectedDevice) return;
+    if (selectedDevice.status === "Sold") {
+      showToast(`Handset ${selectedDevice.id} pehle se Sold ho chuka hai! Doosra phone select karein.`, "error");
+      return;
+    }
     autoRecordCurrentInvoice();
     setActiveTab("history");
-    showToast(`Tax Invoice ${invoiceNumber} created & recorded! Showing in Saved Bills Ledger.`, "success");
+    showToast(`Tax Invoice ${invoiceNumber} created & recorded! Handset stock se hata diya gaya.`, "success");
   };
 
   const handleCopyImei = (imei: string) => {
@@ -604,28 +632,44 @@ https://thefundu.com/verify/${serialNo}
               <CardTitle className="text-sm flex items-center justify-between">
                 <span className="flex items-center gap-2">
                   <Smartphone className="h-4 w-4 text-fundu-600" />
-                  <span>1. Select Device from Inventory</span>
+                  <span>1. Select In-Stock Handset</span>
                 </span>
-                <span className="text-[10px] text-slate-400 font-mono">
-                  {devices.length} Units Available
+                <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-mono font-bold">
+                  {inStockDevices.length} In-Stock Available
                 </span>
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-3 space-y-3 text-xs">
               <div>
-                <label className="font-semibold block mb-1">Choose Serialized Phone *</label>
+                <label className="font-semibold block mb-1">
+                  Choose Available Handset *{" "}
+                  <span className="text-slate-400 font-normal text-[10px]">
+                    (Bill bante hi phone automatic stock se hat jayega)
+                  </span>
+                </label>
                 <select
                   value={selectedDeviceId}
                   onChange={(e) => handleDeviceChange(e.target.value)}
                   className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
                 >
-                  {devices.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.id} — {d.brand} {d.model} ({d.storage})
-                    </option>
-                  ))}
+                  {inStockDevices.length === 0 ? (
+                    <option value="">No In-Stock Handsets Left (All Sold)</option>
+                  ) : (
+                    inStockDevices.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.id} — {d.brand} {d.model} ({d.storage}, {d.colour}) • ₹{d.costs.sellingPrice?.toLocaleString()}
+                      </option>
+                    ))
+                  )}
                 </select>
               </div>
+
+              {selectedDevice?.status === "Sold" && (
+                <div className="p-2.5 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 text-xs text-rose-800 dark:text-rose-300 font-bold flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-rose-600 animate-pulse shrink-0" />
+                  <span>Yeh handset ({selectedDevice.id}) SOLD ho chuka hai (Bill Already Issued).</span>
+                </div>
+              )}
 
               {selectedDevice && (
                 <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/60 border text-[11px] space-y-1">

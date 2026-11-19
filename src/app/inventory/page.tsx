@@ -52,8 +52,21 @@ export default function InventoryPage() {
   // Search & Filters State
   const [searchQuery, setSearchQuery] = useState("");
   const [brandFilter, setBrandFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("In Stock");
   const [storeFilter, setStoreFilter] = useState("all");
+
+  // Summary counts for Quick Status Filters
+  const inStockCount = useMemo(() => {
+    return devices.filter((d) => d.status === "In Stock" || d.status === "Ready for Sale").length;
+  }, [devices]);
+
+  const soldCount = useMemo(() => {
+    return devices.filter((d) => d.status === "Sold").length;
+  }, [devices]);
+
+  const qcRepairCount = useMemo(() => {
+    return devices.filter((d) => d.status === "QC Pending" || d.status === "Under Repair" || d.status === "Damaged").length;
+  }, [devices]);
 
   // Sorting State
   const [sortBy, setSortBy] = useState<"date" | "sellingPrice" | "purchasePrice" | "model">("date");
@@ -97,7 +110,12 @@ export default function InventoryPage() {
       .filter((dev) => {
         const matchesSearch = matchesDeviceSearch(dev, searchQuery);
         const matchesBrand = brandFilter === "all" || dev.brand.toLowerCase() === brandFilter.toLowerCase();
-        const matchesStatus = statusFilter === "all" || dev.status === statusFilter;
+        const matchesStatus =
+          statusFilter === "all"
+            ? true
+            : statusFilter === "In Stock"
+            ? dev.status === "In Stock" || dev.status === "Ready for Sale"
+            : dev.status === statusFilter;
         const matchesStore = storeFilter === "all" || dev.warehouse.includes(storeFilter);
 
         return matchesSearch && matchesBrand && matchesStatus && matchesStore;
@@ -310,11 +328,11 @@ export default function InventoryPage() {
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 flex items-center gap-2">
             <span>Smartphone Inventory</span>
             <Badge variant="fundu" size="sm">
-              {filteredDevices.length} Total Units
+              {inStockCount} Units In Stock
             </Badge>
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Individual IMEI serialised stock ledger across Lucknow store locations.
+            Individual IMEI serialised stock ledger across Lucknow store locations. Billed phones are automatically marked Sold and removed from active stock.
           </p>
         </div>
 
@@ -384,6 +402,71 @@ export default function InventoryPage() {
         </div>
       </div>
 
+      {/* Quick Stock Status Filter Pills */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <button
+          type="button"
+          onClick={() => {
+            setStatusFilter("In Stock");
+            setCurrentPage(1);
+          }}
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            statusFilter === "In Stock"
+              ? "bg-emerald-600 text-white shadow-xs ring-2 ring-emerald-600/30"
+              : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+          }`}
+        >
+          <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span>Active In-Stock ({inStockCount})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setStatusFilter("Sold");
+            setCurrentPage(1);
+          }}
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            statusFilter === "Sold"
+              ? "bg-slate-800 dark:bg-slate-700 text-white shadow-xs"
+              : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+          }`}
+        >
+          <span className="h-2 w-2 rounded-full bg-slate-400" />
+          <span>Sold / Billed ({soldCount})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setStatusFilter("QC Pending");
+            setCurrentPage(1);
+          }}
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            statusFilter === "QC Pending"
+              ? "bg-amber-600 text-white shadow-xs"
+              : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+          }`}
+        >
+          <span>QC &amp; Repairs ({qcRepairCount})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setStatusFilter("all");
+            setCurrentPage(1);
+          }}
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            statusFilter === "all"
+              ? "bg-fundu-600 text-white shadow-xs"
+              : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+          }`}
+        >
+          <span>All Units ({devices.length})</span>
+        </button>
+      </div>
+
       {/* Filter Toolbar */}
       <Card>
         <CardContent className="p-4 space-y-3">
@@ -430,14 +513,13 @@ export default function InventoryPage() {
                 }}
                 className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
               >
-                <option value="all">All Statuses</option>
-                <option value="In Stock">In Stock</option>
-                <option value="Ready for Sale">Ready for Sale</option>
+                <option value="In Stock">In Stock &amp; Ready for Sale ({inStockCount})</option>
+                <option value="Sold">Sold / Billed Out ({soldCount})</option>
                 <option value="QC Pending">QC Pending</option>
                 <option value="Under Repair">Under Repair</option>
                 <option value="Reserved">Reserved</option>
-                <option value="Sold">Sold</option>
                 <option value="Damaged">Damaged</option>
+                <option value="all">All Statuses ({devices.length})</option>
               </select>
             </div>
 

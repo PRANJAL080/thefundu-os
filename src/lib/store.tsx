@@ -705,13 +705,30 @@ export function AppProvider({ children }: { children: ReactNode }) {
       } catch (e) {}
     }
 
-    // Update the device status to 'Sold'
-    if (sale.deviceId) {
-      updateDevice(sale.deviceId, { status: "Sold" });
+    // Update the device status to 'Sold' - immediately removes it from active inventory
+    if (sale.deviceId || sale.imei) {
+      setDevices((prev) => {
+        const nextDevices = prev.map((dev) => {
+          const isMatch =
+            (sale.deviceId && dev.id.toLowerCase() === sale.deviceId.toLowerCase()) ||
+            (sale.imei && (dev.imei1 === sale.imei || dev.imei2 === sale.imei));
+          if (isMatch) {
+            return { ...dev, status: "Sold" as DeviceStatus };
+          }
+          return dev;
+        });
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem(STORAGE_KEYS.devices, JSON.stringify(nextDevices));
+          } catch (e) {}
+        }
+        return nextDevices;
+      });
+
       addStockMovement({
         type: "Outward",
         reason: "Sold",
-        deviceId: sale.deviceId,
+        deviceId: sale.deviceId || fullSale.deviceId,
         deviceModel: fullSale.deviceModel,
         imei: fullSale.imei,
         fromLocation: fullSale.storeName || "Lucknow Store (LKO-01)",
@@ -719,15 +736,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
         quantity: 1,
         value: fullSale.finalAmount,
         initiatedBy: "Sales Team",
-        notes: `Order ${fullSale.id} dispatched via ${fullSale.channelName}`,
+        notes: `Tax invoice ${fullSale.invoiceNumber || fullSale.id} issued. Marked Sold & automatically removed from active stock.`,
       });
     }
 
-    showToast(`Tax Invoice ${fullSale.invoiceNumber || fullSale.id} saved for ${fullSale.customerName}!`, "success");
+    showToast(`Tax Invoice ${fullSale.invoiceNumber || fullSale.id} saved! Handset marked Sold & removed from active stock.`, "success");
     return fullSale;
   };
 
   const deleteSale = (id: string) => {
+    const saleToDelete = sales.find((s) => s.id === id || s.invoiceNumber === id);
     const updated = sales.filter((s) => s.id !== id && s.invoiceNumber !== id);
     setSales(updated);
     if (typeof window !== "undefined") {
@@ -735,7 +753,29 @@ export function AppProvider({ children }: { children: ReactNode }) {
         localStorage.setItem(STORAGE_KEYS.sales, JSON.stringify(updated));
       } catch (e) {}
     }
-    showToast("Invoice removed from saved bills record", "info");
+
+    // Return handset back to In Stock if deleted/voided
+    if (saleToDelete && (saleToDelete.deviceId || saleToDelete.imei)) {
+      setDevices((prev) => {
+        const next = prev.map((dev) => {
+          const isMatch =
+            (saleToDelete.deviceId && dev.id.toLowerCase() === saleToDelete.deviceId.toLowerCase()) ||
+            (saleToDelete.imei && (dev.imei1 === saleToDelete.imei || dev.imei2 === saleToDelete.imei));
+          if (isMatch) {
+            return { ...dev, status: "In Stock" as DeviceStatus };
+          }
+          return dev;
+        });
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem(STORAGE_KEYS.devices, JSON.stringify(next));
+          } catch (e) {}
+        }
+        return next;
+      });
+    }
+
+    showToast("Invoice removed from ledger & handset returned to In Stock", "info");
   };
 
   const updateSalesDeliveryStatus = (id: string, status: SalesOrder["deliveryStatus"]) => {

@@ -61,13 +61,14 @@ export function Sidebar() {
 
   const qcPendingCount = devices.filter((d) => d.status === "QC Pending").length;
   const repairsActiveCount = repairs.filter((r) => r.status === "In Progress" || r.status === "Pending").length;
+  const inStockUnitsCount = devices.filter((d) => d.status === "In Stock" || d.status === "Ready for Sale").length;
 
   const navigationGroups: NavGroup[] = [
     {
       group: "Core Operations",
       items: [
         { title: "Overview", href: "/", icon: LayoutDashboard, permissionKey: "overview" },
-        { title: "Inventory", href: "/inventory", icon: Boxes, badge: devices.length, permissionKey: "inventory" },
+        { title: "Inventory", href: "/inventory", icon: Boxes, badge: inStockUnitsCount, permissionKey: "inventory" },
         { title: "Products", href: "/products", icon: Smartphone, permissionKey: "inventory" },
         { title: "Accessories", href: "/accessories", icon: Headphones, permissionKey: "inventory" },
       ],
