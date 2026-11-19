@@ -278,7 +278,10 @@ export function CompanyInvoiceSheet({
   
   // Dynamic Company Configuration
   const companyLegalName = customCompanyConfig?.companyLegalName || customCompanyConfig?.legalName || COMPANY_CONFIG.legalName;
-  const companyCin = customCompanyConfig?.cin || COMPANY_CONFIG.cin;
+  const companyCin =
+    (customCompanyConfig?.cin && String(customCompanyConfig.cin).trim())
+      ? String(customCompanyConfig.cin).trim()
+      : (COMPANY_CONFIG.cin || "U95111UP2026PTC252407");
   const companyGstin = customCompanyConfig?.gstin || COMPANY_CONFIG.gstin;
   const companyPan = customCompanyConfig?.pan || COMPANY_CONFIG.pan;
   const companyRegisteredAddress = customCompanyConfig?.registeredAddress || COMPANY_CONFIG.registeredAddress;
@@ -436,10 +439,9 @@ export function CompanyInvoiceSheet({
   }
 
   // Payment Details
-  const paymentMethod = paymentInfo?.method || order?.paymentMethod || "UPI";
-  const paymentMode = paymentInfo?.mode || (order?.splitPayment ? "Split (Cash + Online)" : "Online / UPI");
+  const paymentMethod = paymentInfo?.method || order?.paymentMethod || "Google Pay";
+  const paymentMode = paymentInfo?.mode || (order?.splitPayment ? "Split (Cash + Online)" : "UPI");
   const txnId = paymentInfo?.txnId || `TXN${rawId}LKO982`;
-  const gatewayTxnId = paymentInfo?.gatewayTxnId || `pay_LKO${rawId}TFD`;
 
   const splitPaymentData = paymentInfo?.splitPayment || order?.splitPayment;
   const isSplitPayment = Boolean(
@@ -456,9 +458,13 @@ export function CompanyInvoiceSheet({
       }}
     >
       {/* TOP HEADER */}
-      <div className="flex justify-between items-center text-[10px] font-bold pb-1">
-        <span>CIN: {companyCin}</span>
-        <span className="uppercase tracking-wider">Original for Recipient</span>
+      <div className="flex justify-between items-center text-[10.5px] font-bold pb-1 px-1">
+        <span className="tracking-tight">
+          <strong>CIN:</strong> <span className="font-mono font-bold tracking-wide">{companyCin}</span>
+        </span>
+        <span className="uppercase tracking-wider mr-12 text-black font-extrabold text-[9.5px]">
+          Original for Recipient
+        </span>
       </div>
 
       <div className="text-center py-1.5 border-t border-black">
@@ -688,8 +694,8 @@ export function CompanyInvoiceSheet({
               <thead>
                 <tr className="border-b border-black font-bold bg-slate-50">
                   <th className="p-0.5 border-r border-black text-left pl-1">Payment Mode</th>
-                  <th className="p-0.5 border-r border-black">Ref / Txn ID</th>
-                  <th className="p-0.5 border-r border-black">Method</th>
+                  <th className="p-0.5 border-r border-black">Payment Method</th>
+                  <th className="p-0.5 border-r border-black">Transaction ID</th>
                   <th className="p-0.5 text-right pr-1">Amount (INR)</th>
                 </tr>
               </thead>
@@ -698,11 +704,11 @@ export function CompanyInvoiceSheet({
                   <td className="p-0.5 border-r border-black font-bold text-left pl-1">
                     Cash Desk
                   </td>
+                  <td className="p-0.5 border-r border-black font-medium">
+                    Cash Desk
+                  </td>
                   <td className="p-0.5 border-r border-black font-mono text-[7px]">
                     Store Cash Counter
-                  </td>
-                  <td className="p-0.5 border-r border-black font-mono text-[7.5px]">
-                    Cash in Hand
                   </td>
                   <td className="p-0.5 text-right font-bold pr-1 font-mono">
                     {(splitPaymentData?.cashAmount ?? Math.round(finalAmount / 2)).toFixed(2)}
@@ -710,13 +716,13 @@ export function CompanyInvoiceSheet({
                 </tr>
                 <tr className="border-b border-black/40">
                   <td className="p-0.5 border-r border-black font-bold text-left pl-1">
-                    {splitPaymentData?.onlineMode || "Online (UPI)"}
+                    Online / UPI
                   </td>
-                  <td className="p-0.5 border-r border-black font-mono text-[7px] truncate max-w-[80px]">
+                  <td className="p-0.5 border-r border-black font-medium">
+                    {splitPaymentData?.onlineMode || paymentMethod}
+                  </td>
+                  <td className="p-0.5 border-r border-black font-mono text-[7.5px] truncate max-w-[100px]">
                     {txnId}
-                  </td>
-                  <td className="p-0.5 border-r border-black font-mono text-[7.5px] truncate max-w-[60px]">
-                    {paymentMethod}
                   </td>
                   <td className="p-0.5 text-right font-bold pr-1 font-mono">
                     {(splitPaymentData?.onlineAmount ?? (finalAmount - Math.round(finalAmount / 2))).toFixed(2)}
@@ -736,24 +742,20 @@ export function CompanyInvoiceSheet({
             <table className="w-full text-center border-collapse">
               <thead>
                 <tr className="border-b border-black font-bold">
-                  <th className="p-0.5 border-r border-black">Payment Method</th>
                   <th className="p-0.5 border-r border-black">Payment Mode</th>
+                  <th className="p-0.5 border-r border-black">Payment Method</th>
                   <th className="p-0.5 border-r border-black">Transaction ID</th>
-                  <th className="p-0.5 border-r border-black">Gateway Txn ID</th>
                   <th className="p-0.5 text-right">Amount (INR)</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td className="p-0.5 border-r border-black font-mono">{paymentMethod}</td>
                   <td className="p-0.5 border-r border-black font-bold">{paymentMode}</td>
-                  <td className="p-0.5 border-r border-black font-mono text-[7.5px] truncate max-w-[70px]">
-                    {txnId}
+                  <td className="p-0.5 border-r border-black font-medium">{paymentMethod}</td>
+                  <td className="p-0.5 border-r border-black font-mono text-[8px] truncate max-w-[120px]">
+                    {paymentMode === "Cash" ? "Store Cash Counter" : txnId}
                   </td>
-                  <td className="p-0.5 border-r border-black font-mono text-[7.5px] truncate max-w-[70px]">
-                    {gatewayTxnId}
-                  </td>
-                  <td className="p-0.5 text-right font-bold">{finalAmount.toFixed(2)}</td>
+                  <td className="p-0.5 text-right font-bold font-mono">{finalAmount.toFixed(2)}</td>
                 </tr>
               </tbody>
             </table>
@@ -808,15 +810,15 @@ export function CompanyInvoiceSheet({
           ))}
         </div>
 
-        {/* Right: Signature & Company Stamp */}
-        <div className="w-[28%] p-2 flex flex-col justify-between items-center text-center">
-          <p className="font-bold text-[8px]">
+        {/* Right: Signature Area (Without Stamp) */}
+        <div className="w-[28%] p-2 flex flex-col justify-between items-center text-center min-h-[90px]">
+          <p className="font-bold text-[8.5px]">
             For {companyLegalName}
           </p>
           
-          <CompanyStamp />
+          <div className="my-auto py-5" />
 
-          <p className="font-bold text-[9px] border-t border-black w-full pt-0.5">
+          <p className="font-bold text-[9px] border-t border-black w-full pt-1">
             Authorised Signatory
           </p>
         </div>

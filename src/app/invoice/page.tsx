@@ -118,15 +118,14 @@ export default function InvoiceGeneratorPage() {
   const [taxMode, setTaxMode] = useState<"inclusive" | "exclusive">("inclusive");
 
   // Payment Details
-  const [paymentMethod, setPaymentMethod] = useState("csh_razor_pay");
+  const [paymentMethod, setPaymentMethod] = useState("Google Pay");
   const [paymentMode, setPaymentMode] = useState<string>("UPI");
   // Split Payment (Cash + Online / UPI) breakdown
   const [splitCashAmount, setSplitCashAmount] = useState<number>(10000);
   const [splitOnlineAmount, setSplitOnlineAmount] = useState<number>(20000);
-  const [splitOnlineMode, setSplitOnlineMode] = useState<string>("UPI");
+  const [splitOnlineMode, setSplitOnlineMode] = useState<string>("Google Pay");
 
-  const [txnId, setTxnId] = useState("2dyGed5aMTsykarE1a4V");
-  const [gatewayTxnId, setGatewayTxnId] = useState("pay_TwvXY8jF1sg5xl");
+  const [txnId, setTxnId] = useState("TXN26001LKO982");
   const [warrantyDays, setWarrantyDays] = useState(180);
   const [channel, setChannel] = useState<SalesChannelCode>("FSO");
   const [typeOfSale, setTypeOfSale] = useState<SaleTypeCode>("B2C");
@@ -154,6 +153,15 @@ export default function InvoiceGeneratorPage() {
   // Split payment helper functions
   const handlePaymentModeChange = (newMode: string) => {
     setPaymentMode(newMode);
+    if (newMode === "Cash") {
+      setPaymentMethod("Cash Desk");
+    } else if (newMode === "UPI") {
+      setPaymentMethod("Google Pay");
+    } else if (newMode === "Card") {
+      setPaymentMethod("Credit Card");
+    } else if (newMode === "NetBanking") {
+      setPaymentMethod("Net Banking");
+    }
     if (newMode === "Split") {
       const half = Math.round(finalSellingPrice / 2);
       setSplitCashAmount(half);
@@ -761,10 +769,6 @@ Have a wonderful experience with your device!`;
             <CardContent className="pt-3 space-y-3 text-xs">
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="font-semibold block mb-1">Payment Method / Gateway</label>
-                  <Input value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} />
-                </div>
-                <div>
                   <label className="font-semibold block mb-1">Payment Mode</label>
                   <select
                     value={paymentMode}
@@ -776,6 +780,23 @@ Have a wonderful experience with your device!`;
                     <option value="NetBanking">Net Banking / NEFT / IMPS</option>
                     <option value="Cash">Cash on Counter</option>
                     <option value="Split">⚡ Split Payment (Cash + Online / UPI)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="font-semibold block mb-1">Payment Method</label>
+                  <select
+                    value={paymentMethod}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 font-medium"
+                  >
+                    <option value="Google Pay">Google Pay</option>
+                    <option value="PhonePe">PhonePe</option>
+                    <option value="Paytm">Paytm</option>
+                    <option value="BHIM UPI">BHIM UPI / QR</option>
+                    <option value="Credit Card">Credit Card</option>
+                    <option value="Debit Card">Debit Card</option>
+                    <option value="Net Banking">Net Banking</option>
+                    <option value="Cash Desk">Cash Desk</option>
                   </select>
                 </div>
               </div>
@@ -828,27 +849,31 @@ Have a wonderful experience with your device!`;
                   <div className="grid grid-cols-2 gap-2.5">
                     <div>
                       <label className="font-semibold block mb-1 text-[11px] text-slate-700 dark:text-slate-300">
-                        Online Payment Mode
+                        Online Method
                       </label>
                       <select
                         value={splitOnlineMode}
                         onChange={(e) => setSplitOnlineMode(e.target.value)}
                         className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
                       >
-                        <option value="UPI">UPI (GooglePay / PhonePe / Paytm)</option>
-                        <option value="Card">Credit / Debit Card</option>
-                        <option value="NetBanking">Net Banking / NEFT / IMPS</option>
+                        <option value="Google Pay">Google Pay</option>
+                        <option value="PhonePe">PhonePe</option>
+                        <option value="Paytm">Paytm</option>
+                        <option value="BHIM UPI">BHIM UPI</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Debit Card">Debit Card</option>
+                        <option value="Net Banking">Net Banking</option>
                       </select>
                     </div>
 
                     <div>
                       <label className="font-semibold block mb-1 text-[11px] text-slate-700 dark:text-slate-300">
-                        Online UPI / Txn Ref ID
+                        Transaction ID / UPI Ref
                       </label>
                       <Input
                         value={txnId}
                         onChange={(e) => setTxnId(e.target.value)}
-                        placeholder="UPI Ref / UTR / Auth code"
+                        placeholder="UPI Ref / UTR / Txn ID"
                       />
                     </div>
                   </div>
@@ -885,15 +910,13 @@ Have a wonderful experience with your device!`;
               )}
 
               {paymentMode !== "Split" && (
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="font-semibold block mb-1">Transaction ID</label>
-                    <Input value={txnId} onChange={(e) => setTxnId(e.target.value)} />
-                  </div>
-                  <div>
-                    <label className="font-semibold block mb-1">Gateway Txn ID</label>
-                    <Input value={gatewayTxnId} onChange={(e) => setGatewayTxnId(e.target.value)} />
-                  </div>
+                <div>
+                  <label className="font-semibold block mb-1">Transaction ID / UPI Ref *</label>
+                  <Input
+                    value={txnId}
+                    onChange={(e) => setTxnId(e.target.value)}
+                    placeholder={paymentMode === "Cash" ? "Counter Cash Receipt (Optional)" : "e.g. TXN26001LKO982 or 12-digit UPI UTR"}
+                  />
                 </div>
               )}
 
@@ -956,7 +979,6 @@ Have a wonderful experience with your device!`;
                   method: paymentMethod,
                   mode: paymentMode === "Split" ? "Split (Cash + Online)" : paymentMode,
                   txnId,
-                  gatewayTxnId,
                   splitPayment: paymentMode === "Split" ? {
                     cashAmount: splitCashAmount,
                     onlineAmount: splitOnlineAmount,
