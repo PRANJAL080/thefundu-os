@@ -94,12 +94,12 @@ export type SaleTypeCode = (typeof COMPANY_CONFIG.saleTypes)[number]["code"];
  * Formatted in authoritative legal English from board resolution & company policies.
  */
 export const DEFAULT_INVOICE_TERMS: string[] = [
-  "1. No Physical / Liquid Damage: Warranty does not cover physical breakage, screen crack, water damage, burn, or unauthorized repair.",
-  "2. Original Bill Mandatory: Original tax invoice is strictly required for warranty claims. Without original bill, warranty claim will NOT be accepted.",
-  "3. Repair Timeline: Phone repair turnaround time depends on spare parts availability.",
-  "4. Lucknow Jurisdiction: All legal disputes are subject exclusively to Lucknow jurisdiction only.",
-  "5. No Cash Refund: Goods once sold cannot be returned for cash refund. Billed under GST Rule 32(5) Margin Scheme.",
-  "6. Support & Service: For warranty or service, visit TheFundu Store or Call / WhatsApp: +91 6390616616 (Mon-Sat, 10 AM - 8 PM).",
+  "1. Warrenty void if device suffers from Damage , Water , Burn, &  Unauthorized repair.",
+  "2. Original tax invoice is strictly required for warranty claims. Without original bill, warranty claim will NOT be accepted.",
+  "3. Phone repair turnaround time depends on spare parts availability.",
+  "4. All legal disputes are subject exclusively to Lucknow jurisdiction only.",
+  "5. Goods once sold cannot be returned for money refund. Billed under GST Rule 32(5) Margin Scheme.",
+  "6. For warranty or service, visit TheFundu Store or Call / WhatsApp: +91 6390616616 (Mon-Sat, 10 AM - 8 PM).",
 ];
 
 /**

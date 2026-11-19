@@ -284,7 +284,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     userRole: "thefundu_user_role_v5",
     authUser: "thefundu_auth_user_v6",
     selectedStoreId: "thefundu_selected_store_id_v6",
-    invoiceSettings: "thefundu_invoice_settings_v6",
+    invoiceSettings: "thefundu_invoice_settings_v7",
     rolePermissions: "thefundu_role_perms_v6",
     systemUsers: "thefundu_system_users_v6",
   };
@@ -391,8 +391,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
             // Update terms to new clean concise format with repair timeline
             if (Array.isArray(parsed.termsAndConditions)) {
               const needsUpdate = parsed.termsAndConditions.some((t: string) => 
-                t.includes("Voidance") || t.includes("Exclusive Lucknow Jurisdiction") || t.includes("1800") || t.includes("Liquid Ingress")
-              ) || !parsed.termsAndConditions.some((t: string) => t.includes("Repair Timeline"));
+                t.includes("Voidance") || t.includes("Exclusive Lucknow Jurisdiction") || t.includes("1800") || t.includes("Liquid Ingress") || t.includes("No Physical / Liquid Damage:")
+              ) || !parsed.termsAndConditions.some((t: string) => t.includes("Warrenty void"));
 
               if (needsUpdate) {
                 parsed.termsAndConditions = DEFAULT_INVOICE_TERMS;
