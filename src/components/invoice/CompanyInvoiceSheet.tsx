@@ -682,7 +682,7 @@ export function CompanyInvoiceSheet({
                 <tr className="border-b border-black font-bold bg-slate-50">
                   <th className="p-0.5 border-r border-black text-left pl-1">Payment Mode</th>
                   <th className="p-0.5 border-r border-black">Payment Method</th>
-                  <th className="p-0.5 border-r border-black">Transaction ID</th>
+                  <th className="p-0.5 border-r border-black">Transaction ID / UPI Ref</th>
                   <th className="p-0.5 text-right pr-1">Amount (INR)</th>
                 </tr>
               </thead>
@@ -694,7 +694,7 @@ export function CompanyInvoiceSheet({
                   <td className="p-0.5 border-r border-black font-medium">
                     {part1Method}
                   </td>
-                  <td className="p-0.5 border-r border-black font-mono text-[7px] truncate max-w-[90px]">
+                  <td className="p-0.5 border-r border-black font-mono font-semibold text-[7.5px] max-w-[130px] break-all">
                     {part1Txn}
                   </td>
                   <td className="p-0.5 text-right font-bold pr-1 font-mono">
@@ -708,7 +708,7 @@ export function CompanyInvoiceSheet({
                   <td className="p-0.5 border-r border-black font-medium">
                     {part2Method}
                   </td>
-                  <td className="p-0.5 border-r border-black font-mono text-[7.5px] truncate max-w-[90px]">
+                  <td className="p-0.5 border-r border-black font-mono font-semibold text-[7.5px] max-w-[130px] break-all">
                     {part2Txn}
                   </td>
                   <td className="p-0.5 text-right font-bold pr-1 font-mono">
