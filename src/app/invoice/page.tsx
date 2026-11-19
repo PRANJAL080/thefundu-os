@@ -200,17 +200,22 @@ export default function InvoiceGeneratorPage() {
     setPaymentMode(newMode);
     if (newMode === "Cash") {
       setPaymentMethod("Cash Desk");
+      setTxnId("Store Cash Counter");
     } else if (newMode === "UPI") {
       setPaymentMethod("Google Pay");
+      if (!txnId || txnId === "Store Cash Counter") setTxnId(`TXN${rawId}LKO982`);
     } else if (newMode === "Card") {
       setPaymentMethod("Credit Card");
+      if (!txnId || txnId === "Store Cash Counter") setTxnId(`POS${rawId}LKO`);
     } else if (newMode === "NetBanking") {
       setPaymentMethod("Net Banking");
+      if (!txnId || txnId === "Store Cash Counter") setTxnId(`NEFT${rawId}LKO`);
     }
     if (newMode === "Split") {
       const half = Math.round(finalSellingPrice / 2);
       setSplitCashAmount(half);
       setSplitOnlineAmount(Math.max(0, finalSellingPrice - half));
+      if (!txnId || txnId === "Store Cash Counter") setTxnId(`UPI${rawId}LKO`);
     }
   };
 
@@ -278,7 +283,7 @@ export default function InvoiceGeneratorPage() {
       purchasePrice: purchasePriceX,
       profitMargin: profitMarginZ,
       paymentMethod: paymentMode === "Split" ? "Split (Cash + Online)" : (paymentMode as any),
-      paymentTxnId: txnId,
+      paymentTxnId: paymentMode === "Cash" ? "Store Cash Counter" : (txnId || "Store Cash Counter"),
       splitPayment: paymentMode === "Split" ? {
         cashAmount: splitCashAmount,
         onlineAmount: splitOnlineAmount,
@@ -1146,14 +1151,26 @@ https://thefundu.com/verify/${serialNo}
                 </div>
               )}
 
-              {paymentMode !== "Split" && (
+              {paymentMode !== "Split" && paymentMode !== "Cash" && (
                 <div>
                   <label className="font-semibold block mb-1">Transaction ID / UPI Ref *</label>
                   <Input
                     value={txnId}
                     onChange={(e) => setTxnId(e.target.value)}
-                    placeholder={paymentMode === "Cash" ? "Counter Cash Receipt (Optional)" : "e.g. TXN26001LKO982 or 12-digit UPI UTR"}
+                    placeholder="e.g. TXN26001LKO982 or 12-digit UPI UTR"
                   />
+                </div>
+              )}
+
+              {paymentMode === "Cash" && (
+                <div className="p-2.5 rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50/70 dark:bg-emerald-950/30 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2 text-emerald-800 dark:text-emerald-300 font-medium">
+                    <span className="text-base">💵</span>
+                    <span>Full Cash Payment: Transaction ID not required</span>
+                  </div>
+                  <span className="font-semibold font-mono text-[10px] text-emerald-700 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-900/60 px-2 py-0.5 rounded">
+                    Store Cash Counter
+                  </span>
                 </div>
               )}
 
@@ -1215,7 +1232,7 @@ https://thefundu.com/verify/${serialNo}
                 paymentInfo={{
                   method: paymentMethod,
                   mode: paymentMode === "Split" ? "Split (Cash + Online)" : paymentMode,
-                  txnId,
+                  txnId: paymentMode === "Cash" ? "Store Cash Counter" : txnId,
                   splitPayment: paymentMode === "Split" ? {
                     cashAmount: splitCashAmount,
                     onlineAmount: splitOnlineAmount,
