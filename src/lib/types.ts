@@ -207,7 +207,13 @@ export interface SalesOrder {
   discount: number;
   taxAmount: number;
   finalAmount: number;
-  paymentMethod: 'UPI' | 'Card' | 'Bank Transfer' | 'Cash' | 'EMI';
+  paymentMethod: 'UPI' | 'Card' | 'Bank Transfer' | 'Cash' | 'EMI' | 'Split (Cash + Online)';
+  splitPayment?: {
+    cashAmount: number;
+    onlineAmount: number;
+    onlineMode?: 'UPI' | 'Card' | 'Bank Transfer' | 'NetBanking' | string;
+    onlineTxnId?: string;
+  };
   paymentStatus: 'Completed' | 'Pending' | 'Failed';
   emiPlan?: {
     months: number;

@@ -93,7 +93,12 @@ export default function InvoiceGeneratorPage() {
 
   // Payment Details
   const [paymentMethod, setPaymentMethod] = useState("csh_razor_pay");
-  const [paymentMode, setPaymentMode] = useState("UPI");
+  const [paymentMode, setPaymentMode] = useState<string>("UPI");
+  // Split Payment (Cash + Online / UPI) breakdown
+  const [splitCashAmount, setSplitCashAmount] = useState<number>(10000);
+  const [splitOnlineAmount, setSplitOnlineAmount] = useState<number>(20000);
+  const [splitOnlineMode, setSplitOnlineMode] = useState<string>("UPI");
+
   const [txnId, setTxnId] = useState("2dyGed5aMTsykarE1a4V");
   const [gatewayTxnId, setGatewayTxnId] = useState("pay_TwvXY8jF1sg5xl");
   const [warrantyDays, setWarrantyDays] = useState(180);
@@ -120,13 +125,46 @@ export default function InvoiceGeneratorPage() {
   const channelOrderNo = `#${channel}-${storeCode}-${rawId}`;
   const orderNo = `TFD-${channel}-2611-${rawId}`;
 
+  // Split payment helper functions
+  const handlePaymentModeChange = (newMode: string) => {
+    setPaymentMode(newMode);
+    if (newMode === "Split") {
+      const half = Math.round(finalSellingPrice / 2);
+      setSplitCashAmount(half);
+      setSplitOnlineAmount(Math.max(0, finalSellingPrice - half));
+    }
+  };
+
+  const handleSplitCashChange = (cashVal: number) => {
+    const cash = Math.max(0, isNaN(cashVal) ? 0 : cashVal);
+    setSplitCashAmount(cash);
+    setSplitOnlineAmount(Math.max(0, finalSellingPrice - cash));
+  };
+
+  const handleSplitOnlineChange = (onlineVal: number) => {
+    const online = Math.max(0, isNaN(onlineVal) ? 0 : onlineVal);
+    setSplitOnlineAmount(online);
+    setSplitCashAmount(Math.max(0, finalSellingPrice - online));
+  };
+
+  const handleSetEqualSplit = () => {
+    const half = Math.round(finalSellingPrice / 2);
+    setSplitCashAmount(half);
+    setSplitOnlineAmount(Math.max(0, finalSellingPrice - half));
+  };
+
   // When device dropdown changes, pre-fill its costs
   const handleDeviceChange = (devId: string) => {
     setSelectedDeviceId(devId);
     const dev = devices.find((d) => d.id === devId);
     if (dev) {
       setPurchasePriceX(dev.costs.purchasePrice || 25000);
-      setSellingPriceY(dev.costs.sellingPrice || 30000);
+      const newSell = dev.costs.sellingPrice || 30000;
+      setSellingPriceY(newSell);
+      const newFinal = Math.max(0, newSell - discountD);
+      const half = Math.round(newFinal / 2);
+      setSplitCashAmount(half);
+      setSplitOnlineAmount(Math.max(0, newFinal - half));
     }
   };
 
@@ -141,12 +179,17 @@ export default function InvoiceGeneratorPage() {
       ? `${selectedDevice.brand} ${selectedDevice.model} (${selectedDevice.storage}) Refurbished ${selectedDevice.colour && selectedDevice.colour !== "Default Edition" ? selectedDevice.colour : ""}`.replace(/\s+/g, " ").trim()
       : "Apple iPhone Refurbished";
 
+    const paymentSummaryText = paymentMode === "Split"
+      ? `Split Payment (Cash: ₹${splitCashAmount.toLocaleString()} + ${splitOnlineMode}: ₹${splitOnlineAmount.toLocaleString()})`
+      : paymentMode;
+
     const msg = 
 `Hi ${customerName}! Thank you for choosing TheFundu (${invoiceSettings?.companyLegalName || "Esterline Bonaparte Corp"})! 🎉
 
 Your ${cleanTitle} Tax Invoice (${invoiceNumber}) & ${warrantyDays}-day official warranty card are ready!
 
 📄 Invoice Amount: ₹${finalSellingPrice.toLocaleString()}
+💳 Payment Method: ${paymentSummaryText}
 🛡️ Digital Warranty & 42-Point QC Pass Certificate:
 https://thefundu.com/verify/${serialNo}
 
@@ -176,7 +219,13 @@ Have a wonderful experience with your device!`;
       sellingPrice: sellingPriceY,
       discount: discountD,
       finalAmount: finalSellingPrice,
-      paymentMethod: paymentMode as any,
+      paymentMethod: paymentMode === "Split" ? "Split (Cash + Online)" : (paymentMode as any),
+      splitPayment: paymentMode === "Split" ? {
+        cashAmount: splitCashAmount,
+        onlineAmount: splitOnlineAmount,
+        onlineMode: splitOnlineMode,
+        onlineTxnId: txnId,
+      } : undefined,
       paymentStatus: "Completed",
       deliveryStatus: "Delivered",
       warrantyMonths: Math.round(warrantyDays / 30),
@@ -612,34 +661,141 @@ Have a wonderful experience with your device!`;
             <CardContent className="pt-3 space-y-3 text-xs">
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="font-semibold block mb-1">Payment Method</label>
+                  <label className="font-semibold block mb-1">Payment Method / Gateway</label>
                   <Input value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} />
                 </div>
                 <div>
                   <label className="font-semibold block mb-1">Payment Mode</label>
                   <select
                     value={paymentMode}
-                    onChange={(e) => setPaymentMode(e.target.value)}
-                    className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
+                    onChange={(e) => handlePaymentModeChange(e.target.value)}
+                    className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 font-medium"
                   >
-                    <option value="UPI">UPI (GooglePay / PhonePe)</option>
-                    <option value="Card">Credit / Debit Card</option>
-                    <option value="NetBanking">Net Banking</option>
-                    <option value="Cash">Cash on Delivery</option>
+                    <option value="UPI">UPI (GooglePay / PhonePe / QR)</option>
+                    <option value="Card">Credit / Debit Card (POS)</option>
+                    <option value="NetBanking">Net Banking / NEFT / IMPS</option>
+                    <option value="Cash">Cash on Counter</option>
+                    <option value="Split">⚡ Split Payment (Cash + Online / UPI)</option>
                   </select>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="font-semibold block mb-1">Transaction ID</label>
-                  <Input value={txnId} onChange={(e) => setTxnId(e.target.value)} />
+              {/* SPLIT PAYMENT BREAKDOWN UI */}
+              {paymentMode === "Split" && (
+                <div className="p-3 rounded-xl border border-emerald-300 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/20 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 font-bold text-xs text-emerald-900 dark:text-emerald-300">
+                      <DollarSign className="h-4 w-4 text-emerald-600" />
+                      <span>Split Payment Breakdown (Cash + Online)</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleSetEqualSplit}
+                      className="text-[10.5px] font-semibold text-emerald-700 dark:text-emerald-300 underline hover:text-emerald-800"
+                    >
+                      50/50 Equal Split
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="font-semibold block mb-1 text-[11px] text-slate-700 dark:text-slate-300">
+                        💵 Cash Amount (₹)
+                      </label>
+                      <Input
+                        type="number"
+                        min="0"
+                        value={splitCashAmount}
+                        onChange={(e) => handleSplitCashChange(Number(e.target.value))}
+                        placeholder="Cash amount in ₹"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="font-semibold block mb-1 text-[11px] text-slate-700 dark:text-slate-300">
+                        📱 Online / UPI Amount (₹)
+                      </label>
+                      <Input
+                        type="number"
+                        min="0"
+                        value={splitOnlineAmount}
+                        onChange={(e) => handleSplitOnlineChange(Number(e.target.value))}
+                        placeholder="Online amount in ₹"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="font-semibold block mb-1 text-[11px] text-slate-700 dark:text-slate-300">
+                        Online Payment Mode
+                      </label>
+                      <select
+                        value={splitOnlineMode}
+                        onChange={(e) => setSplitOnlineMode(e.target.value)}
+                        className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
+                      >
+                        <option value="UPI">UPI (GooglePay / PhonePe / Paytm)</option>
+                        <option value="Card">Credit / Debit Card</option>
+                        <option value="NetBanking">Net Banking / NEFT / IMPS</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="font-semibold block mb-1 text-[11px] text-slate-700 dark:text-slate-300">
+                        Online UPI / Txn Ref ID
+                      </label>
+                      <Input
+                        value={txnId}
+                        onChange={(e) => setTxnId(e.target.value)}
+                        placeholder="UPI Ref / UTR / Auth code"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Verification / Match Status Bar */}
+                  <div className={`p-2 rounded-lg text-[11px] flex items-center justify-between font-medium border ${
+                    splitCashAmount + splitOnlineAmount === finalSellingPrice
+                      ? "bg-emerald-100/70 border-emerald-300 text-emerald-900 dark:bg-emerald-950 dark:border-emerald-800 dark:text-emerald-300"
+                      : "bg-amber-100/70 border-amber-300 text-amber-900 dark:bg-amber-950 dark:border-amber-800 dark:text-amber-300"
+                  }`}>
+                    <div>
+                      <span>Total: ₹{finalSellingPrice.toLocaleString()}</span>
+                      <span className="mx-1.5">•</span>
+                      <span>Cash: ₹{splitCashAmount.toLocaleString()}</span>
+                      <span className="mx-1">+</span>
+                      <span>Online: ₹{splitOnlineAmount.toLocaleString()}</span>
+                    </div>
+
+                    {splitCashAmount + splitOnlineAmount === finalSellingPrice ? (
+                      <span className="font-bold flex items-center gap-1 text-emerald-800 dark:text-emerald-200">
+                        ✓ Exactly Matched
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setSplitOnlineAmount(Math.max(0, finalSellingPrice - splitCashAmount))}
+                        className="underline font-bold text-amber-800 dark:text-amber-200 hover:text-amber-900"
+                      >
+                        Diff: ₹{Math.abs(finalSellingPrice - (splitCashAmount + splitOnlineAmount))} (Auto-Balance)
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <label className="font-semibold block mb-1">Gateway Txn ID</label>
-                  <Input value={gatewayTxnId} onChange={(e) => setGatewayTxnId(e.target.value)} />
+              )}
+
+              {paymentMode !== "Split" && (
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="font-semibold block mb-1">Transaction ID</label>
+                    <Input value={txnId} onChange={(e) => setTxnId(e.target.value)} />
+                  </div>
+                  <div>
+                    <label className="font-semibold block mb-1">Gateway Txn ID</label>
+                    <Input value={gatewayTxnId} onChange={(e) => setGatewayTxnId(e.target.value)} />
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div>
                 <label className="font-semibold block mb-1">TheFundu Warranty (Days)</label>
@@ -695,9 +851,15 @@ Have a wonderful experience with your device!`;
                 }}
                 paymentInfo={{
                   method: paymentMethod,
-                  mode: paymentMode,
+                  mode: paymentMode === "Split" ? "Split (Cash + Online)" : paymentMode,
                   txnId,
                   gatewayTxnId,
+                  splitPayment: paymentMode === "Split" ? {
+                    cashAmount: splitCashAmount,
+                    onlineAmount: splitOnlineAmount,
+                    onlineMode: splitOnlineMode,
+                    onlineTxnId: txnId,
+                  } : undefined,
                 }}
                 invoiceNumber={invoiceNumber}
                 channelOrderNo={channelOrderNo}

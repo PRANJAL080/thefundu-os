@@ -226,6 +226,26 @@ export function processAiStoreQuery(rawQuery: string, ctx: StoreContext): AiCopi
     };
   }
 
+  // Payment Methods & Split Payment Intent (Cash + Online)
+  if (
+    lower.includes("split") ||
+    lower.includes("kuch cash") ||
+    lower.includes("kuch online") ||
+    lower.includes("cash aur upi") ||
+    lower.includes("aadha cash") ||
+    lower.includes("payment method") ||
+    lower.includes("payment mode") ||
+    originalLower.includes("पेमेंट")
+  ) {
+    return {
+      query: q,
+      answerHindi: "TheFundu Invoice Desk me **Split Payment (Cash + Online / UPI)** fully supported hai:\n\n- **Dual Payment:** Customer se kuch paise Cash me aur baaki amount UPI / Card / Net Banking se le sakte hain.\n- **Auto-Balance Calculator:** Ek amount daalne par doosra amount automatically calculate ho jata hai.\n- **Bill Print Breakdown:** Tax Invoice sheet par dono payments ka alag-alag breakdown (Cash Counter receipt & Online UPI/Txn Ref ID) print hota hai.",
+      spokenHindi: "TheFundu Tax Invoice me aap Split Payment select karke kuch paise cash aur baaki online le sakte hain.",
+      devices: [],
+      navigation: { label: "Open Tax Invoice Desk", href: "/invoice" },
+    };
+  }
+
   // 2. High-Level Inventory Metrics / Valuation / Store Overview
   if (
     lower.includes("total stock") ||

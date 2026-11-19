@@ -665,6 +665,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       taxAmount: Math.round(((sale.sellingPrice || 49999) - (sale.discount || 0)) * 0.18),
       finalAmount: sale.finalAmount || (sale.sellingPrice || 49999) - (sale.discount || 0),
       paymentMethod: sale.paymentMethod || "UPI",
+      splitPayment: sale.splitPayment,
       paymentStatus: sale.paymentStatus || "Completed",
       deliveryStatus: sale.deliveryStatus || "Packed",
       trackingNumber: `TFD-SHIP-${Math.floor(100000 + Math.random() * 900000)}`,

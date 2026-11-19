@@ -55,6 +55,9 @@ export default function SalesOrdersPage() {
   const [sellingPrice, setSellingPrice] = useState(64999);
   const [discount, setDiscount] = useState(1500);
   const [paymentMethod, setPaymentMethod] = useState<SalesOrder["paymentMethod"]>("UPI");
+  const [splitCash, setSplitCash] = useState<number>(20000);
+  const [splitOnline, setSplitOnline] = useState<number>(43499);
+  const [splitOnlineMode, setSplitOnlineMode] = useState<string>("UPI");
 
   const filteredSales = sales.filter((s) => {
     const q = searchQuery.toLowerCase().trim();
@@ -92,6 +95,11 @@ export default function SalesOrdersPage() {
       sellingPrice: Number(sellingPrice),
       discount: Number(discount),
       paymentMethod,
+      splitPayment: paymentMethod === "Split (Cash + Online)" ? {
+        cashAmount: splitCash,
+        onlineAmount: splitOnline,
+        onlineMode: splitOnlineMode,
+      } : undefined,
       paymentStatus: "Completed",
       deliveryStatus: "Packed",
       warrantyMonths: 12,
@@ -325,13 +333,23 @@ export default function SalesOrdersPage() {
                     )}
                   </td>
                   <td className="p-3">
-                    <div className="flex items-center gap-1.5">
-                      <Badge variant="outline" size="sm">
-                        {s.paymentMethod}
-                      </Badge>
-                      {s.emiPlan && (
-                        <span className="text-[10px] font-semibold text-indigo-600">
-                          {s.emiPlan.months}m EMI
+                    <div className="flex flex-col gap-1 items-start">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <Badge
+                          variant={s.paymentMethod?.includes("Split") ? "fundu" : "outline"}
+                          size="sm"
+                        >
+                          {s.paymentMethod}
+                        </Badge>
+                        {s.emiPlan && (
+                          <span className="text-[10px] font-semibold text-indigo-600">
+                            {s.emiPlan.months}m EMI
+                          </span>
+                        )}
+                      </div>
+                      {s.splitPayment && (
+                        <span className="text-[9.5px] text-slate-500 dark:text-slate-400 font-mono">
+                          Cash: {formatINR(s.splitPayment.cashAmount)} + {s.splitPayment.onlineMode || "Online"}: {formatINR(s.splitPayment.onlineAmount)}
                         </span>
                       )}
                     </div>
@@ -503,7 +521,16 @@ export default function SalesOrdersPage() {
               <label className="font-semibold block mb-1">Payment Method</label>
               <select
                 value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value as any)}
+                onChange={(e) => {
+                  const val = e.target.value as any;
+                  setPaymentMethod(val);
+                  if (val === "Split (Cash + Online)") {
+                    const finalAmt = Math.max(0, Number(sellingPrice) - Number(discount));
+                    const half = Math.round(finalAmt / 2);
+                    setSplitCash(half);
+                    setSplitOnline(Math.max(0, finalAmt - half));
+                  }
+                }}
                 className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
               >
                 <option value="UPI">UPI (GooglePay / PhonePe / QR)</option>
@@ -511,8 +538,69 @@ export default function SalesOrdersPage() {
                 <option value="EMI">No-Cost EMI (6m / 12m)</option>
                 <option value="Bank Transfer">NEFT / RTGS / IMPS</option>
                 <option value="Cash">Cash at Counter</option>
+                <option value="Split (Cash + Online)">⚡ Split (Cash + Online / UPI)</option>
               </select>
             </div>
+
+            {paymentMethod === "Split (Cash + Online)" && (
+              <div className="col-span-2 p-3 rounded-xl border border-emerald-300 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/20 space-y-2">
+                <div className="flex items-center justify-between text-xs font-bold text-emerald-800 dark:text-emerald-300">
+                  <span>Split Payment Breakdown (Cash + Online)</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const finalAmt = Math.max(0, Number(sellingPrice) - Number(discount));
+                      const half = Math.round(finalAmt / 2);
+                      setSplitCash(half);
+                      setSplitOnline(Math.max(0, finalAmt - half));
+                    }}
+                    className="text-[10px] underline font-semibold text-emerald-700 dark:text-emerald-300"
+                  >
+                    50/50 Split
+                  </button>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <div>
+                    <label className="text-[10.5px] font-semibold block mb-1">💵 Cash (₹)</label>
+                    <Input
+                      type="number"
+                      value={splitCash}
+                      onChange={(e) => {
+                        const val = Math.max(0, Number(e.target.value));
+                        setSplitCash(val);
+                        const finalAmt = Math.max(0, Number(sellingPrice) - Number(discount));
+                        setSplitOnline(Math.max(0, finalAmt - val));
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10.5px] font-semibold block mb-1">📱 Online (₹)</label>
+                    <Input
+                      type="number"
+                      value={splitOnline}
+                      onChange={(e) => {
+                        const val = Math.max(0, Number(e.target.value));
+                        setSplitOnline(val);
+                        const finalAmt = Math.max(0, Number(sellingPrice) - Number(discount));
+                        setSplitCash(Math.max(0, finalAmt - val));
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10.5px] font-semibold block mb-1">Online Mode</label>
+                    <select
+                      value={splitOnlineMode}
+                      onChange={(e) => setSplitOnlineMode(e.target.value)}
+                      className="w-full h-9 rounded-lg border border-slate-200 bg-white px-2 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
+                    >
+                      <option value="UPI">UPI</option>
+                      <option value="Card">Card</option>
+                      <option value="Bank Transfer">Bank Transfer</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex justify-end gap-2 pt-3 border-t">

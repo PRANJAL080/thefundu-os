@@ -30,6 +30,12 @@ export interface CompanyInvoiceSheetProps {
     mode?: string;
     txnId?: string;
     gatewayTxnId?: string;
+    splitPayment?: {
+      cashAmount: number;
+      onlineAmount: number;
+      onlineMode?: string;
+      onlineTxnId?: string;
+    };
   };
   channel?: SalesChannelCode;
   typeOfSale?: SaleTypeCode;
@@ -418,9 +424,15 @@ export function CompanyInvoiceSheet({
 
   // Payment Details
   const paymentMethod = paymentInfo?.method || order?.paymentMethod || "UPI";
-  const paymentMode = paymentInfo?.mode || "Online / UPI";
+  const paymentMode = paymentInfo?.mode || (order?.splitPayment ? "Split (Cash + Online)" : "Online / UPI");
   const txnId = paymentInfo?.txnId || `TXN${rawId}LKO982`;
   const gatewayTxnId = paymentInfo?.gatewayTxnId || `pay_LKO${rawId}TFD`;
+
+  const splitPaymentData = paymentInfo?.splitPayment || order?.splitPayment;
+  const isSplitPayment = Boolean(
+    splitPaymentData &&
+      (splitPaymentData.cashAmount > 0 || splitPaymentData.onlineAmount > 0)
+  ) || (paymentMode && paymentMode.toLowerCase().includes("split"));
 
   return (
     <div
@@ -636,33 +648,91 @@ export function CompanyInvoiceSheet({
 
         {/* Box 2: PAYMENT SUMMARY */}
         <div className="w-[46%] p-1.5 border-r border-black text-[8.5px]">
-          <p className="font-bold uppercase tracking-wider text-[9px] border-b border-black pb-0.5 mb-1">
-            PAYMENT SUMMARY
-          </p>
-          <table className="w-full text-center border-collapse">
-            <thead>
-              <tr className="border-b border-black font-bold">
-                <th className="p-0.5 border-r border-black">Payment Method</th>
-                <th className="p-0.5 border-r border-black">Payment Mode</th>
-                <th className="p-0.5 border-r border-black">Transaction ID</th>
-                <th className="p-0.5 border-r border-black">Gateway Txn ID</th>
-                <th className="p-0.5 text-right">Amount (INR)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="p-0.5 border-r border-black font-mono">{paymentMethod}</td>
-                <td className="p-0.5 border-r border-black font-bold">{paymentMode}</td>
-                <td className="p-0.5 border-r border-black font-mono text-[7.5px] truncate max-w-[70px]">
-                  {txnId}
-                </td>
-                <td className="p-0.5 border-r border-black font-mono text-[7.5px] truncate max-w-[70px]">
-                  {gatewayTxnId}
-                </td>
-                <td className="p-0.5 text-right font-bold">{finalAmount.toFixed(2)}</td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="border-b border-black pb-0.5 mb-1 flex items-center justify-between">
+            <p className="font-bold uppercase tracking-wider text-[9px]">
+              PAYMENT SUMMARY
+            </p>
+            {isSplitPayment && (
+              <span className="text-[7px] font-black uppercase tracking-wider bg-black text-white px-1 py-0.2 rounded-sm">
+                Split (Cash + Online)
+              </span>
+            )}
+          </div>
+          {isSplitPayment ? (
+            <table className="w-full text-center border-collapse">
+              <thead>
+                <tr className="border-b border-black font-bold bg-slate-50">
+                  <th className="p-0.5 border-r border-black text-left pl-1">Payment Mode</th>
+                  <th className="p-0.5 border-r border-black">Ref / Txn ID</th>
+                  <th className="p-0.5 border-r border-black">Method</th>
+                  <th className="p-0.5 text-right pr-1">Amount (INR)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-black/40">
+                  <td className="p-0.5 border-r border-black font-bold text-left pl-1">
+                    Cash Desk
+                  </td>
+                  <td className="p-0.5 border-r border-black font-mono text-[7px]">
+                    Store Cash Counter
+                  </td>
+                  <td className="p-0.5 border-r border-black font-mono text-[7.5px]">
+                    Cash in Hand
+                  </td>
+                  <td className="p-0.5 text-right font-bold pr-1 font-mono">
+                    {(splitPaymentData?.cashAmount ?? Math.round(finalAmount / 2)).toFixed(2)}
+                  </td>
+                </tr>
+                <tr className="border-b border-black/40">
+                  <td className="p-0.5 border-r border-black font-bold text-left pl-1">
+                    {splitPaymentData?.onlineMode || "Online (UPI)"}
+                  </td>
+                  <td className="p-0.5 border-r border-black font-mono text-[7px] truncate max-w-[80px]">
+                    {txnId}
+                  </td>
+                  <td className="p-0.5 border-r border-black font-mono text-[7.5px] truncate max-w-[60px]">
+                    {paymentMethod}
+                  </td>
+                  <td className="p-0.5 text-right font-bold pr-1 font-mono">
+                    {(splitPaymentData?.onlineAmount ?? (finalAmount - Math.round(finalAmount / 2))).toFixed(2)}
+                  </td>
+                </tr>
+                <tr className="font-bold bg-slate-100">
+                  <td colSpan={3} className="p-0.5 border-r border-black text-right pr-1 font-bold">
+                    Total Received (INR):
+                  </td>
+                  <td className="p-0.5 text-right font-black pr-1 font-mono">
+                    {finalAmount.toFixed(2)}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          ) : (
+            <table className="w-full text-center border-collapse">
+              <thead>
+                <tr className="border-b border-black font-bold">
+                  <th className="p-0.5 border-r border-black">Payment Method</th>
+                  <th className="p-0.5 border-r border-black">Payment Mode</th>
+                  <th className="p-0.5 border-r border-black">Transaction ID</th>
+                  <th className="p-0.5 border-r border-black">Gateway Txn ID</th>
+                  <th className="p-0.5 text-right">Amount (INR)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="p-0.5 border-r border-black font-mono">{paymentMethod}</td>
+                  <td className="p-0.5 border-r border-black font-bold">{paymentMode}</td>
+                  <td className="p-0.5 border-r border-black font-mono text-[7.5px] truncate max-w-[70px]">
+                    {txnId}
+                  </td>
+                  <td className="p-0.5 border-r border-black font-mono text-[7.5px] truncate max-w-[70px]">
+                    {gatewayTxnId}
+                  </td>
+                  <td className="p-0.5 text-right font-bold">{finalAmount.toFixed(2)}</td>
+                </tr>
+              </tbody>
+            </table>
+          )}
         </div>
 
         {/* Box 3: TAX SUMMARY (MARGIN GST RULE 32(5)) */}
