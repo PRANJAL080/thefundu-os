@@ -66,8 +66,8 @@ export function supabaseRowToDevice(row: any): Device {
     sku: row.sku || `TFD-${row.id}`,
     batteryHealth: row.battery_health ? Number(row.battery_health) : undefined,
     grade: (row.grade as any) || "A",
-    status: (row.status as DeviceStatus) || "In Stock",
-    warehouse: row.warehouse_id || "STR-LKO-01",
+    status: (row.status === "Sold" ? "Sold" : "In Stock") as DeviceStatus,
+    warehouse: (row.warehouse_id === "STR-LKO-01" || !row.warehouse_id) ? "Lucknow Store (LKO-01)" : row.warehouse_id,
     supplierId: row.supplier_id || "SUP-001",
     supplierName: "Esterline Bulk Refurb Solutions",
     purchaseDate: row.purchase_date || new Date().toISOString().split("T")[0],
@@ -325,7 +325,11 @@ export async function syncBidirectionalDevices(localDevices: Device[]): Promise<
     }
   });
 
-  const merged = Array.from(mergedMap.values());
+  const merged = Array.from(mergedMap.values()).map((d) => ({
+    ...d,
+    status: (d.status === "Sold" ? "Sold" : "In Stock") as DeviceStatus,
+    warehouse: (d.warehouse === "STR-LKO-01" || !d.warehouse) ? "Lucknow Store (LKO-01)" : d.warehouse,
+  }));
   const syncedFromCloudCount = merged.length - localDevices.length;
 
   return {

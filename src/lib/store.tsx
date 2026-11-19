@@ -297,12 +297,23 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (storedDevs) {
         const parsed = JSON.parse(storedDevs);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Set all devices to "In Stock"
-          const allInStock = parsed.map((d: Device) => ({ ...d, status: "In Stock" as DeviceStatus }));
+          // Merge with all initial devices so no baseline phones are ever missing
+          const devMap = new Map<string, Device>();
+          initialDevices.forEach((d) => devMap.set(d.id, d));
+          parsed.forEach((d: Device) => devMap.set(d.id, d));
+          const allInStock = Array.from(devMap.values()).map((d: Device) => ({
+            ...d,
+            status: (d.status === "Sold" ? "Sold" : "In Stock") as DeviceStatus,
+            warehouse: (d.warehouse === "STR-LKO-01" || !d.warehouse) ? "Lucknow Store (LKO-01)" : d.warehouse,
+          }));
           setDevices(allInStock);
         }
       } else {
-        setDevices(initialDevices.map((d: Device) => ({ ...d, status: "In Stock" as DeviceStatus })));
+        setDevices(initialDevices.map((d: Device) => ({
+          ...d,
+          status: "In Stock" as DeviceStatus,
+          warehouse: (d.warehouse === "STR-LKO-01" || !d.warehouse) ? "Lucknow Store (LKO-01)" : d.warehouse,
+        })));
       }
       const storedRepairs = localStorage.getItem(STORAGE_KEYS.repairs);
       if (storedRepairs) {
