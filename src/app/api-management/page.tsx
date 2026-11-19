@@ -84,7 +84,7 @@ export default function ApiManagementPage() {
             <span>TheFundu Live REST API Secret Key</span>
           </CardTitle>
           <CardDescription>
-            Authenticate external marketplace channels (Amazon Renewed, Flipkart Refurbished, Cashify)
+            Authenticate external marketplace channels (Amazon Renewed, Flipkart Refurbished, TheFundu Online)
           </CardDescription>
         </CardHeader>
         <CardContent className="p-4 space-y-3">

@@ -190,7 +190,7 @@ export function InvoiceModal({
         </div>
       </div>
 
-      {/* PRINTABLE SHEET CONTAINER (EXACT CASHIFY/RETAIL FIESTA LAYOUT) */}
+      {/* PRINTABLE SHEET CONTAINER (THEFUNDU STANDARD RETAIL LAYOUT) */}
       <div ref={printContainerRef} className="py-2 overflow-x-auto">
         <CompanyInvoiceSheet
           device={device}

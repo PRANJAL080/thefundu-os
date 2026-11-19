@@ -848,7 +848,7 @@ export default function SettingsPage() {
                 <span>Legal Corporate Entity &amp; Branding</span>
               </CardTitle>
               <CardDescription>
-                These details are automatically printed on official Cashify-format GST Tax Invoices and customer receipts.
+                These details are automatically printed on official TheFundu GST Tax Invoices and customer receipts.
               </CardDescription>
             </CardHeader>
             <CardContent className="p-4 space-y-4">
@@ -1120,7 +1120,7 @@ export default function SettingsPage() {
                     onChange={(e) => setDefaultLabelSize(e.target.value as any)}
                     className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
                   >
-                    <option value="50x38">50mm x 38mm (Cashify Standard Phone Back)</option>
+                    <option value="50x38">50mm x 38mm (TheFundu Standard Phone Back)</option>
                     <option value="50x25">50mm x 25mm (Compact Battery/Carton)</option>
                     <option value="100x50">100mm x 50mm (Master Box / Consignment)</option>
                   </select>

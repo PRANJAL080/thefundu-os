@@ -58,7 +58,7 @@
    - Official GST customer invoice preview modal.
 
 9. **Supplier CRM (`/suppliers`):**
-   - Vendor directory (Esterline Bulk Refurb, Cashify B2B, Global Trade Tech Dubai, Recommerce India), total purchases, outstanding balances, ratings, and profile modal.
+   - Vendor directory (Esterline Bulk Refurb, TheFundu Enterprise Sourcing, Global Trade Tech Dubai, Recommerce India), total purchases, outstanding balances, ratings, and profile modal.
 
 10. **Customer CRM & Warranties (`/customers`):**
     - Client database with loyalty tiers (Platinum, Gold, Silver), lifetime value, active warranty countdowns, and return rate scoring.

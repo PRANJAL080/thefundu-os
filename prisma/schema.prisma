@@ -113,7 +113,7 @@ model Device {
 // -------------------------------------------------------------
 model Supplier {
   id                  String          @id // SUP-001
-  name                String          // Cashify B2B
+  name                String          // TheFundu Enterprise Sourcing
   company             String          // Manak Waste Management Ltd
   contactPerson       String
   email               String

@@ -108,10 +108,10 @@ const suppliers = [
   },
   {
     id: "SUP-002",
-    name: "Cashify B2B Marketplace",
-    company: "Manak Waste Management Ltd",
+    name: "TheFundu Enterprise Sourcing Hub",
+    company: "National Refurb Exchange Ltd",
     contact_person: "Arjun Mehta",
-    email: "b2b@cashify.in",
+    email: "sourcing@thefundu.com",
     phone: "+91 98101 22849",
     address: "Cyber City, DLF Phase 2, Gurugram, Haryana 122002",
     gst_number: "06AAACM9981B1ZG",
@@ -125,7 +125,7 @@ const suppliers = [
     bank_name: "ICICI Bank Cyber City",
     account_number: "002105018273",
     ifsc_code: "ICIC0000021",
-    upi_id: "cashifyb2b@icici",
+    upi_id: "thefundub2b@icici",
     kyc_verified: true,
   },
   {

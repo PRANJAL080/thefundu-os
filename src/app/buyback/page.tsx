@@ -236,7 +236,7 @@ export default function BuybackDeskPage() {
             </Badge>
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Cashify-style customer phone valuation engine with instant diagnostics, Government CEIR portal clean title clearance, and 1-click inventory inwarding.
+            TheFundu customer phone valuation engine with instant diagnostics, Government CEIR portal clean title clearance, and 1-click inventory inwarding.
           </p>
         </div>
 

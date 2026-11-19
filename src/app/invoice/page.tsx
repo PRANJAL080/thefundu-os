@@ -996,7 +996,7 @@ https://thefundu.com/verify/${serialNo}
                     onChange={(e) => setTaxMode(e.target.value as any)}
                     className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
                   >
-                    <option value="inclusive">Inclusive (Cashify / B2C Standard)</option>
+                    <option value="inclusive">Inclusive (TheFundu Standard / B2C)</option>
                     <option value="exclusive">Exclusive (Add 18% on Margin)</option>
                   </select>
                 </div>
@@ -1462,7 +1462,7 @@ https://thefundu.com/verify/${serialNo}
                   onChange={(e) => setWarrantyDays(Number(e.target.value))}
                   className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
                 >
-                  <option value={180}>180 Days (6 Months Cashify Standard)</option>
+                  <option value={180}>180 Days (6 Months TheFundu Standard)</option>
                   <option value={365}>365 Days (12 Months Annual Comprehensive)</option>
                   <option value={90}>90 Days (Quarterly Guarantee)</option>
                 </select>
@@ -1472,7 +1472,7 @@ https://thefundu.com/verify/${serialNo}
         </div>
 
         {/* ============================================================== */}
-        {/* RIGHT COLUMN: Live Customer Tax Invoice (Identical to Cashify PDF) */}
+        {/* RIGHT COLUMN: Live Customer Tax Invoice (TheFundu Standard Retail PDF) */}
         {/* ============================================================== */}
         <div className="lg:col-span-7">
           <div className="sticky top-6 space-y-2">
