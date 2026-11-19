@@ -29,6 +29,9 @@ import {
   MapPin,
   Sparkles,
   Battery,
+  DollarSign,
+  RotateCcw,
+  SlidersHorizontal,
 } from "lucide-react";
 import { useApp } from "@/lib/store";
 import { Device, DeviceStatus, WarehouseLocation, BuybackRecord } from "@/lib/types";
@@ -49,11 +52,19 @@ import { formatINR, formatDate, getStatusBadgeColor, matchesDeviceSearch } from 
 export default function InventoryPage() {
   const { devices, warehouses, buybacks, updateDevice, deleteDevice, setAllDevicesInStock, transferWarehouseStock, showToast, isCashierMode } = useApp();
 
-  // Search & Filters State
+  // Search & Core Filters State
   const [searchQuery, setSearchQuery] = useState("");
   const [brandFilter, setBrandFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("In Stock");
   const [storeFilter, setStoreFilter] = useState("all");
+
+  // Advanced Price & Spec Filters State
+  const [priceRangeFilter, setPriceRangeFilter] = useState("all");
+  const [customMinPrice, setCustomMinPrice] = useState("");
+  const [customMaxPrice, setCustomMaxPrice] = useState("");
+  const [storageFilter, setStorageFilter] = useState("all");
+  const [gradeFilter, setGradeFilter] = useState("all");
+  const [batteryFilter, setBatteryFilter] = useState("all");
 
   // Summary counts for Quick Status Filters
   const inStockCount = useMemo(() => {
@@ -67,6 +78,48 @@ export default function InventoryPage() {
   const qcRepairCount = useMemo(() => {
     return devices.filter((d) => d.status === "QC Pending" || d.status === "Under Repair" || d.status === "Damaged").length;
   }, [devices]);
+
+  // Live Counts for Quick Price Range Pills (calculated from in-stock devices)
+  const priceRangeCounts = useMemo(() => {
+    const inStock = devices.filter((d) => d.status === "In Stock" || d.status === "Ready for Sale");
+    return {
+      all: inStock.length,
+      under_10k: inStock.filter((d) => d.costs.sellingPrice < 10000).length,
+      "10k_15k": inStock.filter((d) => d.costs.sellingPrice >= 10000 && d.costs.sellingPrice <= 15000).length,
+      "15k_25k": inStock.filter((d) => d.costs.sellingPrice > 15000 && d.costs.sellingPrice <= 25000).length,
+      "25k_40k": inStock.filter((d) => d.costs.sellingPrice > 25000 && d.costs.sellingPrice <= 40000).length,
+      "40k_70k": inStock.filter((d) => d.costs.sellingPrice > 40000 && d.costs.sellingPrice <= 70000).length,
+      above_70k: inStock.filter((d) => d.costs.sellingPrice > 70000).length,
+    };
+  }, [devices]);
+
+  const hasActiveFilters = Boolean(
+    searchQuery ||
+    brandFilter !== "all" ||
+    statusFilter !== "In Stock" ||
+    storeFilter !== "all" ||
+    priceRangeFilter !== "all" ||
+    customMinPrice ||
+    customMaxPrice ||
+    storageFilter !== "all" ||
+    gradeFilter !== "all" ||
+    batteryFilter !== "all"
+  );
+
+  const resetAllFilters = () => {
+    setSearchQuery("");
+    setBrandFilter("all");
+    setStatusFilter("In Stock");
+    setStoreFilter("all");
+    setPriceRangeFilter("all");
+    setCustomMinPrice("");
+    setCustomMaxPrice("");
+    setStorageFilter("all");
+    setGradeFilter("all");
+    setBatteryFilter("all");
+    setCurrentPage(1);
+    showToast("All inventory filters reset to default In-Stock view.", "info");
+  };
 
   // Sorting State
   const [sortBy, setSortBy] = useState<"date" | "sellingPrice" | "purchasePrice" | "model">("date");
@@ -108,17 +161,71 @@ export default function InventoryPage() {
   const filteredDevices = useMemo(() => {
     return devices
       .filter((dev) => {
+        // 1. Search (IMEI, model, brand, SKU)
         const matchesSearch = matchesDeviceSearch(dev, searchQuery);
+
+        // 2. Brand Filter
         const matchesBrand = brandFilter === "all" || dev.brand.toLowerCase() === brandFilter.toLowerCase();
+
+        // 3. Status Filter (Default: "In Stock" shows only active, unsold phones)
         const matchesStatus =
           statusFilter === "all"
             ? true
             : statusFilter === "In Stock"
             ? dev.status === "In Stock" || dev.status === "Ready for Sale"
             : dev.status === statusFilter;
+
+        // 4. Store Filter
         const matchesStore = storeFilter === "all" || dev.warehouse.includes(storeFilter);
 
-        return matchesSearch && matchesBrand && matchesStatus && matchesStore;
+        // 5. Price Range Filter (10000-15000, under 10k, custom min/max)
+        const price = dev.costs.sellingPrice;
+        let matchesPrice = true;
+        if (customMinPrice || customMaxPrice) {
+          const min = customMinPrice ? Number(customMinPrice) : 0;
+          const max = customMaxPrice ? Number(customMaxPrice) : Infinity;
+          matchesPrice = price >= min && price <= max;
+        } else if (priceRangeFilter === "under_10k") {
+          matchesPrice = price < 10000;
+        } else if (priceRangeFilter === "10k_15k") {
+          matchesPrice = price >= 10000 && price <= 15000;
+        } else if (priceRangeFilter === "15k_25k") {
+          matchesPrice = price > 15000 && price <= 25000;
+        } else if (priceRangeFilter === "25k_40k") {
+          matchesPrice = price > 25000 && price <= 40000;
+        } else if (priceRangeFilter === "40k_70k") {
+          matchesPrice = price > 40000 && price <= 70000;
+        } else if (priceRangeFilter === "above_70k") {
+          matchesPrice = price > 70000;
+        }
+
+        // 6. Storage Filter
+        const matchesStorage =
+          storageFilter === "all" ||
+          (dev.storage || "").toLowerCase().replace(/\s+/g, "").includes(storageFilter.toLowerCase().replace(/\s+/g, ""));
+
+        // 7. Condition Grade Filter
+        const matchesGrade =
+          gradeFilter === "all" ||
+          (dev.grade && dev.grade.toUpperCase() === gradeFilter.toUpperCase());
+
+        // 8. Battery Health Filter
+        let matchesBattery = true;
+        const bh = dev.batteryHealth || 0;
+        if (batteryFilter === "90+") matchesBattery = bh >= 90;
+        else if (batteryFilter === "85+") matchesBattery = bh >= 85;
+        else if (batteryFilter === "80+") matchesBattery = bh >= 80;
+
+        return (
+          matchesSearch &&
+          matchesBrand &&
+          matchesStatus &&
+          matchesStore &&
+          matchesPrice &&
+          matchesStorage &&
+          matchesGrade &&
+          matchesBattery
+        );
       })
       .sort((a, b) => {
         let comparison = 0;
@@ -133,7 +240,21 @@ export default function InventoryPage() {
         }
         return sortOrder === "asc" ? comparison : -comparison;
       });
-  }, [devices, searchQuery, brandFilter, statusFilter, storeFilter, sortBy, sortOrder]);
+  }, [
+    devices,
+    searchQuery,
+    brandFilter,
+    statusFilter,
+    storeFilter,
+    priceRangeFilter,
+    customMinPrice,
+    customMaxPrice,
+    storageFilter,
+    gradeFilter,
+    batteryFilter,
+    sortBy,
+    sortOrder,
+  ]);
 
   // Paginated Slices
   const totalPages = Math.ceil(filteredDevices.length / pageSize) || 1;
@@ -467,12 +588,66 @@ export default function InventoryPage() {
         </button>
       </div>
 
-      {/* Filter Toolbar */}
-      <Card>
-        <CardContent className="p-4 space-y-3">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+      {/* Quick Price Budget Filter Pills (e.g. ₹10,000 - ₹15,000) */}
+      <div className="flex items-center gap-2 flex-wrap bg-slate-50/70 dark:bg-slate-900/40 p-2.5 rounded-xl border border-slate-200/80 dark:border-slate-800/80">
+        <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300 flex items-center gap-1 mr-1">
+          <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
+          <span>Price Budget:</span>
+        </span>
+
+        {[
+          { id: "all", label: "All Prices", count: priceRangeCounts.all },
+          { id: "under_10k", label: "Under ₹10k", count: priceRangeCounts.under_10k },
+          { id: "10k_15k", label: "₹10,000 - ₹15,000", count: priceRangeCounts["10k_15k"], highlight: true },
+          { id: "15k_25k", label: "₹15,000 - ₹25,000", count: priceRangeCounts["15k_25k"] },
+          { id: "25k_40k", label: "₹25,000 - ₹40,000", count: priceRangeCounts["25k_40k"] },
+          { id: "40k_70k", label: "₹40,000 - ₹70,000", count: priceRangeCounts["40k_70k"] },
+          { id: "above_70k", label: "Above ₹70,000", count: priceRangeCounts.above_70k },
+        ].map((tier) => {
+          const isActive = priceRangeFilter === tier.id && !customMinPrice && !customMaxPrice;
+          return (
+            <button
+              key={tier.id}
+              type="button"
+              onClick={() => {
+                setPriceRangeFilter(tier.id);
+                setCustomMinPrice("");
+                setCustomMaxPrice("");
+                setCurrentPage(1);
+              }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-2xs ${
+                isActive
+                  ? tier.highlight
+                    ? "bg-emerald-600 text-white shadow-emerald-200 dark:shadow-none ring-2 ring-emerald-600/30"
+                    : "bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 shadow-xs"
+                  : tier.highlight
+                  ? "bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 hover:bg-emerald-100"
+                  : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
+              }`}
+            >
+              <span>{tier.label}</span>
+              <span
+                className={`px-1.5 py-0.2 rounded-full text-[10px] font-mono ${
+                  isActive
+                    ? "bg-white/20 text-white"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
+                }`}
+              >
+                {tier.count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Comprehensive Filter Toolbar */}
+      <Card className="border-slate-200 dark:border-slate-800 shadow-xs">
+        <CardContent className="p-4 space-y-3.5">
+          {/* Row 1: Search, Brand, Price Dropdown, Custom Min/Max */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {/* Search */}
-            <div className="md:col-span-1">
+            <div>
+              <label className="text-[11px] font-semibold text-slate-500 mb-1 block">Search Handsets</label>
               <Input
                 placeholder="Search IMEI, model, brand, SKU..."
                 icon={<Search className="h-4 w-4" />}
@@ -481,18 +656,20 @@ export default function InventoryPage() {
                   setSearchQuery(e.target.value);
                   setCurrentPage(1);
                 }}
+                className="h-9 text-xs"
               />
             </div>
 
             {/* Brand Filter */}
             <div>
+              <label className="text-[11px] font-semibold text-slate-500 mb-1 block">Smartphone Brand</label>
               <select
                 value={brandFilter}
                 onChange={(e) => {
                   setBrandFilter(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
+                className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 font-medium"
               >
                 <option value="all">All Brands ({devices.length} Phones)</option>
                 {brandList.map(([brand, count]) => (
@@ -503,35 +680,130 @@ export default function InventoryPage() {
               </select>
             </div>
 
-            {/* Status Filter */}
+            {/* Price Preset Dropdown */}
             <div>
+              <label className="text-[11px] font-semibold text-slate-500 mb-1 block">Price Bracket</label>
               <select
-                value={statusFilter}
+                value={priceRangeFilter}
                 onChange={(e) => {
-                  setStatusFilter(e.target.value);
+                  setPriceRangeFilter(e.target.value);
+                  setCustomMinPrice("");
+                  setCustomMaxPrice("");
                   setCurrentPage(1);
                 }}
-                className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
+                className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 font-medium"
               >
-                <option value="In Stock">In Stock &amp; Ready for Sale ({inStockCount})</option>
-                <option value="Sold">Sold / Billed Out ({soldCount})</option>
-                <option value="QC Pending">QC Pending</option>
-                <option value="Under Repair">Under Repair</option>
-                <option value="Reserved">Reserved</option>
-                <option value="Damaged">Damaged</option>
-                <option value="all">All Statuses ({devices.length})</option>
+                <option value="all">All Prices (No Limit)</option>
+                <option value="under_10k">Under ₹10,000 (Budget)</option>
+                <option value="10k_15k">₹10,000 - ₹15,000 (Sweet Spot)</option>
+                <option value="15k_25k">₹15,000 - ₹25,000 (Mid-Range)</option>
+                <option value="25k_40k">₹25,000 - ₹40,000 (Upper Mid)</option>
+                <option value="40k_70k">₹40,000 - ₹70,000 (Flagship)</option>
+                <option value="above_70k">Above ₹70,000 (Ultra Pro Max)</option>
+                <option value="custom">Custom Min - Max (₹)</option>
+              </select>
+            </div>
+
+            {/* Custom Min - Max Price Inputs */}
+            <div>
+              <label className="text-[11px] font-semibold text-slate-500 mb-1 block">Custom Price Range (₹ Min - Max)</label>
+              <div className="flex items-center gap-1.5">
+                <input
+                  type="number"
+                  placeholder="Min ₹ (e.g. 10000)"
+                  value={customMinPrice}
+                  onChange={(e) => {
+                    setCustomMinPrice(e.target.value);
+                    setPriceRangeFilter("custom");
+                    setCurrentPage(1);
+                  }}
+                  className="w-1/2 h-9 rounded-lg border border-slate-200 bg-white px-2.5 text-xs shadow-2xs dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 font-mono font-bold"
+                />
+                <span className="text-slate-400 font-bold">-</span>
+                <input
+                  type="number"
+                  placeholder="Max ₹ (e.g. 15000)"
+                  value={customMaxPrice}
+                  onChange={(e) => {
+                    setCustomMaxPrice(e.target.value);
+                    setPriceRangeFilter("custom");
+                    setCurrentPage(1);
+                  }}
+                  className="w-1/2 h-9 rounded-lg border border-slate-200 bg-white px-2.5 text-xs shadow-2xs dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 font-mono font-bold"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Row 2: Storage, Grade, Battery Health, Store Outlet, Status */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 pt-1 border-t border-slate-100 dark:border-slate-800/60">
+            {/* Storage Filter */}
+            <div>
+              <label className="text-[10px] font-semibold text-slate-400 mb-0.5 block">Storage</label>
+              <select
+                value={storageFilter}
+                onChange={(e) => {
+                  setStorageFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="w-full h-8 rounded-lg border border-slate-200 bg-white px-2.5 text-xs shadow-2xs dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
+              >
+                <option value="all">All Storages</option>
+                <option value="64GB">64 GB</option>
+                <option value="128GB">128 GB</option>
+                <option value="256GB">256 GB</option>
+                <option value="512GB">512 GB</option>
+                <option value="1TB">1 TB</option>
+              </select>
+            </div>
+
+            {/* Condition Grade Filter */}
+            <div>
+              <label className="text-[10px] font-semibold text-slate-400 mb-0.5 block">Grade / Condition</label>
+              <select
+                value={gradeFilter}
+                onChange={(e) => {
+                  setGradeFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="w-full h-8 rounded-lg border border-slate-200 bg-white px-2.5 text-xs shadow-2xs dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
+              >
+                <option value="all">All Grades</option>
+                <option value="A+">Grade A+ (Mint / Flawless)</option>
+                <option value="A">Grade A (Superb)</option>
+                <option value="B">Grade B (Good Value)</option>
+                <option value="C">Grade C (Economy)</option>
+              </select>
+            </div>
+
+            {/* Battery Health Filter */}
+            <div>
+              <label className="text-[10px] font-semibold text-slate-400 mb-0.5 block">Battery Health</label>
+              <select
+                value={batteryFilter}
+                onChange={(e) => {
+                  setBatteryFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="w-full h-8 rounded-lg border border-slate-200 bg-white px-2.5 text-xs shadow-2xs dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
+              >
+                <option value="all">All Battery Health</option>
+                <option value="90+">90% and Above</option>
+                <option value="85+">85% and Above</option>
+                <option value="80+">80% and Above</option>
               </select>
             </div>
 
             {/* Store / Location Filter */}
             <div>
+              <label className="text-[10px] font-semibold text-slate-400 mb-0.5 block">Store Location</label>
               <select
                 value={storeFilter}
                 onChange={(e) => {
                   setStoreFilter(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
+                className="w-full h-8 rounded-lg border border-slate-200 bg-white px-2.5 text-xs shadow-2xs dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
               >
                 <option value="all">All Stores</option>
                 {warehouses.map((wh) => (
@@ -541,31 +813,65 @@ export default function InventoryPage() {
                 ))}
               </select>
             </div>
+
+            {/* Status Filter */}
+            <div>
+              <label className="text-[10px] font-semibold text-slate-400 mb-0.5 block">Inventory Status</label>
+              <select
+                value={statusFilter}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="w-full h-8 rounded-lg border border-slate-200 bg-white px-2.5 text-xs shadow-2xs dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 font-medium"
+              >
+                <option value="In Stock">In Stock &amp; Ready ({inStockCount})</option>
+                <option value="Sold">Sold / Billed Out ({soldCount})</option>
+                <option value="QC Pending">QC Pending</option>
+                <option value="Under Repair">Under Repair</option>
+                <option value="Reserved">Reserved</option>
+                <option value="Damaged">Damaged</option>
+                <option value="all">All Statuses ({devices.length})</option>
+              </select>
+            </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-800/80 text-xs">
-            <div className="flex items-center gap-2 text-slate-500">
-              <Store className="h-3.5 w-3.5 text-fundu-600" />
-              <span>
-                Active Store: <strong className="text-slate-800 dark:text-slate-200">Lucknow Store (LKO-01)</strong>
+          {/* Row 3: Active Filters Summary + Reset Button + Sorting */}
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-2.5 border-t border-slate-100 dark:border-slate-800/80 text-xs">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-slate-500 font-medium">
+                Matching Handsets:{" "}
+                <strong className="text-emerald-700 dark:text-emerald-400 font-bold font-mono">
+                  {filteredDevices.length}
+                </strong>{" "}
+                phones
               </span>
-              <span className="text-slate-300">|</span>
-              <Link href="/warehouses" className="text-fundu-600 hover:underline">
-                Manage / Add Stores →
-              </Link>
+
+              {hasActiveFilters && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={resetAllFilters}
+                  className="h-7 text-[11px] gap-1 px-2 border-rose-300 text-rose-700 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800 font-semibold"
+                  title="Reset all search queries, price filters and status"
+                >
+                  <RotateCcw className="h-3 w-3" />
+                  <span>Clear All Filters</span>
+                </Button>
+              )}
             </div>
 
             {/* Sort & Order */}
-            <div className="flex items-center gap-3">
-              <span className="text-slate-400 font-medium">Sort By:</span>
+            <div className="flex items-center gap-2">
+              <span className="text-slate-400 font-medium text-[11px]">Sort By:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="h-8 rounded-md border border-slate-200 bg-white px-2.5 text-xs shadow-2xs dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
+                className="h-7 rounded-md border border-slate-200 bg-white px-2 text-[11px] shadow-2xs dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 font-medium"
               >
                 <option value="date">Purchase Date</option>
-                <option value="sellingPrice">Selling Price</option>
-                <option value="purchasePrice">Purchase Price</option>
+                <option value="sellingPrice">Selling Price (दाम)</option>
+                <option value="purchasePrice">Purchase Cost</option>
                 <option value="model">Handset Model</option>
               </select>
 
@@ -573,7 +879,7 @@ export default function InventoryPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
-                className="h-8 px-2 gap-1"
+                className="h-7 px-2 gap-1"
                 title={`Sort ${sortOrder === "asc" ? "Ascending" : "Descending"}`}
               >
                 <ArrowUpDown className="h-3 w-3" />

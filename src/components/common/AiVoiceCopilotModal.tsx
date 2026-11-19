@@ -232,36 +232,38 @@ export function AiVoiceCopilotModal({
         warehouses,
       });
 
-      // 2. Optionally ping Gemini API in background if user has configured key
+      // 2. Optionally ping Gemini API in background ONLY for generic or open-ended advice if local engine didn't match devices/actions
       let finalAnswer = localResult.answerHindi;
       let finalSpoken = localResult.spokenHindi;
 
-      try {
-        const res = await fetch("/api/ai/copilot", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            query: q,
-            storeSummary: {
-              inStockCount: devices.filter((d) => d.status === "In Stock").length,
-              totalDevices: devices.length,
-              sampleDevices: devices.slice(0, 10).map((d) => ({
-                brand: d.brand,
-                model: d.model,
-                storage: d.storage,
-                price: d.costs.sellingPrice,
-                status: d.status,
-              })),
-            },
-          }),
-        });
-        const data = await res.json();
-        if (!data.fallback && data.answerHindi) {
-          finalAnswer = data.answerHindi;
-          finalSpoken = data.answerHindi.slice(0, 160);
+      if (!localResult.devices?.length && !localResult.navigation && !localResult.stats) {
+        try {
+          const res = await fetch("/api/ai/copilot", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              query: q,
+              storeSummary: {
+                inStockCount: devices.filter((d) => d.status === "In Stock").length,
+                totalDevices: devices.length,
+                sampleDevices: devices.slice(0, 15).map((d) => ({
+                  brand: d.brand,
+                  model: d.model,
+                  storage: d.storage,
+                  price: d.costs.sellingPrice,
+                  status: d.status,
+                })),
+              },
+            }),
+          });
+          const data = await res.json();
+          if (!data.fallback && data.answerHindi) {
+            finalAnswer = data.answerHindi;
+            finalSpoken = data.answerHindi.slice(0, 160);
+          }
+        } catch (err) {
+          // Silently use localResult
         }
-      } catch (err) {
-        // Silently use localResult
       }
 
       const aiMsg: MessageItem = {

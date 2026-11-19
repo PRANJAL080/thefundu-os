@@ -26,7 +26,21 @@ interface StoreContext {
  */
 export function transliterateAndNormalizeHindi(input: string): string {
   if (!input) return "";
-  let s = input.trim();
+  let s = input.normalize("NFC").trim();
+
+  // 0. Devanagari nukta stripping and composed nukta normalization:
+  // e.g. 'इज़' (U+095B) and 'इज़' (U+091C + U+093C) both reduce to 'इज' (U+091C)
+  s = s.replace(/\u093c/g, "");
+  const nuktaMap: Record<string, string> = {
+    "\u0958": "क",
+    "\u0959": "ख",
+    "\u095a": "ग",
+    "\u095b": "ज",
+    "\u095c": "ड",
+    "\u095d": "ढ",
+    "\u095e": "फ",
+  };
+  s = s.replace(/[\u0958-\u095e]/g, (ch) => nuktaMap[ch] || ch);
 
   // 1. Devanagari numerals to standard digits: ०-९ -> 0-9
   const devanagariDigits: Record<string, string> = {
@@ -61,31 +75,36 @@ export function transliterateAndNormalizeHindi(input: string): string {
   s = s.replace(/(?:^|\s+)लाख(?:\s+|$)/gi, "00000 ");
 
   // 3. Brand Names transliteration
-  s = s.replace(/(?:सेमसंग|सैमसंग|सामसंग|समसंग|सैमसन|सेमसन|सैमसुंग|सेमसुंग)/gi, "samsung");
-  s = s.replace(/(?:आईफोन|आइफोन|आई\s*फोन|आइ\s*फोन)/gi, "iphone");
-  s = s.replace(/(?:ऐप्पल|एप्पल|एपिल|एपल|ऐपल)/gi, "apple");
-  s = s.replace(/वनप्लस|वन\s*प्लस/gi, "oneplus");
-  s = s.replace(/गूगल|गुगल/gi, "google");
-  s = s.replace(/पिक्सेल|पिक्सल|पिकसल/gi, "pixel");
-  s = s.replace(/शाओमी|श्योमी|श्याओमी|ज़िओमी|जिओमी/gi, "xiaomi");
-  s = s.replace(/रेडमी|रेड\s*मी/gi, "redmi");
-  s = s.replace(/पोको/gi, "poco");
-  s = s.replace(/वीवो|विवो/gi, "vivo");
-  s = s.replace(/ओप्पो|ओपो/gi, "oppo");
-  s = s.replace(/रियलमी|रियल\s*मी|रेअलमी/gi, "realme");
-  s = s.replace(/मोटोरोला|मोटो/gi, "motorola");
-  s = s.replace(/नथिंग/gi, "nothing");
-  s = s.replace(/आईकू|इकू|आयकु/gi, "iqoo");
-  s = s.replace(/इनफिनिक्स|इनफ़िनिक्स/gi, "infinix");
-  s = s.replace(/टेक्नो|टेकनो/gi, "tecno");
-  s = s.replace(/लावा/gi, "lava");
-  s = s.replace(/नोकिया/gi, "nokia");
-  s = s.replace(/सोनी/gi, "sony");
-  s = s.replace(/हॉनर|ऑनर/gi, "honor");
-  s = s.replace(/आसुस|असुस/gi, "asus");
+  s = s.replace(/(?:^|\s+)(?:सेमसंग|सैमसंग|सामसंग|समसंग|सैमसन|सेमसन|सैमसुंग|सेमसुंग)(?:\s+|$)/gi, " samsung ");
+  s = s.replace(/(?:^|\s+)(?:आईफोन|आइफोन|आई\s*फोन|आइ\s*फोन)(?:\s+|$)/gi, " iphone ");
+  s = s.replace(/(?:^|\s+)(?:ऐप्पल|एप्पल|एपिल|एपल|ऐपल)(?:\s+|$)/gi, " apple ");
+  s = s.replace(/(?:^|\s+)(?:वनप्लस|वन\s*प्लस)(?:\s+|$)/gi, " oneplus ");
+  s = s.replace(/(?:^|\s+)(?:गूगल|गुगल)(?:\s+|$)/gi, " google ");
+  s = s.replace(/(?:^|\s+)(?:पिक्सेल|पिक्सल|पिकसल)(?:\s+|$)/gi, " pixel ");
+  s = s.replace(/(?:^|\s+)(?:शाओमी|श्योमी|श्याओमी|ज़िओमी|जिओमी)(?:\s+|$)/gi, " xiaomi ");
+  s = s.replace(/(?:^|\s+)(?:रेडमी|रेड\s*मी)(?:\s+|$)/gi, " redmi ");
+  s = s.replace(/(?:^|\s+)(?:पोको)(?:\s+|$)/gi, " poco ");
+  s = s.replace(/(?:^|\s+)(?:वीवो|विवो)(?:\s+|$)/gi, " vivo ");
+  s = s.replace(/(?:^|\s+)(?:ओप्पो|ओपो)(?:\s+|$)/gi, " oppo ");
+  s = s.replace(/(?:^|\s+)(?:रियलमी|रियल\s*मी|रेअलमी)(?:\s+|$)/gi, " realme ");
+  s = s.replace(/(?:^|\s+)(?:मोटोरोला|मोटो)(?:\s+|$)/gi, " motorola ");
+  s = s.replace(/(?:^|\s+)(?:नथिंग)(?:\s+|$)/gi, " nothing ");
+  s = s.replace(/(?:^|\s+)(?:आईकू|इकू|आयकु)(?:\s+|$)/gi, " iqoo ");
+  s = s.replace(/(?:^|\s+)(?:इनफिनिक्स|इनफ़िनिक्स)(?:\s+|$)/gi, " infinix ");
+  s = s.replace(/(?:^|\s+)(?:टेक्नो|टेकनो)(?:\s+|$)/gi, " tecno ");
+  s = s.replace(/(?:^|\s+)(?:लावा)(?:\s+|$)/gi, " lava ");
+  s = s.replace(/(?:^|\s+)(?:नोकिया)(?:\s+|$)/gi, " nokia ");
+  s = s.replace(/(?:^|\s+)(?:सोनी)(?:\s+|$)/gi, " sony ");
+  s = s.replace(/(?:^|\s+)(?:हॉनर|ऑनर)(?:\s+|$)/gi, " honor ");
+  s = s.replace(/(?:^|\s+)(?:आसुस|असुस)(?:\s+|$)/gi, " asus ");
 
   // 4. Model Terms and Letter-Series (Handle Speech-to-Text variants of "S" like "एस", "इज़", "इस", "इज")
-  s = s.replace(/(?:^|\s+)(?:एस|एस्|इज़|इस|इज|ईस|ईज़|स)(?:\s+|$)/gi, " s ");
+  // First, handle S-series with attached digits like "एस24", "इज24", "इस24"
+  s = s.replace(/(?:^|\s+)(?:एस|एस्|इज|इस|ईस|ईज)(\d+)/gi, (m, p1) => ` s${p1} `);
+
+  // Next, handle isolated S-series like "एस 24", "इज 24", "इस 24", "एस", "स"
+  s = s.replace(/(?:^|\s+)(?:एस|एस्|इज|इस|ईस|ईज|स)(?:\s+|$)/gi, " s ");
+
   s = s.replace(/(?:^|\s+)(?:अल्ट्रा|अलट्रा|उल्ट्रा)(?:\s+|$)/gi, " ultra ");
   s = s.replace(/(?:^|\s+)(?:प्रो|प्रॉ)(?:\s+|$)/gi, " pro ");
   s = s.replace(/(?:^|\s+)(?:मैक्स|मेक्स|मेकस)(?:\s+|$)/gi, " max ");
@@ -426,7 +445,36 @@ export function processAiStoreQuery(rawQuery: string, ctx: StoreContext): AiCopi
     };
   }
 
-  // 8. Specific Price Constraints ("under 30000", "40k se sasta", "50000 ke under")
+  // 8A. Price Range Queries (e.g. "10000 se 15000", "10k se 15k", "10000 to 15000", "10 hajar se 15 hajar tak")
+  const priceRangeMatch =
+    lower.match(/(\d+)\s*(?:k|000)?\s*(?:se|to|-|se lekar)\s*(\d+)\s*(?:k|000)?/i) ||
+    lower.match(/(?:between|ke beech)\s*(\d+)\s*(?:and|aur|-)\s*(\d+)/i);
+
+  if (priceRangeMatch) {
+    let min = parseInt(priceRangeMatch[1], 10);
+    let max = parseInt(priceRangeMatch[2], 10);
+    if (min < 200) min = min * 1000;
+    if (max < 200) max = max * 1000;
+    if (min > max) {
+      const temp = min;
+      min = max;
+      max = temp;
+    }
+
+    const inStock = devices.filter((d) => d.status === "In Stock" || d.status === "Ready for Sale");
+    const matched = inStock.filter(
+      (d) => d.costs.sellingPrice >= min && d.costs.sellingPrice <= max
+    );
+
+    return {
+      query: q,
+      answerHindi: `**${formatINR(min)} se ${formatINR(max)}** ke budget range me hamare stock me kul **${matched.length} smartphones** available hain:`,
+      spokenHindi: `${formatINR(min)} se ${formatINR(max)} ke beech ${matched.length} phone available hain.`,
+      devices: matched,
+    };
+  }
+
+  // 8B. Specific Price Constraints ("under 30000", "40k se sasta", "50000 ke under")
   const priceUnderMatch = lower.match(/(?:under|below|se kam|tak)\s*(\d+)(?:k|000)?/i) || lower.match(/(\d+)(?:k|000)?\s*(?:se sasta|ke andar|ke under)/i);
   if (priceUnderMatch) {
     let limit = parseInt(priceUnderMatch[1], 10);
@@ -493,6 +541,13 @@ export function processAiStoreQuery(rawQuery: string, ctx: StoreContext): AiCopi
         if (/^\d+$/.test(token)) {
           const modelNumRegex = new RegExp(`(?:^|[^0-9])${token}(?:[^0-9]|$)`, "i");
           return modelNumRegex.test(model) || storage.includes(token);
+        }
+        const letterDigit = token.match(/^([a-z]+)(\d+)$/i);
+        if (letterDigit) {
+          const cleanModel = model.replace(/[^a-z0-9]/g, "");
+          if (cleanModel.includes(token)) return true;
+          const numRegex = new RegExp(`(?:^|[^0-9])${letterDigit[2]}(?:[^0-9]|$)`, "i");
+          if (numRegex.test(model)) return true;
         }
         return brand.includes(token) || model.includes(token) || storage.includes(token);
       });
