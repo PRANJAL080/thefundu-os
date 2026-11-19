@@ -18,6 +18,7 @@ import {
   PhoneCall,
   Calendar,
   AlertCircle,
+  ShieldAlert,
   Wrench,
   X,
   Share2,
@@ -437,6 +438,20 @@ export default function DeviceVerificationDetailPage() {
               </div>
             </div>
           </div>
+
+          {/* Mandatory Original Bill & Warranty Policy Alert */}
+          <div className="mt-4 p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-200 space-y-1.5 shadow-xs">
+            <div className="flex items-center gap-2 font-bold text-amber-950 dark:text-amber-100">
+              <ShieldAlert className="h-4 w-4 text-amber-600 shrink-0" />
+              <span>Mandatory Warranty Claim Policy (ओरिजिनल बिल अनिवार्य है)</span>
+            </div>
+            <p className="leading-relaxed">
+              वारंटी क्लेम करने के लिए स्टोर पर फिजिकल ओरिजिनल टैक्स इनवॉइस (Original Tax Invoice / Bill) प्रस्तुत करना अनिवार्य है। <strong>यदि ग्राहक के पास ओरिजिनल बिल नहीं होगा, तो वारंटी क्लेम किसी भी स्थिति में स्वीकार नहीं किया जाएगा।</strong>
+            </p>
+            <p className="text-[11px] text-amber-800 dark:text-amber-300">
+              (Physical presentation of the original tax invoice is strictly mandatory. No warranty claim will be entertained without the original bill.)
+            </p>
+          </div>
         </div>
 
         {/* ============================================================== */}
@@ -615,6 +630,14 @@ export default function DeviceVerificationDetailPage() {
                 <p className="text-[11px] text-slate-500">
                   ED-476, Sector-Q, Aliganj, Lucknow (UP) • Open Mon-Sat 10:00 AM - 08:30 PM
                 </p>
+              </div>
+
+              {/* Mandatory Bill Notice */}
+              <div className="p-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 text-[11px] text-amber-900 dark:text-amber-200 flex items-start gap-2">
+                <ShieldAlert className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                <span>
+                  <strong>शर्त (Mandatory Rule):</strong> सर्विस सेंटर पर ओरिजिनल बिल (Physical Original Invoice) दिखाना अनिवार्य है। यदि ओरिजिनल बिल नहीं होगा तो वारंटी क्लेम प्रोसेस नहीं किया जाएगा।
+                </span>
               </div>
 
               <div className="flex justify-end gap-2 pt-2">

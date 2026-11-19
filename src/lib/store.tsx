@@ -372,9 +372,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         try {
           const parsed = JSON.parse(storedInvoiceSettings);
           if (parsed && parsed.companyLegalName) {
-            // Update terms if they contain old 1800 number or Toll-Free
+            // Update terms if they contain old 1800 number or need mandatory original bill clause
             if (Array.isArray(parsed.termsAndConditions)) {
               parsed.termsAndConditions = parsed.termsAndConditions.map((t: string) => {
+                if (t.startsWith("2.") && !t.includes("Mandatory Original Tax Invoice")) {
+                  return "2. Mandatory Original Tax Invoice For Warranty: Physical presentation of this original tax invoice/bill is strictly mandatory for any warranty claim. In the absence of the original bill, NO warranty claim will be entertained or accepted under any circumstances (ओरिजिनल बिल न होने पर कोई भी वारंटी क्लेम मान्य नहीं होगी). Warranty is non-transferable and applicable strictly to the purchaser named on this bill.";
+                }
                 if (t.includes("1800") || t.toLowerCase().includes("toll-free")) {
                   return "5. Authorized Service Support: For warranty claims, diagnostic inspection, or service queries, visit your nearest authorized TheFundu Store Outlet or contact Call & WhatsApp: +91 6390616616 | Email: support@thefundu.com (Mon-Sat, 10:00 AM - 08:00 PM).";
                 }

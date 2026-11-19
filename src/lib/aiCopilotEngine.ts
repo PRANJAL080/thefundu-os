@@ -111,6 +111,8 @@ export function transliterateAndNormalizeHindi(input: string): string {
   s = s.replace(/बायबैक|खरीदना|खरीद/gi, "buyback");
   s = s.replace(/इनवॉइस|बिल|रसीद/gi, "invoice");
   s = s.replace(/क्लोजिंग|हिसाब/gi, "closing");
+  s = s.replace(/वारंटी|वारन्टी/gi, "warranty");
+  s = s.replace(/शर्तें|शर्त|नियम/gi, "terms");
 
   // 6. Join letter-series with numbers: e.g. "s 24" -> "s24", "s 26" -> "s26", "a 54" -> "a54"
   s = s.replace(/\b([a-z])\s+(\d+)\b/gi, (m, p1, p2) => p1 + p2);
@@ -202,6 +204,25 @@ export function processAiStoreQuery(rawQuery: string, ctx: StoreContext): AiCopi
       spokenHindi: "Day End Closing report open kar sakte hain.",
       devices: [],
       navigation: { label: "Open Day-End Closing & Z-Slip", href: "/day-end-closing" },
+    };
+  }
+
+  // Warranty Policy & Mandatory Original Bill Intent
+  if (
+    lower.includes("warranty") ||
+    lower.includes("claim") ||
+    lower.includes("terms") ||
+    lower.includes("condition") ||
+    originalLower.includes("वारंटी") ||
+    originalLower.includes("नियम") ||
+    originalLower.includes("शर्त")
+  ) {
+    return {
+      query: q,
+      answerHindi: "TheFundu Warranty & Bill Policy:\n\n1. 📜 **Original Bill Anivarya Hai:** Warranty claim karne ke liye Physical Original Tax Invoice hona strictly mandatory hai. **Agar original bill nahi hoga to warranty claim accept nahi kiya jayega.**\n2. 🚫 **Damage Voidance:** Screen crack, liquid/water damage, electrical burn, ya unauthorized repair hone par warranty void ho jati hai.\n3. ⏱️ **180 Days Protection:** Certified smartphones par 180 din ki full diagnostic warranty cover milti hai.",
+      spokenHindi: "TheFundu policy ke mutabiq bina original bill ke warranty claim accept nahi hogi.",
+      devices: [],
+      navigation: { label: "View Warranty Policy Details", href: "/verify" },
     };
   }
 
