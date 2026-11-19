@@ -44,6 +44,7 @@ export interface CompanyInvoiceSheetProps {
   typeOfSale?: SaleTypeCode;
   invoiceNumber?: string;
   invoiceDate?: string;
+  invoiceTime?: string;
   channelOrderNo?: string;
   orderNo?: string;
   warrantyDays?: number;
@@ -269,6 +270,7 @@ export function CompanyInvoiceSheet({
   typeOfSale: customTypeOfSale,
   invoiceNumber: customInvoiceNumber,
   invoiceDate: customInvoiceDate,
+  invoiceTime: customInvoiceTime,
   channelOrderNo: customChannelOrderNo,
   orderNo: customOrderNo,
   warrantyDays = 180,
@@ -325,11 +327,13 @@ export function CompanyInvoiceSheet({
     order?.invoiceNumber ||
     `INV${cleanStoreCode}2611-${rawId}`;
 
-  // Date formatted as "16:Nov:2026"
+  // Date & Time formatted as "19:Nov:2026" and "05:47 PM"
   const today = new Date();
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const formattedDefaultDate = `${String(today.getDate()).padStart(2, "0")}:${months[today.getMonth()]}:${today.getFullYear()}`;
-  const invoiceDate = customInvoiceDate || (order?.date ? formatDate(order.date) : formattedDefaultDate);
+  const formattedDefaultTime = today.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true });
+  const invoiceDate = customInvoiceDate || (order?.date ? (order.date.includes(":") && !order.date.includes("-") ? order.date : formatDate(order.date)) : formattedDefaultDate);
+  const invoiceTime = customInvoiceTime || order?.time || formattedDefaultTime;
 
   // Effective Terms & Conditions in Legal English
   const effectiveTerms = customTerms && customTerms.length > 0 ? customTerms : DEFAULT_INVOICE_TERMS;
@@ -511,11 +515,11 @@ export function CompanyInvoiceSheet({
 
         {/* Row 2 */}
         <div className="flex border-b border-black">
-          <div className="w-[34%] p-1.5 border-r border-black">
+          <div className="w-[30%] p-1.5 border-r border-black truncate">
             Invoice Number: <span className="font-bold">{invoiceNumber}</span>
           </div>
-          <div className="w-[28%] p-1.5 border-r border-black">
-            Invoice Date: <span className="font-bold">{invoiceDate}</span>
+          <div className="w-[32%] p-1.5 border-r border-black truncate">
+            Date &amp; Time: <span className="font-bold">{invoiceDate}{invoiceTime ? ` • ${invoiceTime}` : ""}</span>
           </div>
           <div className="w-[18%] p-1.5 border-r border-black">
             Sales Channel: <span className="font-bold">{activeChannelCode}</span>

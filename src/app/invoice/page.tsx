@@ -35,6 +35,7 @@ import {
   Building2,
   Filter,
   Phone,
+  Clock,
 } from "lucide-react";
 import { useApp } from "@/lib/store";
 import { Device, SalesOrder, SalesChannelCode, SaleTypeCode } from "@/lib/types";
@@ -175,6 +176,68 @@ export default function InvoiceGeneratorPage() {
   const [channel, setChannel] = useState<SalesChannelCode>("FSO");
   const [typeOfSale, setTypeOfSale] = useState<SaleTypeCode>("B2C");
 
+  // Helper functions for local date and time (Auto-fetched & manually editable)
+  const getTodayDateStr = () => {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const getCurrentTimeStr = () => {
+    const d = new Date();
+    const hours = String(d.getHours()).padStart(2, "0");
+    const minutes = String(d.getMinutes()).padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+
+  const [invoiceDate, setInvoiceDate] = useState<string>(getTodayDateStr());
+  const [invoiceTime, setInvoiceTime] = useState<string>(getCurrentTimeStr());
+
+  const handleSetToday = () => {
+    setInvoiceDate(getTodayDateStr());
+    setInvoiceTime(getCurrentTimeStr());
+    showToast("Invoice date & time set to Today!", "info");
+  };
+
+  const handleSetYesterday = () => {
+    const y = new Date();
+    y.setDate(y.getDate() - 1);
+    const year = y.getFullYear();
+    const month = String(y.getMonth() + 1).padStart(2, "0");
+    const day = String(y.getDate()).padStart(2, "0");
+    setInvoiceDate(`${year}-${month}-${day}`);
+    showToast("Invoice date set to Yesterday!", "info");
+  };
+
+  // Format date for printed invoice: "19:Nov:2026"
+  const formattedInvoiceDate = useMemo(() => {
+    if (!invoiceDate) return "";
+    const parts = invoiceDate.split("-");
+    if (parts.length === 3) {
+      const year = parts[0];
+      const monthIdx = parseInt(parts[1], 10) - 1;
+      const day = parts[2].padStart(2, "0");
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      return `${day}:${months[monthIdx] || "Nov"}:${year}`;
+    }
+    return invoiceDate;
+  }, [invoiceDate]);
+
+  // Format time for printed invoice: "05:47 PM"
+  const formattedInvoiceTime = useMemo(() => {
+    if (!invoiceTime) return "";
+    const [hStr, mStr] = invoiceTime.split(":");
+    let h = parseInt(hStr, 10);
+    const m = mStr || "00";
+    if (isNaN(h)) return invoiceTime;
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = h % 12;
+    if (h === 0) h = 12;
+    return `${String(h).padStart(2, "0")}:${m} ${ampm}`;
+  }, [invoiceTime]);
+
   // Derived Financials
   const finalSellingPrice = Math.max(0, sellingPriceY - discountD);
   const profitMarginZ = Math.max(0, finalSellingPrice - purchasePriceX);
@@ -293,6 +356,8 @@ export default function InvoiceGeneratorPage() {
       paymentStatus: "Completed",
       deliveryStatus: "Delivered",
       warrantyMonths: Math.round(warrantyDays / 30),
+      date: formattedInvoiceDate,
+      time: formattedInvoiceTime,
       storeName: currentStore.name,
       storeCode: currentStore.code,
     });
@@ -884,6 +949,73 @@ https://thefundu.com/verify/${serialNo}
             </CardContent>
           </Card>
 
+          {/* Card: Invoice Billing Date & Timing Configuration (Manual & Auto-Fetch) */}
+          <Card className="border-slate-200 dark:border-slate-800">
+            <CardHeader className="pb-2.5 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-fundu-600" />
+                  <span>Invoice Date &amp; Timing (बिल की तारीख और समय)</span>
+                </CardTitle>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={handleSetToday}
+                    className={`px-2.5 py-1 rounded-md text-[10.5px] font-bold border transition-colors ${
+                      invoiceDate === getTodayDateStr()
+                        ? "bg-emerald-600 text-white border-emerald-600 shadow-2xs"
+                        : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50"
+                    }`}
+                  >
+                    ⚡ Today (आज)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSetYesterday}
+                    className="px-2.5 py-1 rounded-md text-[10.5px] font-bold border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 transition-colors"
+                  >
+                    📅 Yesterday (कल)
+                  </button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-3 space-y-3 text-xs">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-semibold block mb-1 text-[11px] text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                    <Calendar className="w-3 h-3 text-fundu-600" />
+                    <span>Billing Date (तारीख) *</span>
+                  </label>
+                  <Input
+                    type="date"
+                    value={invoiceDate}
+                    onChange={(e) => setInvoiceDate(e.target.value)}
+                    className="w-full text-xs font-mono font-medium"
+                  />
+                </div>
+                <div>
+                  <label className="font-semibold block mb-1 text-[11px] text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                    <Clock className="w-3 h-3 text-fundu-600" />
+                    <span>Billing Time (समय) *</span>
+                  </label>
+                  <Input
+                    type="time"
+                    value={invoiceTime}
+                    onChange={(e) => setInvoiceTime(e.target.value)}
+                    className="w-full text-xs font-mono font-medium"
+                  />
+                </div>
+              </div>
+
+              <div className="p-2 rounded-lg bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 flex items-center justify-between text-[11px]">
+                <span className="text-emerald-900 dark:text-emerald-300 font-medium">Printed on Bill:</span>
+                <span className="font-bold font-mono text-emerald-800 dark:text-emerald-200 bg-white dark:bg-slate-900 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
+                  {formattedInvoiceDate} • {formattedInvoiceTime}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Card 3: Customer Details */}
           <Card>
             <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800">
@@ -1241,6 +1373,8 @@ https://thefundu.com/verify/${serialNo}
                   } : undefined,
                 }}
                 invoiceNumber={invoiceNumber}
+                invoiceDate={formattedInvoiceDate}
+                invoiceTime={formattedInvoiceTime}
                 channelOrderNo={channelOrderNo}
                 orderNo={orderNo}
                 warrantyDays={warrantyDays}
@@ -1482,6 +1616,7 @@ https://thefundu.com/verify/${serialNo}
                             <div className="flex items-center gap-1.5 text-[11px] text-slate-500 mt-0.5">
                               <Calendar className="w-3 h-3 text-slate-400" />
                               <span>{s.date}</span>
+                              {s.time && <span className="text-[10px] text-slate-400 font-mono">• {s.time}</span>}
                               <span className="text-[10px] px-1 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 font-mono">
                                 {s.channel || "FSO"}
                               </span>
@@ -1706,6 +1841,7 @@ https://thefundu.com/verify/${serialNo}
           }}
           invoiceNumber={selectedHistoryOrder.invoiceNumber || selectedHistoryOrder.id}
           invoiceDate={selectedHistoryOrder.date}
+          invoiceTime={selectedHistoryOrder.time}
         />
       )}
 

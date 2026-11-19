@@ -201,6 +201,7 @@ export interface SalesOrder {
   customerGstin?: string;
   placeOfSupply?: string;
   date: string;
+  time?: string;
   deviceId: string;
   deviceModel: string;
   imei: string;

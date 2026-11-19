@@ -56,6 +56,7 @@ interface InvoiceModalProps {
   typeOfSale?: any;
   invoiceNumber?: string;
   invoiceDate?: string;
+  invoiceTime?: string;
 }
 
 export function InvoiceModal({
@@ -70,6 +71,7 @@ export function InvoiceModal({
   typeOfSale,
   invoiceNumber,
   invoiceDate,
+  invoiceTime,
 }: InvoiceModalProps) {
   const { warehouses, selectedStoreId, invoiceSettings } = useApp();
   const currentStore = warehouses.find((w) => w.id === selectedStoreId || w.code === selectedStoreId) || warehouses[0];
@@ -184,6 +186,7 @@ export function InvoiceModal({
           typeOfSale={typeOfSale || order?.typeOfSale}
           invoiceNumber={invoiceNumber}
           invoiceDate={invoiceDate}
+          invoiceTime={invoiceTime}
         />
       </div>
     </Dialog>
