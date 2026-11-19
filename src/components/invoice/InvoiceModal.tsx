@@ -46,10 +46,18 @@ interface InvoiceModalProps {
     txnId?: string;
     gatewayTxnId?: string;
     splitPayment?: {
-      cashAmount: number;
-      onlineAmount: number;
+      cashAmount?: number;
+      onlineAmount?: number;
       onlineMode?: string;
       onlineTxnId?: string;
+      mode1?: string;
+      method1?: string;
+      amount1?: number;
+      txnId1?: string;
+      mode2?: string;
+      method2?: string;
+      amount2?: number;
+      txnId2?: string;
     };
   };
   channel?: any;

@@ -210,12 +210,20 @@ export interface SalesOrder {
   discount: number;
   taxAmount: number;
   finalAmount: number;
-  paymentMethod: 'UPI' | 'Card' | 'Bank Transfer' | 'Cash' | 'EMI' | 'Split (Cash + Online)';
+  paymentMethod: 'UPI' | 'Card' | 'Bank Transfer' | 'Cash' | 'EMI' | 'Split (Cash + Online)' | string;
   splitPayment?: {
-    cashAmount: number;
-    onlineAmount: number;
+    cashAmount?: number;
+    onlineAmount?: number;
     onlineMode?: 'UPI' | 'Card' | 'Bank Transfer' | 'NetBanking' | string;
     onlineTxnId?: string;
+    mode1?: string;
+    method1?: string;
+    amount1?: number;
+    txnId1?: string;
+    mode2?: string;
+    method2?: string;
+    amount2?: number;
+    txnId2?: string;
   };
   paymentStatus: 'Completed' | 'Pending' | 'Failed';
   emiPlan?: {

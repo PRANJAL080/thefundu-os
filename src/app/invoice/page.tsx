@@ -193,10 +193,17 @@ export default function InvoiceGeneratorPage() {
   // Payment Details
   const [paymentMethod, setPaymentMethod] = useState("Google Pay");
   const [paymentMode, setPaymentMode] = useState<string>("UPI");
-  // Split Payment (Cash + Online / UPI) breakdown
-  const [splitCashAmount, setSplitCashAmount] = useState<number>(10000);
-  const [splitOnlineAmount, setSplitOnlineAmount] = useState<number>(20000);
-  const [splitOnlineMode, setSplitOnlineMode] = useState<string>("Google Pay");
+  
+  // Flexible Dual Multi-Payment / Split Payment state (Supports any 2 methods: 2 UPIs, UPI + Card, Cash + Card, etc.)
+  const [splitMode1, setSplitMode1] = useState<string>("UPI");
+  const [splitMethod1, setSplitMethod1] = useState<string>("Google Pay");
+  const [splitAmount1, setSplitAmount1] = useState<number>(15000);
+  const [splitTxnId1, setSplitTxnId1] = useState<string>("");
+
+  const [splitMode2, setSplitMode2] = useState<string>("Card");
+  const [splitMethod2, setSplitMethod2] = useState<string>("Credit / Debit Card");
+  const [splitAmount2, setSplitAmount2] = useState<number>(15000);
+  const [splitTxnId2, setSplitTxnId2] = useState<string>("");
 
   const [txnId, setTxnId] = useState("TXN26001LKO982");
   const [warrantyDays, setWarrantyDays] = useState(180);
@@ -281,11 +288,38 @@ export default function InvoiceGeneratorPage() {
   const netProfitAfterTax = Math.round((profitMarginZ - (taxMode === "inclusive" ? totalMarginTax : 0)) * 100) / 100;
 
   const rawId = selectedDevice?.id ? selectedDevice.id.replace("Fun-", "").replace("TFD-", "") : "26001";
-  const invoiceNumber = `INV${cleanStoreCode}2611-${rawId}`;
-  const channelOrderNo = `#${channel}-${storeCode}-${rawId}`;
-  const orderNo = `TFD-${channel}-2611-${rawId}`;
 
-  // Split payment helper functions
+  // Sequential Invoice Serial Number Generator (Strict line-by-line auto-increment: 0001, 0002, 0003...)
+  const nextInvoiceSerial = useMemo(() => {
+    let maxSeq = 0;
+    sales.forEach((s) => {
+      const invStr = s.invoiceNumber || s.id || "";
+      const match = invStr.match(/-(?:0*)(\d+)$/) || invStr.match(/(\d+)$/);
+      if (match && match[1]) {
+        const val = parseInt(match[1], 10);
+        if (!isNaN(val) && val < 20000 && val > maxSeq) {
+          maxSeq = val;
+        }
+      }
+    });
+    const nextVal = Math.max(sales.length + 1, maxSeq + 1);
+    return String(nextVal).padStart(4, "0");
+  }, [sales]);
+
+  const defaultInvoiceNumber = `INV${cleanStoreCode}2611-${nextInvoiceSerial}`;
+  const [customInvoiceNumber, setCustomInvoiceNumber] = useState("");
+  const invoiceNumber = customInvoiceNumber.trim() || defaultInvoiceNumber;
+  const channelOrderNo = `#${channel}-${storeCode}-${nextInvoiceSerial}`;
+  const orderNo = `TFD-${channel}-2611-${nextInvoiceSerial}`;
+
+  // Keep dual split amounts synchronized with final selling price
+  useEffect(() => {
+    const half = Math.round(finalSellingPrice / 2);
+    setSplitAmount1(half);
+    setSplitAmount2(Math.max(0, finalSellingPrice - half));
+  }, [finalSellingPrice]);
+
+  // Dual multi-payment helper functions
   const handlePaymentModeChange = (newMode: string) => {
     setPaymentMode(newMode);
     if (newMode === "Cash") {
@@ -293,38 +327,73 @@ export default function InvoiceGeneratorPage() {
       setTxnId("Store Cash Counter");
     } else if (newMode === "UPI") {
       setPaymentMethod("Google Pay");
-      if (!txnId || txnId === "Store Cash Counter") setTxnId(`TXN${rawId}LKO982`);
+      if (!txnId || txnId === "Store Cash Counter") setTxnId(`TXN${nextInvoiceSerial}982`);
     } else if (newMode === "Card") {
       setPaymentMethod("Credit Card");
-      if (!txnId || txnId === "Store Cash Counter") setTxnId(`POS${rawId}LKO`);
+      if (!txnId || txnId === "Store Cash Counter") setTxnId(`POS${nextInvoiceSerial}`);
     } else if (newMode === "NetBanking") {
       setPaymentMethod("Net Banking");
-      if (!txnId || txnId === "Store Cash Counter") setTxnId(`NEFT${rawId}LKO`);
-    }
-    if (newMode === "Split") {
+      if (!txnId || txnId === "Store Cash Counter") setTxnId(`NEFT${nextInvoiceSerial}`);
+    } else if (newMode === "Split") {
       const half = Math.round(finalSellingPrice / 2);
-      setSplitCashAmount(half);
-      setSplitOnlineAmount(Math.max(0, finalSellingPrice - half));
-      if (!txnId || txnId === "Store Cash Counter") setTxnId(`UPI${rawId}LKO`);
+      setSplitAmount1(half);
+      setSplitAmount2(Math.max(0, finalSellingPrice - half));
+      if (!splitTxnId1) setSplitTxnId1(`UPI${nextInvoiceSerial}-1`);
+      if (!splitTxnId2) setSplitTxnId2(`POS${nextInvoiceSerial}-2`);
     }
   };
 
-  const handleSplitCashChange = (cashVal: number) => {
-    const cash = Math.max(0, isNaN(cashVal) ? 0 : cashVal);
-    setSplitCashAmount(cash);
-    setSplitOnlineAmount(Math.max(0, finalSellingPrice - cash));
+  const handleSplitAmount1Change = (val: number) => {
+    const a1 = Math.max(0, isNaN(val) ? 0 : val);
+    setSplitAmount1(a1);
+    setSplitAmount2(Math.max(0, finalSellingPrice - a1));
   };
 
-  const handleSplitOnlineChange = (onlineVal: number) => {
-    const online = Math.max(0, isNaN(onlineVal) ? 0 : onlineVal);
-    setSplitOnlineAmount(online);
-    setSplitCashAmount(Math.max(0, finalSellingPrice - online));
+  const handleSplitAmount2Change = (val: number) => {
+    const a2 = Math.max(0, isNaN(val) ? 0 : val);
+    setSplitAmount2(a2);
+    setSplitAmount1(Math.max(0, finalSellingPrice - a2));
   };
 
   const handleSetEqualSplit = () => {
     const half = Math.round(finalSellingPrice / 2);
-    setSplitCashAmount(half);
-    setSplitOnlineAmount(Math.max(0, finalSellingPrice - half));
+    setSplitAmount1(half);
+    setSplitAmount2(Math.max(0, finalSellingPrice - half));
+  };
+
+  const applySplitPreset = (combo: "upi_card" | "two_upi" | "cash_upi" | "cash_card") => {
+    const half = Math.round(finalSellingPrice / 2);
+    setSplitAmount1(half);
+    setSplitAmount2(Math.max(0, finalSellingPrice - half));
+    if (combo === "upi_card") {
+      setSplitMode1("UPI");
+      setSplitMethod1("Google Pay");
+      setSplitTxnId1(`UPI${nextInvoiceSerial}-1`);
+      setSplitMode2("Card");
+      setSplitMethod2("Credit / Debit Card");
+      setSplitTxnId2(`POS${nextInvoiceSerial}-2`);
+    } else if (combo === "two_upi") {
+      setSplitMode1("UPI");
+      setSplitMethod1("Google Pay");
+      setSplitTxnId1(`GPAY${nextInvoiceSerial}`);
+      setSplitMode2("UPI");
+      setSplitMethod2("PhonePe");
+      setSplitTxnId2(`PPAY${nextInvoiceSerial}`);
+    } else if (combo === "cash_upi") {
+      setSplitMode1("Cash");
+      setSplitMethod1("Cash on Counter");
+      setSplitTxnId1("Store Cash Counter");
+      setSplitMode2("UPI");
+      setSplitMethod2("Google Pay");
+      setSplitTxnId2(`UPI${nextInvoiceSerial}`);
+    } else if (combo === "cash_card") {
+      setSplitMode1("Cash");
+      setSplitMethod1("Cash on Counter");
+      setSplitTxnId1("Store Cash Counter");
+      setSplitMode2("Card");
+      setSplitMethod2("Credit / Debit Card");
+      setSplitTxnId2(`POS${nextInvoiceSerial}`);
+    }
   };
 
   // When device dropdown changes, pre-fill its costs
@@ -337,8 +406,8 @@ export default function InvoiceGeneratorPage() {
       setSellingPriceY(newSell);
       const newFinal = Math.max(0, newSell - discountD);
       const half = Math.round(newFinal / 2);
-      setSplitCashAmount(half);
-      setSplitOnlineAmount(Math.max(0, newFinal - half));
+      setSplitAmount1(half);
+      setSplitAmount2(Math.max(0, newFinal - half));
     }
   };
 
@@ -425,20 +494,32 @@ export default function InvoiceGeneratorPage() {
       deviceId: selectedDevice.id,
       deviceModel: cleanTitle,
       imei: selectedDevice.imei1,
-      serialNumber: selectedDevice.serialNumber || `SN${rawId}`,
+      serialNumber: selectedDevice.serialNumber || `SN${nextInvoiceSerial}`,
       sellingPrice: sellingPriceY,
       discount: discountD,
       taxAmount: totalMarginTax,
       finalAmount: finalSellingPrice,
       purchasePrice: purchasePriceX,
       profitMargin: profitMarginZ,
-      paymentMethod: paymentMode === "Split" ? "Split (Cash + Online)" : (paymentMode as any),
-      paymentTxnId: paymentMode === "Cash" ? "Store Cash Counter" : (txnId || "Store Cash Counter"),
+      paymentMethod: paymentMode === "Split"
+        ? `Split (${splitMethod1} + ${splitMethod2})`
+        : (paymentMethod || paymentMode),
+      paymentTxnId: paymentMode === "Split"
+        ? `${splitMode1 === "Cash" ? "Cash Desk" : splitTxnId1 || "N/A"} / ${splitMode2 === "Cash" ? "Cash Desk" : splitTxnId2 || "N/A"}`
+        : (paymentMode === "Cash" ? "Store Cash Counter" : (txnId || "Store Cash Counter")),
       splitPayment: paymentMode === "Split" ? {
-        cashAmount: splitCashAmount,
-        onlineAmount: splitOnlineAmount,
-        onlineMode: splitOnlineMode,
-        onlineTxnId: txnId,
+        mode1: splitMode1,
+        method1: splitMethod1,
+        amount1: splitAmount1,
+        txnId1: splitMode1 === "Cash" ? "Store Cash Counter" : splitTxnId1,
+        mode2: splitMode2,
+        method2: splitMethod2,
+        amount2: splitAmount2,
+        txnId2: splitMode2 === "Cash" ? "Store Cash Counter" : splitTxnId2,
+        cashAmount: splitMode1 === "Cash" ? splitAmount1 : splitMode2 === "Cash" ? splitAmount2 : 0,
+        onlineAmount: splitMode1 !== "Cash" ? splitAmount1 : splitMode2 !== "Cash" ? splitAmount2 : 0,
+        onlineMode: splitMode1 !== "Cash" ? splitMethod1 : splitMethod2,
+        onlineTxnId: splitMode1 !== "Cash" ? splitTxnId1 : splitTxnId2,
       } : undefined,
       paymentStatus: "Completed",
       deliveryStatus: "Delivered",
@@ -479,8 +560,8 @@ export default function InvoiceGeneratorPage() {
       : "Apple iPhone Refurbished";
 
     const paymentSummaryText = paymentMode === "Split"
-      ? `Split Payment (Cash: ₹${splitCashAmount.toLocaleString()} + ${splitOnlineMode}: ₹${splitOnlineAmount.toLocaleString()})`
-      : paymentMode;
+      ? `Split Payment (${splitMethod1}: ₹${splitAmount1.toLocaleString()} + ${splitMethod2}: ₹${splitAmount2.toLocaleString()})`
+      : `${paymentMethod} (${paymentMode === "Cash" ? "Cash Counter" : txnId})`;
 
     const msg = 
 `Hi ${customerName}! Thank you for choosing TheFundu (${invoiceSettings?.companyLegalName || "Esterline Bonaparte Corp"})! 🎉
@@ -526,7 +607,7 @@ Have a wonderful experience with your device!`;
     const cleanPhone = order.customerPhone.replace(/\D/g, "");
     const serialNo = order.serialNumber || `SN${order.deviceId?.replace(/\D/g, "") || "26001"}`;
     const paymentSummaryText = order.splitPayment
-      ? `Split Payment (Cash: ₹${order.splitPayment.cashAmount?.toLocaleString()} + ${order.splitPayment.onlineMode}: ₹${order.splitPayment.onlineAmount?.toLocaleString()})`
+      ? `Split Payment (${order.splitPayment.method1 || order.splitPayment.mode1 || "Cash"}: ₹${Number(order.splitPayment.amount1 ?? order.splitPayment.cashAmount ?? 0).toLocaleString()} + ${order.splitPayment.method2 || order.splitPayment.mode2 || order.splitPayment.onlineMode || "Online"}: ₹${Number(order.splitPayment.amount2 ?? order.splitPayment.onlineAmount ?? 0).toLocaleString()})`
       : order.paymentMethod;
 
     const msg = 
@@ -1104,7 +1185,7 @@ https://thefundu.com/verify/${serialNo}
               <div className="flex items-center justify-between">
                 <CardTitle className="text-sm flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-fundu-600" />
-                  <span>Invoice Date &amp; Timing (बिल की तारीख और समय)</span>
+                  <span>Invoice Serial, Date &amp; Timing</span>
                 </CardTitle>
                 <div className="flex items-center gap-1.5">
                   <button
@@ -1129,6 +1210,36 @@ https://thefundu.com/verify/${serialNo}
               </div>
             </CardHeader>
             <CardContent className="pt-3 space-y-3 text-xs">
+              {/* Sequential Invoice Serial Number */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="font-semibold text-[11px] text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                    <FileText className="w-3.5 h-3.5 text-fundu-600" />
+                    <span>Invoice Serial Number (सीरियल नंबर - Line by line auto) *</span>
+                  </label>
+                  <span className="text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded border border-emerald-300 dark:border-emerald-800">
+                    Auto-Increment #{nextInvoiceSerial}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={invoiceNumber}
+                    onChange={(e) => setCustomInvoiceNumber(e.target.value)}
+                    placeholder={defaultInvoiceNumber}
+                    className="w-full text-xs font-mono font-bold tracking-wider text-slate-900 dark:text-slate-100"
+                  />
+                  {customInvoiceNumber && (
+                    <button
+                      type="button"
+                      onClick={() => setCustomInvoiceNumber("")}
+                      className="text-[11px] text-fundu-600 hover:underline shrink-0 font-medium"
+                    >
+                      Reset Auto
+                    </button>
+                  )}
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="font-semibold block mb-1 text-[11px] text-slate-700 dark:text-slate-300 flex items-center gap-1">
@@ -1159,7 +1270,7 @@ https://thefundu.com/verify/${serialNo}
               <div className="p-2 rounded-lg bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 flex items-center justify-between text-[11px]">
                 <span className="text-emerald-900 dark:text-emerald-300 font-medium">Printed on Bill:</span>
                 <span className="font-bold font-mono text-emerald-800 dark:text-emerald-200 bg-white dark:bg-slate-900 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
-                  {formattedInvoiceDate} • {formattedInvoiceTime}
+                  {invoiceNumber} • {formattedInvoiceDate} • {formattedInvoiceTime}
                 </span>
               </div>
             </CardContent>
@@ -1206,14 +1317,16 @@ https://thefundu.com/verify/${serialNo}
                 </div>
               </div>
 
-              {/* AADHAAR CARD FIELD */}
+              {/* AADHAAR CARD FIELD - KYC NO */}
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="font-semibold flex items-center gap-1.5 text-slate-800 dark:text-slate-200">
                     <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-                    <span>Aadhaar Card Number (12-Digit UID)</span>
+                    <span>KYC NO / Aadhaar Card Number (12-Digit UID)</span>
                   </label>
-                  <span className="text-[10px] text-slate-400">Government KYC</span>
+                  <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded border border-emerald-200 dark:border-emerald-800">
+                    Prints as &quot;KYC NO&quot; on Bill
+                  </span>
                 </div>
                 <Input
                   value={customerAadhaar}
@@ -1324,108 +1437,255 @@ https://thefundu.com/verify/${serialNo}
                 </div>
               </div>
 
-              {/* SPLIT PAYMENT BREAKDOWN UI */}
+              {/* SPLIT PAYMENT BREAKDOWN UI (UNIVERSAL DUAL-PAYMENT) */}
               {paymentMode === "Split" && (
-                <div className="p-3 rounded-xl border border-emerald-300 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/20 space-y-3">
-                  <div className="flex items-center justify-between">
+                <div className="p-3.5 rounded-xl border border-emerald-300 dark:border-emerald-800 bg-emerald-50/70 dark:bg-emerald-950/25 space-y-3.5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-emerald-200/80 dark:border-emerald-800/80 pb-2">
                     <div className="flex items-center gap-1.5 font-bold text-xs text-emerald-900 dark:text-emerald-300">
-                      <DollarSign className="h-4 w-4 text-emerald-600" />
-                      <span>Split Payment Breakdown (Cash + Online)</span>
+                      <CreditCard className="h-4 w-4 text-emerald-600" />
+                      <span>Dual Payment Breakdown (2 UPI / UPI + Card / Cash + Card)</span>
                     </div>
                     <button
                       type="button"
                       onClick={handleSetEqualSplit}
-                      className="text-[10.5px] font-semibold text-emerald-700 dark:text-emerald-300 underline hover:text-emerald-800"
+                      className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 underline hover:text-emerald-800 self-start sm:self-auto"
                     >
                       50/50 Equal Split
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2.5">
-                    <div>
-                      <label className="font-semibold block mb-1 text-[11px] text-slate-700 dark:text-slate-300">
-                        💵 Cash Amount (₹)
-                      </label>
-                      <Input
-                        type="number"
-                        min="0"
-                        value={splitCashAmount}
-                        onChange={(e) => handleSplitCashChange(Number(e.target.value))}
-                        placeholder="Cash amount in ₹"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="font-semibold block mb-1 text-[11px] text-slate-700 dark:text-slate-300">
-                        📱 Online / UPI Amount (₹)
-                      </label>
-                      <Input
-                        type="number"
-                        min="0"
-                        value={splitOnlineAmount}
-                        onChange={(e) => handleSplitOnlineChange(Number(e.target.value))}
-                        placeholder="Online amount in ₹"
-                      />
+                  {/* Quick Combination Presets */}
+                  <div>
+                    <label className="text-[10.5px] font-semibold text-slate-600 dark:text-slate-400 block mb-1.5">
+                      ⚡ Quick Mode Combinations:
+                    </label>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => applySplitPreset("two_upi")}
+                        className={`px-2 py-1 rounded text-[10.5px] font-semibold border transition-all ${
+                          splitMode1 === "UPI" && splitMode2 === "UPI"
+                            ? "bg-emerald-700 text-white border-emerald-700 shadow-2xs"
+                            : "bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-emerald-400"
+                        }`}
+                      >
+                        📱 2 UPI (GPay + PhonePe)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applySplitPreset("upi_card")}
+                        className={`px-2 py-1 rounded text-[10.5px] font-semibold border transition-all ${
+                          (splitMode1 === "UPI" && splitMode2 === "Card") || (splitMode1 === "Card" && splitMode2 === "UPI")
+                            ? "bg-emerald-700 text-white border-emerald-700 shadow-2xs"
+                            : "bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-emerald-400"
+                        }`}
+                      >
+                        💳 UPI + Card
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applySplitPreset("cash_upi")}
+                        className={`px-2 py-1 rounded text-[10.5px] font-semibold border transition-all ${
+                          (splitMode1 === "Cash" && splitMode2 === "UPI") || (splitMode1 === "UPI" && splitMode2 === "Cash")
+                            ? "bg-emerald-700 text-white border-emerald-700 shadow-2xs"
+                            : "bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-emerald-400"
+                        }`}
+                      >
+                        💵 Cash + UPI
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applySplitPreset("cash_card")}
+                        className={`px-2 py-1 rounded text-[10.5px] font-semibold border transition-all ${
+                          (splitMode1 === "Cash" && splitMode2 === "Card") || (splitMode1 === "Card" && splitMode2 === "Cash")
+                            ? "bg-emerald-700 text-white border-emerald-700 shadow-2xs"
+                            : "bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-emerald-400"
+                        }`}
+                      >
+                        🏧 Cash + Card
+                      </button>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2.5">
-                    <div>
-                      <label className="font-semibold block mb-1 text-[11px] text-slate-700 dark:text-slate-300">
-                        Online Method
-                      </label>
-                      <select
-                        value={splitOnlineMode}
-                        onChange={(e) => setSplitOnlineMode(e.target.value)}
-                        className="w-full h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
-                      >
-                        <option value="Google Pay">Google Pay</option>
-                        <option value="PhonePe">PhonePe</option>
-                        <option value="Paytm">Paytm</option>
-                        <option value="BHIM UPI">BHIM UPI</option>
-                        <option value="Credit Card">Credit Card</option>
-                        <option value="Debit Card">Debit Card</option>
-                        <option value="Net Banking">Net Banking</option>
-                      </select>
+                  {/* PART 1 PAYMENT */}
+                  <div className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-[11px] text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                        <span className="h-4 w-4 rounded-full bg-emerald-600 text-white text-[9px] flex items-center justify-center font-bold">1</span>
+                        <span>Payment Part 1 (पहला भुगतान)</span>
+                      </span>
+                      <span className="font-mono font-bold text-xs text-emerald-700 dark:text-emerald-400">
+                        ₹{splitAmount1.toLocaleString()}
+                      </span>
                     </div>
 
-                    <div>
-                      <label className="font-semibold block mb-1 text-[11px] text-slate-700 dark:text-slate-300">
-                        Transaction ID / UPI Ref
-                      </label>
-                      <Input
-                        value={txnId}
-                        onChange={(e) => setTxnId(e.target.value)}
-                        placeholder="UPI Ref / UTR / Txn ID"
-                      />
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-[10px] font-semibold text-slate-500 block mb-0.5">Mode 1</label>
+                        <select
+                          value={splitMode1}
+                          onChange={(e) => {
+                            const m = e.target.value;
+                            setSplitMode1(m);
+                            if (m === "UPI") { setSplitMethod1("Google Pay"); setSplitTxnId1(`GPAY${nextInvoiceSerial}`); }
+                            else if (m === "Card") { setSplitMethod1("Credit / Debit Card"); setSplitTxnId1(`POS${nextInvoiceSerial}-1`); }
+                            else if (m === "Cash") { setSplitMethod1("Cash on Counter"); setSplitTxnId1("Store Cash Counter"); }
+                            else if (m === "NetBanking") { setSplitMethod1("Net Banking"); setSplitTxnId1(`NEFT${nextInvoiceSerial}-1`); }
+                          }}
+                          className="w-full h-8 rounded border border-slate-200 bg-white px-2 text-[11px] font-medium dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
+                        >
+                          <option value="UPI">UPI</option>
+                          <option value="Card">Card</option>
+                          <option value="Cash">Cash</option>
+                          <option value="NetBanking">Net Banking</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] font-semibold text-slate-500 block mb-0.5">Method 1</label>
+                        <select
+                          value={splitMethod1}
+                          onChange={(e) => setSplitMethod1(e.target.value)}
+                          className="w-full h-8 rounded border border-slate-200 bg-white px-2 text-[11px] font-medium dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
+                        >
+                          <option value="Google Pay">Google Pay</option>
+                          <option value="PhonePe">PhonePe</option>
+                          <option value="Paytm">Paytm</option>
+                          <option value="BHIM UPI">BHIM UPI</option>
+                          <option value="Credit / Debit Card">Credit / Debit Card</option>
+                          <option value="Cash on Counter">Cash on Counter</option>
+                          <option value="Net Banking">Net Banking</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-[10px] font-semibold text-slate-500 block mb-0.5">Amount 1 (₹) *</label>
+                        <Input
+                          type="number"
+                          min="0"
+                          value={splitAmount1}
+                          onChange={(e) => handleSplitAmount1Change(Number(e.target.value))}
+                          placeholder="Amount 1"
+                          className="h-8 text-xs font-mono font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-semibold text-slate-500 block mb-0.5">Txn ID / Ref 1</label>
+                        <Input
+                          value={splitMode1 === "Cash" ? "Store Cash Counter" : splitTxnId1}
+                          disabled={splitMode1 === "Cash"}
+                          onChange={(e) => setSplitTxnId1(e.target.value)}
+                          placeholder={splitMode1 === "Cash" ? "Not required" : "UPI / Txn Ref"}
+                          className="h-8 text-xs font-mono"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* PART 2 PAYMENT */}
+                  <div className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-[11px] text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                        <span className="h-4 w-4 rounded-full bg-emerald-600 text-white text-[9px] flex items-center justify-center font-bold">2</span>
+                        <span>Payment Part 2 (दूसरा भुगतान)</span>
+                      </span>
+                      <span className="font-mono font-bold text-xs text-emerald-700 dark:text-emerald-400">
+                        ₹{splitAmount2.toLocaleString()}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-[10px] font-semibold text-slate-500 block mb-0.5">Mode 2</label>
+                        <select
+                          value={splitMode2}
+                          onChange={(e) => {
+                            const m = e.target.value;
+                            setSplitMode2(m);
+                            if (m === "UPI") { setSplitMethod2("PhonePe"); setSplitTxnId2(`PPAY${nextInvoiceSerial}`); }
+                            else if (m === "Card") { setSplitMethod2("Credit / Debit Card"); setSplitTxnId2(`POS${nextInvoiceSerial}-2`); }
+                            else if (m === "Cash") { setSplitMethod2("Cash on Counter"); setSplitTxnId2("Store Cash Counter"); }
+                            else if (m === "NetBanking") { setSplitMethod2("Net Banking"); setSplitTxnId2(`NEFT${nextInvoiceSerial}-2`); }
+                          }}
+                          className="w-full h-8 rounded border border-slate-200 bg-white px-2 text-[11px] font-medium dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
+                        >
+                          <option value="UPI">UPI</option>
+                          <option value="Card">Card</option>
+                          <option value="Cash">Cash</option>
+                          <option value="NetBanking">Net Banking</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-[10px] font-semibold text-slate-500 block mb-0.5">Method 2</label>
+                        <select
+                          value={splitMethod2}
+                          onChange={(e) => setSplitMethod2(e.target.value)}
+                          className="w-full h-8 rounded border border-slate-200 bg-white px-2 text-[11px] font-medium dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200"
+                        >
+                          <option value="PhonePe">PhonePe</option>
+                          <option value="Google Pay">Google Pay</option>
+                          <option value="Paytm">Paytm</option>
+                          <option value="BHIM UPI">BHIM UPI</option>
+                          <option value="Credit / Debit Card">Credit / Debit Card</option>
+                          <option value="Cash on Counter">Cash on Counter</option>
+                          <option value="Net Banking">Net Banking</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-[10px] font-semibold text-slate-500 block mb-0.5">Amount 2 (₹) *</label>
+                        <Input
+                          type="number"
+                          min="0"
+                          value={splitAmount2}
+                          onChange={(e) => handleSplitAmount2Change(Number(e.target.value))}
+                          placeholder="Amount 2"
+                          className="h-8 text-xs font-mono font-bold"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-semibold text-slate-500 block mb-0.5">Txn ID / Ref 2</label>
+                        <Input
+                          value={splitMode2 === "Cash" ? "Store Cash Counter" : splitTxnId2}
+                          disabled={splitMode2 === "Cash"}
+                          onChange={(e) => setSplitTxnId2(e.target.value)}
+                          placeholder={splitMode2 === "Cash" ? "Not required" : "UPI / Txn Ref"}
+                          className="h-8 text-xs font-mono"
+                        />
+                      </div>
                     </div>
                   </div>
 
                   {/* Verification / Match Status Bar */}
-                  <div className={`p-2 rounded-lg text-[11px] flex items-center justify-between font-medium border ${
-                    splitCashAmount + splitOnlineAmount === finalSellingPrice
-                      ? "bg-emerald-100/70 border-emerald-300 text-emerald-900 dark:bg-emerald-950 dark:border-emerald-800 dark:text-emerald-300"
-                      : "bg-amber-100/70 border-amber-300 text-amber-900 dark:bg-amber-950 dark:border-amber-800 dark:text-amber-300"
+                  <div className={`p-2.5 rounded-lg text-[11px] flex items-center justify-between font-medium border ${
+                    splitAmount1 + splitAmount2 === finalSellingPrice
+                      ? "bg-emerald-100/80 border-emerald-300 text-emerald-900 dark:bg-emerald-950 dark:border-emerald-800 dark:text-emerald-300"
+                      : "bg-amber-100/80 border-amber-300 text-amber-900 dark:bg-amber-950 dark:border-amber-800 dark:text-amber-300"
                   }`}>
                     <div>
                       <span>Total: ₹{finalSellingPrice.toLocaleString()}</span>
                       <span className="mx-1.5">•</span>
-                      <span>Cash: ₹{splitCashAmount.toLocaleString()}</span>
+                      <span>{splitMethod1}: ₹{splitAmount1.toLocaleString()}</span>
                       <span className="mx-1">+</span>
-                      <span>Online: ₹{splitOnlineAmount.toLocaleString()}</span>
+                      <span>{splitMethod2}: ₹{splitAmount2.toLocaleString()}</span>
                     </div>
 
-                    {splitCashAmount + splitOnlineAmount === finalSellingPrice ? (
+                    {splitAmount1 + splitAmount2 === finalSellingPrice ? (
                       <span className="font-bold flex items-center gap-1 text-emerald-800 dark:text-emerald-200">
-                        ✓ Exactly Matched
+                        ✓ 100% Balanced
                       </span>
                     ) : (
                       <button
                         type="button"
-                        onClick={() => setSplitOnlineAmount(Math.max(0, finalSellingPrice - splitCashAmount))}
+                        onClick={() => setSplitAmount2(Math.max(0, finalSellingPrice - splitAmount1))}
                         className="underline font-bold text-amber-800 dark:text-amber-200 hover:text-amber-900"
                       >
-                        Diff: ₹{Math.abs(finalSellingPrice - (splitCashAmount + splitOnlineAmount))} (Auto-Balance)
+                        Diff: ₹{Math.abs(finalSellingPrice - (splitAmount1 + splitAmount2))} (Auto-Balance)
                       </button>
                     )}
                   </div>
@@ -1512,13 +1772,21 @@ https://thefundu.com/verify/${serialNo}
                 }}
                 paymentInfo={{
                   method: paymentMethod,
-                  mode: paymentMode === "Split" ? "Split (Cash + Online)" : paymentMode,
+                  mode: paymentMode === "Split" ? `Split (${splitMethod1} + ${splitMethod2})` : paymentMode,
                   txnId: paymentMode === "Cash" ? "Store Cash Counter" : txnId,
                   splitPayment: paymentMode === "Split" ? {
-                    cashAmount: splitCashAmount,
-                    onlineAmount: splitOnlineAmount,
-                    onlineMode: splitOnlineMode,
-                    onlineTxnId: txnId,
+                    mode1: splitMode1,
+                    method1: splitMethod1,
+                    amount1: splitAmount1,
+                    txnId1: splitMode1 === "Cash" ? "Store Cash Counter" : splitTxnId1,
+                    mode2: splitMode2,
+                    method2: splitMethod2,
+                    amount2: splitAmount2,
+                    txnId2: splitMode2 === "Cash" ? "Store Cash Counter" : splitTxnId2,
+                    cashAmount: splitMode1 === "Cash" ? splitAmount1 : splitMode2 === "Cash" ? splitAmount2 : 0,
+                    onlineAmount: splitMode1 !== "Cash" ? splitAmount1 : splitMode2 !== "Cash" ? splitAmount2 : 0,
+                    onlineMode: splitMode1 !== "Cash" ? splitMethod1 : splitMethod2,
+                    onlineTxnId: splitMode1 !== "Cash" ? splitTxnId1 : splitTxnId2,
                   } : undefined,
                 }}
                 invoiceNumber={invoiceNumber}
@@ -1863,7 +2131,7 @@ https://thefundu.com/verify/${serialNo}
                             {s.customerAadhaar ? (
                               <div className="inline-flex items-center gap-1 mt-0.5 px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800">
                                 <ShieldCheck className="w-2.5 h-2.5 text-blue-600" />
-                                <span>UID: {s.customerAadhaar}</span>
+                                <span>KYC NO: {s.customerAadhaar}</span>
                               </div>
                             ) : null}
                             <div
@@ -1881,11 +2149,11 @@ https://thefundu.com/verify/${serialNo}
                                 <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
                                   Split Payment
                                 </span>
-                                <div className="text-[11px] text-slate-700 dark:text-slate-300 font-semibold">
-                                  💵 Cash: ₹{s.splitPayment.cashAmount?.toLocaleString()}
+                                <div className="text-[11px] text-slate-700 dark:text-slate-300 font-semibold truncate max-w-[170px]" title={`${s.splitPayment.method1 || s.splitPayment.mode1 || "Part 1"}: ₹${(s.splitPayment.amount1 ?? s.splitPayment.cashAmount ?? 0).toLocaleString()}`}>
+                                  • {s.splitPayment.method1 || s.splitPayment.mode1 || (s.splitPayment.cashAmount ? "Cash" : "Part 1")}: ₹{(s.splitPayment.amount1 ?? s.splitPayment.cashAmount ?? 0).toLocaleString()}
                                 </div>
-                                <div className="text-[11px] text-slate-700 dark:text-slate-300 font-semibold">
-                                  💳 {s.splitPayment.onlineMode || "UPI"}: ₹{s.splitPayment.onlineAmount?.toLocaleString()}
+                                <div className="text-[11px] text-slate-700 dark:text-slate-300 font-semibold truncate max-w-[170px]" title={`${s.splitPayment.method2 || s.splitPayment.mode2 || s.splitPayment.onlineMode || "Part 2"}: ₹${(s.splitPayment.amount2 ?? s.splitPayment.onlineAmount ?? 0).toLocaleString()}`}>
+                                  • {s.splitPayment.method2 || s.splitPayment.mode2 || s.splitPayment.onlineMode || "Part 2"}: ₹{(s.splitPayment.amount2 ?? s.splitPayment.onlineAmount ?? 0).toLocaleString()}
                                 </div>
                               </div>
                             ) : (

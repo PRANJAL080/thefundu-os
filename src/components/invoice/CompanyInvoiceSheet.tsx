@@ -35,10 +35,18 @@ export interface CompanyInvoiceSheetProps {
     txnId?: string;
     gatewayTxnId?: string;
     splitPayment?: {
-      cashAmount: number;
-      onlineAmount: number;
+      cashAmount?: number;
+      onlineAmount?: number;
       onlineMode?: string;
       onlineTxnId?: string;
+      mode1?: string;
+      method1?: string;
+      amount1?: number;
+      txnId1?: string;
+      mode2?: string;
+      method2?: string;
+      amount2?: number;
+      txnId2?: string;
     };
   };
   channel?: SalesChannelCode;
@@ -405,14 +413,28 @@ export function CompanyInvoiceSheet({
 
   // Payment Details
   const paymentMethod = paymentInfo?.method || order?.paymentMethod || "Google Pay";
-  const paymentMode = paymentInfo?.mode || (order?.splitPayment ? "Split (Cash + Online)" : "UPI");
+  const paymentMode = paymentInfo?.mode || (order?.splitPayment ? "Split" : "UPI");
   const txnId = paymentInfo?.txnId || `TXN${rawId}LKO982`;
 
   const splitPaymentData = paymentInfo?.splitPayment || order?.splitPayment;
   const isSplitPayment = Boolean(
     splitPaymentData &&
-      (splitPaymentData.cashAmount > 0 || splitPaymentData.onlineAmount > 0)
+      ((splitPaymentData.amount1 !== undefined && splitPaymentData.amount1 > 0) ||
+       (splitPaymentData.amount2 !== undefined && splitPaymentData.amount2 > 0) ||
+       (splitPaymentData.cashAmount !== undefined && splitPaymentData.cashAmount > 0) ||
+       (splitPaymentData.onlineAmount !== undefined && splitPaymentData.onlineAmount > 0))
   ) || (paymentMode && paymentMode.toLowerCase().includes("split"));
+
+  // Universal Part 1 & Part 2 Dual Payment Breakdown
+  const part1Mode = splitPaymentData?.mode1 || (splitPaymentData?.cashAmount !== undefined && splitPaymentData?.cashAmount > 0 ? "Cash Desk" : "UPI");
+  const part1Method = splitPaymentData?.method1 || (part1Mode === "Cash Desk" ? "Cash on Counter" : "Google Pay");
+  const part1Txn = splitPaymentData?.txnId1 || (part1Mode.toLowerCase().includes("cash") ? "Store Cash Counter" : `TXN${rawId}-1`);
+  const part1Amount = Number(splitPaymentData?.amount1 ?? splitPaymentData?.cashAmount ?? Math.round(finalAmount / 2));
+
+  const part2Mode = splitPaymentData?.mode2 || (splitPaymentData?.onlineMode ? "UPI / Online" : "Card");
+  const part2Method = splitPaymentData?.method2 || splitPaymentData?.onlineMode || "Credit / Debit Card";
+  const part2Txn = splitPaymentData?.txnId2 || (part2Mode.toLowerCase().includes("cash") ? "Store Cash Counter" : txnId || `TXN${rawId}-2`);
+  const part2Amount = Number(splitPaymentData?.amount2 ?? splitPaymentData?.onlineAmount ?? Math.max(0, finalAmount - part1Amount));
 
   return (
     <div
@@ -511,7 +533,7 @@ export function CompanyInvoiceSheet({
               <p className="font-bold text-[10px] text-black">{customerName}</p>
               <p><span className="font-semibold">Ph:</span> {customerPhone} {customerEmail ? <span>&nbsp;|&nbsp; <span className="font-semibold">Email:</span> {customerEmail}</span> : null}</p>
               {customerAadhaar ? (
-                <p className="font-mono"><span className="font-sans font-bold">Aadhaar No:</span> {customerAadhaar}</p>
+                <p className="font-mono font-bold text-black"><span className="font-sans font-bold">KYC NO:</span> {customerAadhaar}</p>
               ) : null}
               <p><span className="font-semibold">Local Address:</span> {customerLocalAddress}</p>
               {customerPermanentAddress ? (
@@ -533,7 +555,7 @@ export function CompanyInvoiceSheet({
                 <p><span className="font-semibold">Permanent Address:</span> {customerPermanentAddress}</p>
               ) : null}
               {customerAadhaar ? (
-                <p className="font-mono text-[8px]"><span className="font-sans font-semibold">Buyer KYC UID:</span> {customerAadhaar}</p>
+                <p className="font-mono text-[8.5px] font-bold text-black"><span className="font-sans font-bold">KYC NO:</span> {customerAadhaar}</p>
               ) : null}
             </div>
           </div>
@@ -650,7 +672,7 @@ export function CompanyInvoiceSheet({
             </p>
             {isSplitPayment && (
               <span className="text-[7px] font-black uppercase tracking-wider bg-black text-white px-1 py-0.2 rounded-sm">
-                Split (Cash + Online)
+                Split ({part1Mode} + {part2Mode})
               </span>
             )}
           </div>
@@ -667,30 +689,30 @@ export function CompanyInvoiceSheet({
               <tbody>
                 <tr className="border-b border-black/40">
                   <td className="p-0.5 border-r border-black font-bold text-left pl-1">
-                    Cash Desk
+                    {part1Mode}
                   </td>
                   <td className="p-0.5 border-r border-black font-medium">
-                    Cash Desk
+                    {part1Method}
                   </td>
-                  <td className="p-0.5 border-r border-black font-mono text-[7px]">
-                    Store Cash Counter
+                  <td className="p-0.5 border-r border-black font-mono text-[7px] truncate max-w-[90px]">
+                    {part1Txn}
                   </td>
                   <td className="p-0.5 text-right font-bold pr-1 font-mono">
-                    {(splitPaymentData?.cashAmount ?? Math.round(finalAmount / 2)).toFixed(2)}
+                    {part1Amount.toFixed(2)}
                   </td>
                 </tr>
                 <tr className="border-b border-black/40">
                   <td className="p-0.5 border-r border-black font-bold text-left pl-1">
-                    Online / UPI
+                    {part2Mode}
                   </td>
                   <td className="p-0.5 border-r border-black font-medium">
-                    {splitPaymentData?.onlineMode || paymentMethod}
+                    {part2Method}
                   </td>
-                  <td className="p-0.5 border-r border-black font-mono text-[7.5px] truncate max-w-[100px]">
-                    {txnId}
+                  <td className="p-0.5 border-r border-black font-mono text-[7.5px] truncate max-w-[90px]">
+                    {part2Txn}
                   </td>
                   <td className="p-0.5 text-right font-bold pr-1 font-mono">
-                    {(splitPaymentData?.onlineAmount ?? (finalAmount - Math.round(finalAmount / 2))).toFixed(2)}
+                    {part2Amount.toFixed(2)}
                   </td>
                 </tr>
                 <tr className="font-bold bg-slate-100">

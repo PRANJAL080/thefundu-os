@@ -353,7 +353,7 @@ export default function SalesOrdersPage() {
                       </div>
                       {s.splitPayment && (
                         <span className="text-[9.5px] text-slate-500 dark:text-slate-400 font-mono">
-                          Cash: {formatINR(s.splitPayment.cashAmount)} + {s.splitPayment.onlineMode || "Online"}: {formatINR(s.splitPayment.onlineAmount)}
+                          {s.splitPayment.method1 || s.splitPayment.mode1 || "Part 1"}: {formatINR(Number(s.splitPayment.amount1 ?? s.splitPayment.cashAmount ?? 0))} + {s.splitPayment.method2 || s.splitPayment.mode2 || s.splitPayment.onlineMode || "Part 2"}: {formatINR(Number(s.splitPayment.amount2 ?? s.splitPayment.onlineAmount ?? 0))}
                         </span>
                       )}
                     </div>

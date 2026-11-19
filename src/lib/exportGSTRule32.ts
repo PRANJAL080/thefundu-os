@@ -133,9 +133,13 @@ export function exportSavedBillsCSV(sales: SalesOrder[], filename = "TheFundu_Sa
 
   const rows = sales.map((s) => {
     const isSplit = Boolean(s.splitPayment || s.paymentMethod?.includes("Split"));
-    const cashAmt = isSplit && s.splitPayment ? s.splitPayment.cashAmount : (s.paymentMethod === "Cash" ? s.finalAmount : 0);
-    const onlineAmt = isSplit && s.splitPayment ? s.splitPayment.onlineAmount : (s.paymentMethod !== "Cash" ? s.finalAmount : 0);
-    const txn = s.splitPayment?.onlineTxnId || (s as any).paymentTxnId || "N/A";
+    const cashAmt = isSplit && s.splitPayment
+      ? Number(s.splitPayment.cashAmount ?? (s.splitPayment.mode1 === "Cash" ? s.splitPayment.amount1 : s.splitPayment.mode2 === "Cash" ? s.splitPayment.amount2 : s.splitPayment.amount1) ?? 0)
+      : (s.paymentMethod === "Cash" ? s.finalAmount : 0);
+    const onlineAmt = isSplit && s.splitPayment
+      ? Number(s.splitPayment.onlineAmount ?? (s.splitPayment.mode1 !== "Cash" ? s.splitPayment.amount1 : s.splitPayment.amount2) ?? 0)
+      : (s.paymentMethod !== "Cash" ? s.finalAmount : 0);
+    const txn = s.splitPayment?.onlineTxnId || s.splitPayment?.txnId2 || s.splitPayment?.txnId1 || (s as any).paymentTxnId || "N/A";
     const funCode = s.deviceId?.startsWith("Fun-") ? s.deviceId : `Fun-${s.deviceId?.replace(/\D/g, "") || "26000"}`;
 
     return [
