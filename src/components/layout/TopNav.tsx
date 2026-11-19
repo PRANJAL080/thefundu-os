@@ -26,6 +26,10 @@ import {
   X,
   Edit2,
   Save,
+  RefreshCw,
+  Cloud,
+  Upload,
+  Download,
 } from "lucide-react";
 import { useApp, DateFilterType } from "@/lib/store";
 import { UserRole } from "@/lib/types";
@@ -56,7 +60,24 @@ export function TopNav({ onOpenGlobalSearch, onOpenBarcodeScanner, onOpenAiCopil
     currentUser,
     updateCurrentUserProfile,
     logout,
+    devices,
+    isCloudSyncing,
+    syncWithCloud,
+    exportStoreBackup,
+    importStoreBackup,
   } = useApp();
+
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
+
+  const handleBackupFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      await importStoreBackup(file);
+      setIsSyncModalOpen(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
 
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -276,6 +297,23 @@ export function TopNav({ onOpenGlobalSearch, onOpenBarcodeScanner, onOpenAiCopil
             </div>
           )}
         </div>
+
+        {/* Multi-Laptop Cloud Sync Button */}
+        <button
+          onClick={() => setIsSyncModalOpen(true)}
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold shadow-xs transition-all ${
+            isCloudSyncing
+              ? "bg-amber-50 text-amber-800 border-amber-300 animate-pulse dark:bg-amber-950/60 dark:text-amber-300"
+              : "bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800"
+          }`}
+          title="Multi-Laptop Cloud Sync: Keep both laptops updated with 75+ phones & store settings"
+        >
+          <Cloud className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+          <span className="hidden sm:inline font-bold">
+            {isCloudSyncing ? "Syncing..." : `Cloud Sync (${devices.length})`}
+          </span>
+          <RefreshCw className={`h-3 w-3 text-emerald-600 dark:text-emerald-400 ${isCloudSyncing ? "animate-spin" : ""}`} />
+        </button>
 
         {/* Role Switcher Pill */}
         <button
@@ -668,6 +706,108 @@ export function TopNav({ onOpenGlobalSearch, onOpenBarcodeScanner, onOpenAiCopil
             </Button>
           </div>
         </form>
+      </Dialog>
+
+      {/* Multi-Laptop Cloud Sync & Data Migration Modal */}
+      <Dialog
+        isOpen={isSyncModalOpen}
+        onClose={() => setIsSyncModalOpen(false)}
+        title="Multi-Laptop Cloud Sync & Data Management"
+        maxWidth="lg"
+      >
+        <div className="space-y-4 text-xs">
+          <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex items-start gap-3">
+            <Cloud className="h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-bold text-emerald-900 dark:text-emerald-200 text-sm">
+                Live Cloud Sync Across Both Laptops
+              </h4>
+              <p className="text-emerald-700 dark:text-emerald-300 mt-1 leading-relaxed">
+                TheFundu OS uses Supabase PostgreSQL cloud sync. When you add phones or update the store address on any laptop, click <strong>Sync With Cloud</strong> to automatically synchronize all <strong>{devices.length} handsets</strong> and store details across both laptops and mobile devices.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+            {/* Action 1: Instant Cloud Sync */}
+            <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col justify-between">
+              <div>
+                <span className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+                  <RefreshCw className={`h-4 w-4 text-fundu-600 ${isCloudSyncing ? "animate-spin" : ""}`} />
+                  Automatic Cloud Sync
+                </span>
+                <p className="text-slate-500 text-[11px] mt-1.5 leading-snug">
+                  Pulls new inventory from other laptops and uploads any new handsets added here directly to the cloud.
+                </p>
+              </div>
+              <Button
+                variant="fundu"
+                size="sm"
+                onClick={async () => {
+                  await syncWithCloud();
+                }}
+                disabled={isCloudSyncing}
+                className="mt-3 w-full font-bold h-8 text-xs gap-1.5"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${isCloudSyncing ? "animate-spin" : ""}`} />
+                <span>{isCloudSyncing ? "Synchronizing..." : "Sync With Cloud Now"}</span>
+              </Button>
+            </div>
+
+            {/* Action 2: Direct Backup & Transfer File */}
+            <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col justify-between">
+              <div>
+                <span className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5">
+                  <Download className="h-4 w-4 text-blue-600" />
+                  Manual Backup Transfer
+                </span>
+                <p className="text-slate-500 text-[11px] mt-1.5 leading-snug">
+                  Export complete store state (all {devices.length} handsets, invoices, addresses) to a backup file to transfer between laptops.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-2 mt-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={exportStoreBackup}
+                  className="font-semibold h-8 text-[11px] gap-1 px-2"
+                  title="Download full backup JSON"
+                >
+                  <Download className="h-3 w-3" />
+                  <span>Export</span>
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="font-semibold h-8 text-[11px] gap-1 px-2 border-fundu-300 text-fundu-700 bg-fundu-50/50 hover:bg-fundu-100"
+                  title="Load backup JSON from another laptop"
+                >
+                  <Upload className="h-3 w-3" />
+                  <span>Import</span>
+                </Button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="hidden"
+                  accept=".json"
+                  onChange={handleBackupFileChange}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-2 text-right">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsSyncModalOpen(false)}
+            >
+              Close
+            </Button>
+          </div>
+        </div>
       </Dialog>
     </header>
   );

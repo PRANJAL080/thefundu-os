@@ -56,6 +56,14 @@ import {
   initialSettlements,
   initialWarrantyClaims,
 } from "./mock-data";
+import {
+  fetchCloudDevices,
+  upsertCloudDevices,
+  deleteCloudDevice,
+  fetchCloudWarehouses,
+  upsertCloudWarehouse,
+  syncBidirectionalDevices,
+} from "./supabaseSync";
 
 export type DateFilterType = "today" | "7d" | "30d" | "this_month" | "custom";
 
@@ -173,6 +181,13 @@ interface AppContextType {
   // Digital Warranty & Verification
   warrantyClaims: WarrantyClaim[];
   addWarrantyClaim: (claim: Partial<WarrantyClaim>) => WarrantyClaim;
+
+  // Multi-Laptop Cloud Synchronization & Backup
+  isCloudSyncing: boolean;
+  cloudSyncStatus: "synced" | "syncing" | "offline";
+  syncWithCloud: () => Promise<void>;
+  exportStoreBackup: () => void;
+  importStoreBackup: (file: File) => Promise<boolean>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -492,6 +507,125 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
+  // Multi-Laptop Cloud Synchronization State
+  const [isCloudSyncing, setIsCloudSyncing] = useState(false);
+  const [cloudSyncStatus, setCloudSyncStatus] = useState<"synced" | "syncing" | "offline">("synced");
+
+  const syncWithCloud = async () => {
+    if (isCloudSyncing) return;
+    setIsCloudSyncing(true);
+    setCloudSyncStatus("syncing");
+
+    try {
+      // 1. Synchronize Devices with Supabase Cloud
+      const currentLocal = devices.length > 0 ? devices : initialDevices;
+      const { devices: mergedDevices, syncedToCloudCount, syncedFromCloudCount } = await syncBidirectionalDevices(currentLocal);
+
+      if (mergedDevices.length > 0) {
+        setDevices(mergedDevices);
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem(STORAGE_KEYS.devices, JSON.stringify(mergedDevices));
+          } catch (e) {}
+        }
+      }
+
+      // 2. Synchronize Warehouses & Store Address with Supabase Cloud
+      const cloudWarehouses = await fetchCloudWarehouses();
+      if (cloudWarehouses && cloudWarehouses.length > 0) {
+        setWarehouses(cloudWarehouses);
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem(STORAGE_KEYS.warehouses, JSON.stringify(cloudWarehouses));
+          } catch (e) {}
+        }
+      }
+
+      setCloudSyncStatus("synced");
+      if (syncedToCloudCount > 0) {
+        showToast(`Uploaded ${syncedToCloudCount} handsets to Cloud! All connected laptops updated to ${mergedDevices.length} phones.`, "success");
+      } else if (syncedFromCloudCount > 0) {
+        showToast(`Downloaded ${syncedFromCloudCount} handsets from Cloud! Now showing ${mergedDevices.length} phones.`, "success");
+      }
+    } catch (err) {
+      console.error("Cloud sync error:", err);
+      setCloudSyncStatus("offline");
+    } finally {
+      setIsCloudSyncing(false);
+    }
+  };
+
+  // Run initial multi-device cloud sync once hydrated on any laptop
+  useEffect(() => {
+    if (isHydrated) {
+      syncWithCloud();
+    }
+  }, [isHydrated]);
+
+  // One-Click Cross-Laptop Backup Export & Import
+  const exportStoreBackup = () => {
+    const backupData = {
+      version: "1.0",
+      brand: "TheFundu",
+      exportedAt: new Date().toISOString(),
+      devices,
+      warehouses,
+      sales,
+      purchases,
+      buybacks,
+      invoiceSettings,
+    };
+    const jsonStr = JSON.stringify(backupData, null, 2);
+    const blob = new Blob([jsonStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `TheFundu_Store_Backup_${new Date().toISOString().split("T")[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast(`Exported backup file with ${devices.length} handsets & store settings!`, "success");
+  };
+
+  const importStoreBackup = async (file: File): Promise<boolean> => {
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      if (!parsed || !Array.isArray(parsed.devices)) {
+        showToast("Invalid backup file: 'devices' array missing.", "error");
+        return false;
+      }
+      setDevices(parsed.devices);
+      if (Array.isArray(parsed.warehouses)) setWarehouses(parsed.warehouses);
+      if (Array.isArray(parsed.sales)) setSales(parsed.sales);
+      if (Array.isArray(parsed.purchases)) setPurchases(parsed.purchases);
+      if (Array.isArray(parsed.buybacks)) setBuybacks(parsed.buybacks);
+      if (parsed.invoiceSettings) setInvoiceSettings(parsed.invoiceSettings);
+
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem(STORAGE_KEYS.devices, JSON.stringify(parsed.devices));
+          if (parsed.warehouses) localStorage.setItem(STORAGE_KEYS.warehouses, JSON.stringify(parsed.warehouses));
+        } catch (e) {}
+      }
+
+      // Automatically push all imported devices to cloud
+      await upsertCloudDevices(parsed.devices);
+      if (Array.isArray(parsed.warehouses) && parsed.warehouses.length > 0) {
+        for (const w of parsed.warehouses) {
+          await upsertCloudWarehouse(w);
+        }
+      }
+
+      showToast(`Successfully imported & cloud-synced ${parsed.devices.length} handsets across all devices!`, "success");
+      return true;
+    } catch (err: any) {
+      showToast(`Failed to parse backup file: ${err.message}`, "error");
+      return false;
+    }
+  };
+
   // Device CRUD
   const addDevice = (newDev: Partial<Device>): Device => {
     const nextNumber = 26000 + devices.length;
@@ -562,6 +696,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     setDevices((prev) => [fullDevice, ...prev]);
 
+    // Asynchronously push new device to Cloud so all laptops receive it
+    upsertCloudDevices([fullDevice]).catch(console.error);
+
     // Also record inward movement
     addStockMovement({
       type: "Inward",
@@ -577,26 +714,32 @@ export function AppProvider({ children }: { children: ReactNode }) {
       notes: "Newly registered device in OS",
     });
 
-    showToast(`Device ${fullDevice.brand} ${fullDevice.model} added successfully (${fullDevice.id})!`, "success");
+    showToast(`Device ${fullDevice.brand} ${fullDevice.model} added & synced to Cloud (${fullDevice.id})!`, "success");
     return fullDevice;
   };
 
   const updateDevice = (id: string, updates: Partial<Device>) => {
     const targetId = updates.id && updates.id.trim() ? updates.id.trim() : id;
-    setDevices((prev) =>
-      prev.map((dev) => {
+    setDevices((prev) => {
+      const next = prev.map((dev) => {
         if (dev.id === id) {
           const updated = { ...dev, ...updates, id: targetId };
           return updated;
         }
         return dev;
-      })
-    );
+      });
+      const target = next.find((d) => d.id === targetId || d.id === id);
+      if (target) {
+        upsertCloudDevices([target]).catch(console.error);
+      }
+      return next;
+    });
     showToast(`Device ${targetId} updated successfully.`, "info");
   };
 
   const deleteDevice = (id: string) => {
     setDevices((prev) => prev.filter((d) => d.id !== id));
+    deleteCloudDevice(id).catch(console.error);
     showToast(`Device ${id} removed from active inventory.`, "info");
   };
 
@@ -1353,7 +1496,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
         localStorage.setItem(STORAGE_KEYS.warehouses, JSON.stringify(updated));
       } catch (e) {}
     }
-    showToast("Store details updated!", "success");
+    const target = updated.find((w) => w.id === id || w.code === id);
+    if (target) {
+      upsertCloudWarehouse(target).catch(console.error);
+    }
+    showToast("Store details updated & synced to Cloud!", "success");
   };
 
   const deleteStore = (id: string) => {
@@ -1745,6 +1892,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
         // Warranty
         warrantyClaims,
         addWarrantyClaim,
+
+        // Multi-Laptop Cloud Synchronization & Backup
+        isCloudSyncing,
+        cloudSyncStatus,
+        syncWithCloud,
+        exportStoreBackup,
+        importStoreBackup,
       }}
     >
       {children}

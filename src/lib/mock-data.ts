@@ -3910,6 +3910,92 @@ export const initialDevices: Device[] = [
         "afterImages": []
       }
     ]
+  },
+  {
+    "id": "Fun-26081",
+    "brand": "Samsung",
+    "model": "Samsung S25 Edge",
+    "storage": "256GB",
+    "ram": "12GB",
+    "colour": "Black",
+    "imei1": "354922133130580",
+    "imei2": "",
+    "serialNumber": "SN26081",
+    "sku": "TFD-26081-SAM",
+    "batteryHealth": 90,
+    "grade": "A",
+    "status": "In Stock",
+    "warehouse": "Lucknow Store (LKO-01)",
+    "costs": {
+      "purchasePrice": 54000,
+      "repairCost": 0,
+      "testingCost": 250,
+      "packagingCost": 0,
+      "logisticsCost": 350,
+      "otherCost": 0,
+      "totalLandedCost": 54600,
+      "sellingPrice": 60000,
+      "projectedProfit": 5400,
+      "profitMarginPercent": 9
+    },
+    "supplierId": "SUP-001",
+    "supplierName": "Esterline Bulk Refurb Solutions",
+    "purchaseDate": "2026-11-19",
+    "images": [
+      "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=600&q=80"
+    ],
+    "specifications": {
+      "chipset": "Snapdragon 8 Gen 4",
+      "screenSize": "6.8 inch Dynamic AMOLED",
+      "cameraSpecs": "200MP + 50MP + 12MP",
+      "network": "5G Dual SIM",
+      "osVersion": "One UI 7"
+    },
+    "activityTimeline": [],
+    "repairHistory": []
+  },
+  {
+    "id": "Fun-26082",
+    "brand": "Apple",
+    "model": "iPhone Air",
+    "storage": "256GB",
+    "ram": "8GB",
+    "colour": "Sky Blue",
+    "imei1": "358258287029542",
+    "imei2": "",
+    "serialNumber": "SN26082",
+    "sku": "TFD-26082-APP",
+    "batteryHealth": 96,
+    "grade": "A+",
+    "status": "In Stock",
+    "warehouse": "Lucknow Store (LKO-01)",
+    "costs": {
+      "purchasePrice": 48000,
+      "repairCost": 0,
+      "testingCost": 250,
+      "packagingCost": 0,
+      "logisticsCost": 350,
+      "otherCost": 0,
+      "totalLandedCost": 48600,
+      "sellingPrice": 59999,
+      "projectedProfit": 11399,
+      "profitMarginPercent": 19
+    },
+    "supplierId": "SUP-001",
+    "supplierName": "Esterline Bulk Refurb Solutions",
+    "purchaseDate": "2026-11-19",
+    "images": [
+      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+    ],
+    "specifications": {
+      "chipset": "Apple A19 Bionic",
+      "screenSize": "6.6 inch Super Retina XDR",
+      "cameraSpecs": "48MP Dual Fusion",
+      "network": "5G eSIM",
+      "osVersion": "iOS 19"
+    },
+    "activityTimeline": [],
+    "repairHistory": []
   }
 ];
 

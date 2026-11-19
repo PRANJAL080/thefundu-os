@@ -32,6 +32,8 @@ import {
   DollarSign,
   RotateCcw,
   SlidersHorizontal,
+  RefreshCw,
+  Cloud,
 } from "lucide-react";
 import { useApp } from "@/lib/store";
 import { Device, DeviceStatus, WarehouseLocation, BuybackRecord } from "@/lib/types";
@@ -50,7 +52,19 @@ import { exportGSTRule32AuditCSV } from "@/lib/exportGSTRule32";
 import { formatINR, formatDate, getStatusBadgeColor, matchesDeviceSearch } from "@/lib/utils";
 
 export default function InventoryPage() {
-  const { devices, warehouses, buybacks, updateDevice, deleteDevice, setAllDevicesInStock, transferWarehouseStock, showToast, isCashierMode } = useApp();
+  const {
+    devices,
+    warehouses,
+    buybacks,
+    updateDevice,
+    deleteDevice,
+    setAllDevicesInStock,
+    transferWarehouseStock,
+    showToast,
+    isCashierMode,
+    isCloudSyncing,
+    syncWithCloud,
+  } = useApp();
 
   // Search & Core Filters State
   const [searchQuery, setSearchQuery] = useState("");
@@ -480,6 +494,22 @@ export default function InventoryPage() {
           >
             <Download className="h-3.5 w-3.5" />
             <span>Export CSV</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => syncWithCloud()}
+            disabled={isCloudSyncing}
+            className={`gap-1.5 font-bold ${
+              isCloudSyncing
+                ? "border-amber-300 text-amber-700 bg-amber-50 animate-pulse"
+                : "border-blue-300 text-blue-700 bg-blue-50/60 hover:bg-blue-100 dark:border-blue-800 dark:text-blue-300 dark:bg-blue-950/40"
+            }`}
+            title="Multi-Laptop Cloud Sync: Keep both laptops updated with 75+ phones & store settings"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 text-blue-600 dark:text-blue-400 ${isCloudSyncing ? "animate-spin" : ""}`} />
+            <span>{isCloudSyncing ? "Syncing..." : `Sync Cloud (${devices.length})`}</span>
           </Button>
 
           <Button
