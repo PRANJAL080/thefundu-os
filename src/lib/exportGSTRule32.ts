@@ -99,3 +99,84 @@ export function exportGSTRule32AuditCSV(devices: Device[], filename = "TheFundu_
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
+
+/**
+ * Export All Saved Tax Invoices with Fun Code, IMEI, Aadhaar, Addresses, and Payment Breakdown
+ */
+export function exportSavedBillsCSV(sales: SalesOrder[], filename = "TheFundu_Saved_Bills_Register.csv") {
+  const headers = [
+    "Invoice Number",
+    "Invoice Date",
+    "Fun Code / Device ID",
+    "Handset Model",
+    "Primary IMEI",
+    "Serial Number",
+    "Customer Name",
+    "Customer Mobile",
+    "Customer Aadhaar UID",
+    "Local Address",
+    "Permanent Address",
+    "Customer GSTIN",
+    "Selling Price (Rs)",
+    "Discount (Rs)",
+    "Final Billed Amount (Rs)",
+    "Margin GST (18%)",
+    "Payment Mode",
+    "Payment Method",
+    "Cash Amount (Rs)",
+    "Online Amount (Rs)",
+    "Txn ID / UTR",
+    "Store Outlet",
+    "Warranty Months",
+    "Payment Status"
+  ];
+
+  const rows = sales.map((s) => {
+    const isSplit = Boolean(s.splitPayment || s.paymentMethod?.includes("Split"));
+    const cashAmt = isSplit && s.splitPayment ? s.splitPayment.cashAmount : (s.paymentMethod === "Cash" ? s.finalAmount : 0);
+    const onlineAmt = isSplit && s.splitPayment ? s.splitPayment.onlineAmount : (s.paymentMethod !== "Cash" ? s.finalAmount : 0);
+    const txn = s.splitPayment?.onlineTxnId || (s as any).paymentTxnId || "N/A";
+    const funCode = s.deviceId?.startsWith("Fun-") ? s.deviceId : `Fun-${s.deviceId?.replace(/\D/g, "") || "26000"}`;
+
+    return [
+      `"${s.invoiceNumber || s.id}"`,
+      `"${s.date}"`,
+      `"${funCode}"`,
+      `"${(s.deviceModel || "").replace(/"/g, '""')}"`,
+      `="${s.imei || "N/A"}"`,
+      `"${s.serialNumber || "N/A"}"`,
+      `"${(s.customerName || "").replace(/"/g, '""')}"`,
+      `="${s.customerPhone || ""}"`,
+      s.customerAadhaar ? `="${s.customerAadhaar}"` : '="N/A"',
+      `"${(s.customerLocalAddress || s.customerAddress || "").replace(/"/g, '""')}"`,
+      `"${(s.customerPermanentAddress || s.customerLocalAddress || s.customerAddress || "").replace(/"/g, '""')}"`,
+      `"${s.customerGstin || "URP (Unregistered)"}"`,
+      Number(s.sellingPrice || 0).toFixed(2),
+      Number(s.discount || 0).toFixed(2),
+      Number(s.finalAmount || 0).toFixed(2),
+      Number(s.taxAmount || 0).toFixed(2),
+      `"${s.paymentMethod || "UPI"}"`,
+      `"${s.splitPayment?.onlineMode || s.paymentMethod || "Google Pay"}"`,
+      cashAmt.toFixed(2),
+      onlineAmt.toFixed(2),
+      `"${txn}"`,
+      `"${s.channelName || "Lucknow Flagship Store (LKO-01)"}"`,
+      s.warrantyMonths || 6,
+      `"${s.paymentStatus || "Completed"}"`
+    ];
+  });
+
+  const csvContent =
+    "\uFEFF" +
+    [headers.join(","), ...rows.map((r) => r.join(","))].join("\r\n");
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}

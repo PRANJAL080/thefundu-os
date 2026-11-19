@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FileText,
   Printer,
@@ -24,6 +24,17 @@ import {
   Store,
   MapPin,
   Sliders,
+  ReceiptText,
+  Copy,
+  Trash2,
+  ExternalLink,
+  RefreshCw,
+  Eye,
+  Calendar,
+  CreditCard,
+  Building2,
+  Filter,
+  Phone,
 } from "lucide-react";
 import { useApp } from "@/lib/store";
 import { Device, SalesOrder, SalesChannelCode, SaleTypeCode } from "@/lib/types";
@@ -33,9 +44,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { CompanyInvoiceSheet } from "@/components/invoice/CompanyInvoiceSheet";
+import { InvoiceModal } from "@/components/invoice/InvoiceModal";
 import { InvoiceSettingsModal } from "@/components/invoice/InvoiceSettingsModal";
 import { formatINR } from "@/lib/utils";
-import { exportGSTRule32AuditCSV } from "@/lib/exportGSTRule32";
+import { exportGSTRule32AuditCSV, exportSavedBillsCSV } from "@/lib/exportGSTRule32";
 
 export default function InvoiceGeneratorPage() {
   const {
@@ -45,11 +57,34 @@ export default function InvoiceGeneratorPage() {
     setSelectedStoreId,
     invoiceSettings,
     addSale,
+    deleteSale,
+    sales,
     showToast,
     isCashierMode,
   } = useApp();
 
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+
+  // Active Tab: "generator" (create/print bill) or "history" (all saved bills)
+  const [activeTab, setActiveTab] = useState<"generator" | "history">("generator");
+
+  // Saved Bills History filters and state
+  const [historySearch, setHistorySearch] = useState("");
+  const [historyPaymentFilter, setHistoryPaymentFilter] = useState("all");
+  const [historyStoreFilter, setHistoryStoreFilter] = useState("all");
+  const [selectedHistoryOrder, setSelectedHistoryOrder] = useState<SalesOrder | null>(null);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [copiedImei, setCopiedImei] = useState<string | null>(null);
+
+  // Auto-switch to history tab if ?tab=history is in the URL
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("tab") === "history" || params.get("tab") === "saved") {
+        setActiveTab("history");
+      }
+    }
+  }, []);
 
   // Active Store Outlet (Dynamic multi-store support)
   const currentStore =
@@ -202,11 +237,60 @@ export default function InvoiceGeneratorPage() {
     }
   };
 
+  // Centralized Auto-Record Invoice Function:
+  // Automatically saves complete bill details (IMEI, Fun Code, Aadhaar, Addresses, Split Payments, Store)
+  // whenever someone Prints, Downloads PDF, sends WhatsApp, or Issues an Invoice!
+  const autoRecordCurrentInvoice = () => {
+    if (!selectedDevice) return null;
+    const cleanTitle = `${selectedDevice.brand} ${selectedDevice.model} (${selectedDevice.storage}) Refurbished ${selectedDevice.colour && selectedDevice.colour !== "Default Edition" ? selectedDevice.colour : ""}`.replace(/\s+/g, " ").trim();
+
+    return addSale({
+      customerName,
+      customerPhone,
+      customerEmail,
+      customerAddress: customerLocalAddress,
+      customerLocalAddress,
+      customerPermanentAddress,
+      customerAadhaar: customerAadhaar.trim() || undefined,
+      customerGstin,
+      placeOfSupply,
+      channel,
+      typeOfSale,
+      invoiceNumber,
+      deviceId: selectedDevice.id,
+      deviceModel: cleanTitle,
+      imei: selectedDevice.imei1,
+      serialNumber: selectedDevice.serialNumber || `SN${rawId}`,
+      sellingPrice: sellingPriceY,
+      discount: discountD,
+      taxAmount: totalMarginTax,
+      finalAmount: finalSellingPrice,
+      purchasePrice: purchasePriceX,
+      profitMargin: profitMarginZ,
+      paymentMethod: paymentMode === "Split" ? "Split (Cash + Online)" : (paymentMode as any),
+      paymentTxnId: txnId,
+      splitPayment: paymentMode === "Split" ? {
+        cashAmount: splitCashAmount,
+        onlineAmount: splitOnlineAmount,
+        onlineMode: splitOnlineMode,
+        onlineTxnId: txnId,
+      } : undefined,
+      paymentStatus: "Completed",
+      deliveryStatus: "Delivered",
+      warrantyMonths: Math.round(warrantyDays / 30),
+      storeName: currentStore.name,
+      storeCode: currentStore.code,
+    });
+  };
+
   const handlePrint = () => {
+    autoRecordCurrentInvoice();
     window.print();
+    showToast(`Tax Invoice ${invoiceNumber} for ${selectedDevice?.id || "Handset"} saved & printed!`, "success");
   };
 
   const handleSendWhatsApp = () => {
+    autoRecordCurrentInvoice();
     const cleanPhone = customerPhone.replace(/\D/g, "");
     const serialNo = selectedDevice?.serialNumber || `SN${selectedDevice?.id.replace(/\D/g, "") || "26001"}`;
     const cleanTitle = selectedDevice
@@ -234,43 +318,87 @@ Have a wonderful experience with your device!`;
 
     const encoded = encodeURIComponent(msg);
     window.open(`https://wa.me/91${cleanPhone}?text=${encoded}`, "_blank");
-    showToast(`WhatsApp confirmation dispatched for ${customerName}!`, "success");
+    showToast(`WhatsApp bill dispatched & recorded for ${customerName}!`, "success");
   };
 
   const handleSaveAndIssue = () => {
     if (!selectedDevice) return;
-    addSale({
-      customerName,
-      customerPhone,
-      customerEmail,
-      customerAddress: customerLocalAddress,
-      customerLocalAddress,
-      customerPermanentAddress,
-      customerAadhaar: customerAadhaar.trim() || undefined,
-      customerGstin,
-      placeOfSupply,
-      channel,
-      typeOfSale,
-      invoiceNumber,
-      deviceId: selectedDevice.id,
-      deviceModel: `${selectedDevice.brand} ${selectedDevice.model} (${selectedDevice.storage}) Refurbished ${selectedDevice.colour && selectedDevice.colour !== "Default Edition" ? selectedDevice.colour : ""}`.replace(/\s+/g, " ").trim(),
-      imei: selectedDevice.imei1,
-      sellingPrice: sellingPriceY,
-      discount: discountD,
-      finalAmount: finalSellingPrice,
-      paymentMethod: paymentMode === "Split" ? "Split (Cash + Online)" : (paymentMode as any),
-      splitPayment: paymentMode === "Split" ? {
-        cashAmount: splitCashAmount,
-        onlineAmount: splitOnlineAmount,
-        onlineMode: splitOnlineMode,
-        onlineTxnId: txnId,
-      } : undefined,
-      paymentStatus: "Completed",
-      deliveryStatus: "Delivered",
-      warrantyMonths: Math.round(warrantyDays / 30),
-    });
-    showToast(`Tax Invoice ${invoiceNumber} created and recorded under Rule 32(5)!`, "success");
+    autoRecordCurrentInvoice();
+    setActiveTab("history");
+    showToast(`Tax Invoice ${invoiceNumber} created & recorded! Showing in Saved Bills Ledger.`, "success");
   };
+
+  const handleCopyImei = (imei: string) => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(imei);
+      setCopiedImei(imei);
+      showToast(`IMEI ${imei} copied to clipboard!`, "info");
+      setTimeout(() => setCopiedImei(null), 2500);
+    }
+  };
+
+  const handleSendWhatsAppForOrder = (order: SalesOrder) => {
+    const cleanPhone = order.customerPhone.replace(/\D/g, "");
+    const serialNo = order.serialNumber || `SN${order.deviceId?.replace(/\D/g, "") || "26001"}`;
+    const paymentSummaryText = order.splitPayment
+      ? `Split Payment (Cash: ₹${order.splitPayment.cashAmount?.toLocaleString()} + ${order.splitPayment.onlineMode}: ₹${order.splitPayment.onlineAmount?.toLocaleString()})`
+      : order.paymentMethod;
+
+    const msg = 
+`Hi ${order.customerName}! Here is your duplicate tax invoice & warranty certificate from TheFundu! 🎉
+
+Handset: ${order.deviceModel}
+Invoice No: ${order.invoiceNumber || order.id}
+Handset Code: ${order.deviceId}
+Primary IMEI: ${order.imei}
+Billed Amount: ₹${Number(order.finalAmount || order.sellingPrice).toLocaleString()}
+Payment Method: ${paymentSummaryText}
+
+🛡️ Official Digital Warranty Certificate:
+https://thefundu.com/verify/${serialNo}
+
+📍 Store: ${order.storeName || "Lucknow Flagship Store (LKO-01)"}
+📞 Helpline: ${invoiceSettings?.tollFree || "1800-THE-FUNDU"}`;
+
+    const encoded = encodeURIComponent(msg);
+    window.open(`https://wa.me/91${cleanPhone}?text=${encoded}`, "_blank");
+    showToast(`WhatsApp invoice dispatched to ${order.customerName}!`, "success");
+  };
+
+  // Saved Bills History Filter Logic
+  const filteredHistorySales = sales.filter((s) => {
+    const q = historySearch.toLowerCase().trim();
+    const cleanQNoSpaces = q.replace(/\s+/g, "");
+    const matchesSearch =
+      !q ||
+      (s.imei && s.imei.includes(q)) ||
+      (s.deviceId && s.deviceId.toLowerCase().includes(q)) ||
+      (s.deviceId && s.deviceId.replace(/\D/g, "").includes(q)) ||
+      (s.invoiceNumber && s.invoiceNumber.toLowerCase().includes(q)) ||
+      (s.id && s.id.toLowerCase().includes(q)) ||
+      (s.customerName && s.customerName.toLowerCase().includes(q)) ||
+      (s.customerPhone && s.customerPhone.includes(q)) ||
+      (s.customerAadhaar && s.customerAadhaar.replace(/\s+/g, "").includes(cleanQNoSpaces)) ||
+      (s.deviceModel && s.deviceModel.toLowerCase().includes(q));
+
+    const matchesPayment =
+      historyPaymentFilter === "all" ||
+      (historyPaymentFilter === "Split" && (s.paymentMethod?.includes("Split") || s.splitPayment)) ||
+      (historyPaymentFilter === "Cash" && s.paymentMethod === "Cash" && !s.splitPayment) ||
+      (historyPaymentFilter === "UPI" && s.paymentMethod === "UPI" && !s.splitPayment) ||
+      (historyPaymentFilter === "Card" && s.paymentMethod === "Card" && !s.splitPayment);
+
+    const matchesStore =
+      historyStoreFilter === "all" ||
+      (s.storeCode && s.storeCode === historyStoreFilter) ||
+      (s.channelName && s.channelName.includes(historyStoreFilter));
+
+    return matchesSearch && matchesPayment && matchesStore;
+  });
+
+  const totalBilledRevenue = sales.reduce((acc, s) => acc + (s.finalAmount || s.sellingPrice || 0), 0);
+  const totalMarginTaxAudited = sales.reduce((acc, s) => acc + (s.taxAmount || 0), 0);
+  const totalSplitBills = sales.filter((s) => s.paymentMethod?.includes("Split") || s.splitPayment).length;
 
   return (
     <div className="space-y-6 pb-20">
@@ -338,8 +466,73 @@ Have a wonderful experience with your device!`;
         </div>
       </div>
 
-      {/* TWO COLUMN WORKSPACE: Config on Left, Live Customer Invoice on Right */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      {/* SECTION TABS: Generator vs Saved Bills & Invoices History */}
+      <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3 gap-3 flex-wrap print:hidden">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setActiveTab("generator")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-2xs ${
+              activeTab === "generator"
+                ? "bg-fundu-600 text-white shadow-fundu-200 dark:shadow-none ring-2 ring-fundu-600/30"
+                : "bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/80"
+            }`}
+          >
+            <FileText className="w-4 h-4" />
+            <span>Create &amp; Print Bill (नया बिल बनाएं)</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("history")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-2xs ${
+              activeTab === "history"
+                ? "bg-fundu-600 text-white shadow-fundu-200 dark:shadow-none ring-2 ring-fundu-600/30"
+                : "bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/80"
+            }`}
+          >
+            <ReceiptText className="w-4 h-4" />
+            <span>Saved Bills Ledger (सुरक्षित बिलों का लेजर)</span>
+            <span
+              className={`px-2 py-0.5 rounded-full text-[11px] font-extrabold ${
+                activeTab === "history"
+                  ? "bg-white/20 text-white"
+                  : "bg-fundu-100 dark:bg-fundu-950/80 text-fundu-700 dark:text-fundu-300"
+              }`}
+            >
+              {sales.length} Bills
+            </span>
+          </button>
+        </div>
+
+        {activeTab === "generator" ? (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setActiveTab("history")}
+            className="text-xs gap-1.5 font-semibold text-slate-700 dark:text-slate-300"
+          >
+            <ReceiptText className="w-3.5 h-3.5 text-fundu-600" />
+            <span>View All Saved Bills ({sales.length})</span>
+          </Button>
+        ) : (
+          <Button
+            variant="fundu"
+            size="sm"
+            onClick={() => setActiveTab("generator")}
+            className="text-xs gap-1.5 font-semibold"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span>+ Create New Tax Invoice</span>
+          </Button>
+        )}
+      </div>
+
+      {/* ============================================================== */}
+      {/* TAB 1: INVOICE GENERATOR & CUSTOMER BILL PREVIEW               */}
+      {/* ============================================================== */}
+      {activeTab === "generator" && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* ============================================================== */}
         {/* LEFT COLUMN: Input Parameters & Margin Calculator (Hidden in Print) */}
         {/* ============================================================== */}
@@ -997,6 +1190,463 @@ Have a wonderful experience with your device!`;
           </div>
         </div>
       </div>
+      )}
+
+      {/* ============================================================== */}
+      {/* TAB 2: PERMANENT SAVED BILLS & TAX INVOICE LEDGER               */}
+      {/* ============================================================== */}
+      {activeTab === "history" && (
+        <div className="space-y-5 print:hidden">
+          {/* KPI Summary Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="border-fundu-200 dark:border-fundu-900 bg-gradient-to-br from-fundu-50/60 to-white dark:from-fundu-950/30 dark:to-slate-900 shadow-2xs">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Total Saved Invoices</span>
+                  <div className="h-8 w-8 rounded-lg bg-fundu-100 dark:bg-fundu-900/60 text-fundu-600 flex items-center justify-center">
+                    <ReceiptText className="h-4 w-4" />
+                  </div>
+                </div>
+                <div className="text-2xl font-black text-slate-900 dark:text-slate-100 mt-2 font-mono">
+                  {sales.length}
+                </div>
+                <p className="text-[11px] text-fundu-700 dark:text-fundu-400 font-medium mt-1">
+                  All issued &amp; printed bills recorded
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-blue-200 dark:border-blue-900 bg-gradient-to-br from-blue-50/60 to-white dark:from-blue-950/30 dark:to-slate-900 shadow-2xs">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Total Billed Revenue</span>
+                  <div className="h-8 w-8 rounded-lg bg-blue-100 dark:bg-blue-900/60 text-blue-600 flex items-center justify-center">
+                    <DollarSign className="h-4 w-4" />
+                  </div>
+                </div>
+                <div className="text-2xl font-black text-slate-900 dark:text-slate-100 mt-2 font-mono">
+                  {formatINR(totalBilledRevenue)}
+                </div>
+                <p className="text-[11px] text-blue-700 dark:text-blue-400 font-medium mt-1">
+                  Gross retail sales value
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-emerald-200 dark:border-emerald-900 bg-gradient-to-br from-emerald-50/60 to-white dark:from-emerald-950/30 dark:to-slate-900 shadow-2xs">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">GST Rule 32(5) Margin Tax</span>
+                  <div className="h-8 w-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/60 text-emerald-600 flex items-center justify-center">
+                    <BadgePercent className="h-4 w-4" />
+                  </div>
+                </div>
+                <div className="text-2xl font-black text-emerald-700 dark:text-emerald-400 mt-2 font-mono">
+                  {formatINR(totalMarginTaxAudited)}
+                </div>
+                <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium mt-1">
+                  18% GST strictly audited on margin
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-amber-200 dark:border-amber-900 bg-gradient-to-br from-amber-50/60 to-white dark:from-amber-950/30 dark:to-slate-900 shadow-2xs">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Split Payment Bills</span>
+                  <div className="h-8 w-8 rounded-lg bg-amber-100 dark:bg-amber-900/60 text-amber-600 flex items-center justify-center">
+                    <CreditCard className="h-4 w-4" />
+                  </div>
+                </div>
+                <div className="text-2xl font-black text-slate-900 dark:text-slate-100 mt-2 font-mono">
+                  {totalSplitBills}
+                </div>
+                <p className="text-[11px] text-amber-700 dark:text-amber-400 font-medium mt-1">
+                  Cash + UPI hybrid settlement
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Search, Filter & Quick Action Bar */}
+          <Card className="border-slate-200 dark:border-slate-800 shadow-xs">
+            <CardContent className="p-4">
+              <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 flex-wrap">
+                {/* Search Input */}
+                <div className="relative flex-1 min-w-[280px]">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                  <Input
+                    type="text"
+                    value={historySearch}
+                    onChange={(e) => setHistorySearch(e.target.value)}
+                    placeholder="Search by IMEI (e.g. 359078...), Fun Code (e.g. Fun-26000), Invoice #, Customer Name, Mobile, Aadhaar..."
+                    className="pl-9 pr-9 h-10 text-xs sm:text-sm bg-white dark:bg-slate-900"
+                  />
+                  {historySearch && (
+                    <button
+                      type="button"
+                      onClick={() => setHistorySearch("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs font-bold"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+
+                {/* Filter by Payment Mode */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <select
+                    value={historyPaymentFilter}
+                    onChange={(e) => setHistoryPaymentFilter(e.target.value)}
+                    className="h-10 px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-medium"
+                  >
+                    <option value="all">All Payment Modes</option>
+                    <option value="UPI">UPI (GPay / PhonePe / Paytm)</option>
+                    <option value="Cash">Cash Desk</option>
+                    <option value="Card">Card</option>
+                    <option value="Split">Split (Cash + Online)</option>
+                  </select>
+
+                  {/* Filter by Store */}
+                  <select
+                    value={historyStoreFilter}
+                    onChange={(e) => setHistoryStoreFilter(e.target.value)}
+                    className="h-10 px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-medium"
+                  >
+                    <option value="all">All Store Outlets</option>
+                    {warehouses.map((w) => (
+                      <option key={w.id} value={w.code}>
+                        {w.name} ({w.code})
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* Export CSV Button */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      exportSavedBillsCSV(sales);
+                      showToast("Exported all saved tax invoices with Fun Code & IMEI to CSV!", "success");
+                    }}
+                    className="h-10 text-xs gap-1.5 font-semibold border-emerald-300 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800 shrink-0"
+                    title="Export all saved tax invoices with IMEI, Fun Code, Aadhaar, Addresses, and GST Rule 32(5) breakdown"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    <span>Export Bills (CSV / Excel)</span>
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Saved Bills Table */}
+          <Card className="border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+            <CardHeader className="py-3 px-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/60 flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="text-sm font-bold flex items-center gap-2">
+                  <ReceiptText className="w-4 h-4 text-fundu-600" />
+                  <span>Permanent Tax Invoice Ledger</span>
+                  <Badge variant="fundu" size="sm">
+                    {filteredHistorySales.length} of {sales.length} Bills
+                  </Badge>
+                </CardTitle>
+                <CardDescription className="text-xs mt-0.5">
+                  Every bill issued, downloaded, or printed is permanently recorded here with Fun Code, 15-digit IMEI, Aadhaar UID, and GST Rule 32(5) tax split.
+                </CardDescription>
+              </div>
+
+              <Button
+                variant="fundu"
+                size="sm"
+                onClick={() => setActiveTab("generator")}
+                className="text-xs gap-1 font-semibold"
+              >
+                <FileText className="w-3.5 h-3.5" />
+                <span>+ Create New Bill</span>
+              </Button>
+            </CardHeader>
+
+            <div className="overflow-x-auto">
+              {filteredHistorySales.length === 0 ? (
+                <div className="py-16 text-center text-slate-500">
+                  <ReceiptText className="h-12 w-12 text-slate-300 mx-auto mb-3" />
+                  <p className="text-sm font-semibold">Koi bill nahi mila</p>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Search query ya filter adjust karein ya naya bill generate karein.
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setHistorySearch("");
+                      setHistoryPaymentFilter("all");
+                      setHistoryStoreFilter("all");
+                    }}
+                    className="mt-3 text-xs"
+                  >
+                    Clear All Filters
+                  </Button>
+                </div>
+              ) : (
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-100/70 dark:bg-slate-900/90 text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                      <th className="py-3 px-3.5">Invoice # &amp; Date</th>
+                      <th className="py-3 px-3.5">Fun Code &amp; Handset</th>
+                      <th className="py-3 px-3.5">IMEI &amp; Serial</th>
+                      <th className="py-3 px-3.5">Customer &amp; Aadhaar</th>
+                      <th className="py-3 px-3.5">Payment Details</th>
+                      <th className="py-3 px-3.5 text-right">Billed Amount</th>
+                      <th className="py-3 px-3.5 text-center">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
+                    {filteredHistorySales.map((s) => {
+                      const funCode = s.deviceId?.startsWith("Fun-")
+                        ? s.deviceId
+                        : `Fun-${s.deviceId?.replace(/\D/g, "") || "26000"}`;
+                      const isSplit = Boolean(s.splitPayment || s.paymentMethod?.includes("Split"));
+
+                      return (
+                        <tr
+                          key={s.id}
+                          className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors"
+                        >
+                          {/* 1. Invoice Number & Date */}
+                          <td className="py-3 px-3.5 align-top">
+                            <div className="font-mono font-bold text-slate-900 dark:text-slate-100">
+                              {s.invoiceNumber || s.id}
+                            </div>
+                            <div className="flex items-center gap-1.5 text-[11px] text-slate-500 mt-0.5">
+                              <Calendar className="w-3 h-3 text-slate-400" />
+                              <span>{s.date}</span>
+                              <span className="text-[10px] px-1 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 font-mono">
+                                {s.channel || "FSO"}
+                              </span>
+                            </div>
+                          </td>
+
+                          {/* 2. Fun Code & Handset Model */}
+                          <td className="py-3 px-3.5 align-top">
+                            <div className="flex items-center gap-1.5">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-md font-mono text-[11px] font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800">
+                                {funCode}
+                              </span>
+                              <span className="text-[10px] font-semibold text-slate-500 uppercase">
+                                Refurbished
+                              </span>
+                            </div>
+                            <div
+                              className="text-xs font-bold text-slate-800 dark:text-slate-200 mt-1 max-w-[210px] truncate"
+                              title={s.deviceModel}
+                            >
+                              {s.deviceModel}
+                            </div>
+                          </td>
+
+                          {/* 3. Primary IMEI & Serial */}
+                          <td className="py-3 px-3.5 align-top">
+                            <div className="flex items-center gap-1.5 font-mono text-xs font-bold text-slate-900 dark:text-slate-100">
+                              <span>{s.imei}</span>
+                              <button
+                                type="button"
+                                onClick={() => handleCopyImei(s.imei)}
+                                className="text-slate-400 hover:text-fundu-600 p-0.5 rounded"
+                                title="Copy 15-digit IMEI"
+                              >
+                                {copiedImei === s.imei ? (
+                                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                                ) : (
+                                  <Copy className="w-3.5 h-3.5" />
+                                )}
+                              </button>
+                            </div>
+                            <div className="text-[10px] font-mono text-slate-500 mt-0.5">
+                              SN: {s.serialNumber || `SN${funCode.replace(/\D/g, "")}`}
+                            </div>
+                          </td>
+
+                          {/* 4. Customer Name, Mobile, Aadhaar UID, Address */}
+                          <td className="py-3 px-3.5 align-top">
+                            <div className="font-bold text-slate-900 dark:text-slate-100">
+                              {s.customerName}
+                            </div>
+                            <div className="flex items-center gap-1 text-[11px] text-slate-500">
+                              <Phone className="w-2.5 h-2.5 text-slate-400" />
+                              <span>{s.customerPhone}</span>
+                            </div>
+                            {s.customerAadhaar ? (
+                              <div className="inline-flex items-center gap-1 mt-0.5 px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800">
+                                <ShieldCheck className="w-2.5 h-2.5 text-blue-600" />
+                                <span>UID: {s.customerAadhaar}</span>
+                              </div>
+                            ) : null}
+                            <div
+                              className="text-[10px] text-slate-400 truncate max-w-[190px] mt-0.5"
+                              title={s.customerLocalAddress || s.customerAddress}
+                            >
+                              📍 {s.customerLocalAddress || s.customerAddress}
+                            </div>
+                          </td>
+
+                          {/* 5. Payment Details */}
+                          <td className="py-3 px-3.5 align-top">
+                            {isSplit && s.splitPayment ? (
+                              <div className="space-y-0.5">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+                                  Split Payment
+                                </span>
+                                <div className="text-[11px] text-slate-700 dark:text-slate-300 font-semibold">
+                                  💵 Cash: ₹{s.splitPayment.cashAmount?.toLocaleString()}
+                                </div>
+                                <div className="text-[11px] text-slate-700 dark:text-slate-300 font-semibold">
+                                  💳 {s.splitPayment.onlineMode || "UPI"}: ₹{s.splitPayment.onlineAmount?.toLocaleString()}
+                                </div>
+                              </div>
+                            ) : (
+                              <div>
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                  s.paymentMethod === "Cash"
+                                    ? "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200 border border-slate-300"
+                                    : "bg-fundu-100 text-fundu-800 dark:bg-fundu-950/60 dark:text-fundu-300 border border-fundu-300"
+                                }`}>
+                                  {s.paymentMethod}
+                                </span>
+                                <div className="text-[10px] font-mono text-slate-400 mt-0.5 truncate max-w-[140px]">
+                                  Txn: {s.paymentTxnId || s.splitPayment?.onlineTxnId || "Completed"}
+                                </div>
+                              </div>
+                            )}
+                          </td>
+
+                          {/* 6. Billed Amount & Margin GST */}
+                          <td className="py-3 px-3.5 align-top text-right">
+                            <div className="font-extrabold text-sm text-slate-900 dark:text-slate-100 font-mono">
+                              {formatINR(s.finalAmount || s.sellingPrice || 0)}
+                            </div>
+                            <div className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">
+                              GST Rule 32(5): {formatINR(s.taxAmount || 0)}
+                            </div>
+                            {Number(s.discount) > 0 && (
+                              <div className="text-[10px] text-rose-500 font-medium">
+                                -{formatINR(s.discount)} Off
+                              </div>
+                            )}
+                          </td>
+
+                          {/* 7. Action Buttons */}
+                          <td className="py-3 px-3.5 align-top text-center">
+                            <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                              {/* 1-Click View & Reprint */}
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  setSelectedHistoryOrder(s);
+                                  setIsHistoryModalOpen(true);
+                                }}
+                                className="h-7 text-xs px-2 gap-1 font-bold border-fundu-300 text-fundu-700 bg-fundu-50/60 hover:bg-fundu-100 dark:bg-fundu-950/50 dark:text-fundu-300 dark:border-fundu-800 shadow-2xs"
+                                title="Open certified Tax Invoice for Reprinting or PDF Download"
+                              >
+                                <Printer className="w-3 h-3 text-fundu-600" />
+                                <span>Reprint</span>
+                              </Button>
+
+                              {/* WhatsApp Share */}
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleSendWhatsAppForOrder(s)}
+                                className="h-7 text-xs px-2 gap-1 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border-emerald-300 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800 shadow-2xs"
+                                title="Share invoice receipt and warranty certificate via WhatsApp"
+                              >
+                                <MessageSquare className="w-3 h-3 text-emerald-600" />
+                                <span>WhatsApp</span>
+                              </Button>
+
+                              {/* Delete Record */}
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  if (confirm(`Remove bill ${s.invoiceNumber || s.id} from ledger?`)) {
+                                    deleteSale(s.id);
+                                  }
+                                }}
+                                className="h-7 w-7 p-0 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30"
+                                title="Delete bill from ledger"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* View / Reprint Tax Invoice Sheet Modal for History */}
+      {selectedHistoryOrder && (
+        <InvoiceModal
+          isOpen={isHistoryModalOpen}
+          onClose={() => {
+            setIsHistoryModalOpen(false);
+            setSelectedHistoryOrder(null);
+          }}
+          order={selectedHistoryOrder}
+          device={
+            devices.find(
+              (d) =>
+                d.id === selectedHistoryOrder.deviceId ||
+                d.imei1 === selectedHistoryOrder.imei
+            ) || ({
+              id: selectedHistoryOrder.deviceId,
+              brand: selectedHistoryOrder.deviceModel.split(" ")[0] || "Smartphone",
+              model: selectedHistoryOrder.deviceModel,
+              storage: "128 GB",
+              colour: "Default Edition",
+              imei1: selectedHistoryOrder.imei,
+              serialNumber: selectedHistoryOrder.serialNumber || `SN${selectedHistoryOrder.deviceId?.replace(/\D/g, "") || "26001"}`,
+              costs: {
+                purchasePrice: selectedHistoryOrder.purchasePrice || 25000,
+                sellingPrice: selectedHistoryOrder.sellingPrice,
+                totalLandedCost: selectedHistoryOrder.purchasePrice || 25000,
+              },
+            } as any)
+          }
+          customCustomer={{
+            name: selectedHistoryOrder.customerName,
+            phone: selectedHistoryOrder.customerPhone,
+            email: selectedHistoryOrder.customerEmail,
+            address: selectedHistoryOrder.customerLocalAddress || selectedHistoryOrder.customerAddress,
+            localAddress: selectedHistoryOrder.customerLocalAddress || selectedHistoryOrder.customerAddress,
+            permanentAddress: selectedHistoryOrder.customerPermanentAddress || selectedHistoryOrder.customerLocalAddress || selectedHistoryOrder.customerAddress,
+            aadhaar: selectedHistoryOrder.customerAadhaar,
+            gstin: selectedHistoryOrder.customerGstin,
+            placeOfSupply: selectedHistoryOrder.placeOfSupply,
+          }}
+          financials={{
+            purchasePrice: selectedHistoryOrder.purchasePrice || 25000,
+            sellingPrice: selectedHistoryOrder.sellingPrice,
+            discount: selectedHistoryOrder.discount,
+          }}
+          paymentInfo={{
+            method: selectedHistoryOrder.splitPayment?.onlineMode || selectedHistoryOrder.paymentMethod,
+            mode: selectedHistoryOrder.splitPayment ? "Split" : selectedHistoryOrder.paymentMethod,
+            txnId: selectedHistoryOrder.paymentTxnId || selectedHistoryOrder.splitPayment?.onlineTxnId,
+            splitPayment: selectedHistoryOrder.splitPayment,
+          }}
+          invoiceNumber={selectedHistoryOrder.invoiceNumber || selectedHistoryOrder.id}
+          invoiceDate={selectedHistoryOrder.date}
+        />
+      )}
 
       {/* Invoice & Multi-Store Settings Modal */}
       <InvoiceSettingsModal

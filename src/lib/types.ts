@@ -229,6 +229,11 @@ export interface SalesOrder {
   warrantyExpiry: string;
   invoiceUrl?: string;
   invoiceNumber?: string;
+  purchasePrice?: number;
+  profitMargin?: number;
+  paymentTxnId?: string;
+  storeName?: string;
+  storeCode?: string;
 }
 
 export interface StockMovement {

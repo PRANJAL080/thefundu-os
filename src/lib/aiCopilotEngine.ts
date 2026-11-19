@@ -61,43 +61,43 @@ export function transliterateAndNormalizeHindi(input: string): string {
   s = s.replace(/(?:^|\s+)लाख(?:\s+|$)/gi, "00000 ");
 
   // 3. Brand Names transliteration
-  s = s.replace(/सैमसंग|सामसंग/gi, "samsung");
-  s = s.replace(/ऐप्पल|एप्पल|एपिल/gi, "apple");
-  s = s.replace(/आईफोन|आइफोन/gi, "iphone");
+  s = s.replace(/(?:सेमसंग|सैमसंग|सामसंग|समसंग|सैमसन|सेमसन|सैमसुंग|सेमसुंग)/gi, "samsung");
+  s = s.replace(/(?:आईफोन|आइफोन|आई\s*फोन|आइ\s*फोन)/gi, "iphone");
+  s = s.replace(/(?:ऐप्पल|एप्पल|एपिल|एपल|ऐपल)/gi, "apple");
   s = s.replace(/वनप्लस|वन\s*प्लस/gi, "oneplus");
   s = s.replace(/गूगल|गुगल/gi, "google");
-  s = s.replace(/पिक्सेल|पिक्सल/gi, "pixel");
-  s = s.replace(/शाओमी|श्योमी/gi, "xiaomi");
-  s = s.replace(/रेडमी/gi, "redmi");
+  s = s.replace(/पिक्सेल|पिक्सल|पिकसल/gi, "pixel");
+  s = s.replace(/शाओमी|श्योमी|श्याओमी|ज़िओमी|जिओमी/gi, "xiaomi");
+  s = s.replace(/रेडमी|रेड\s*मी/gi, "redmi");
   s = s.replace(/पोको/gi, "poco");
   s = s.replace(/वीवो|विवो/gi, "vivo");
   s = s.replace(/ओप्पो|ओपो/gi, "oppo");
-  s = s.replace(/रियलमी|रियल\s*मी/gi, "realme");
+  s = s.replace(/रियलमी|रियल\s*मी|रेअलमी/gi, "realme");
   s = s.replace(/मोटोरोला|मोटो/gi, "motorola");
   s = s.replace(/नथिंग/gi, "nothing");
-  s = s.replace(/आईकू|इकू/gi, "iqoo");
-  s = s.replace(/इनफिनिक्स/gi, "infinix");
-  s = s.replace(/टेक्नो/gi, "tecno");
+  s = s.replace(/आईकू|इकू|आयकु/gi, "iqoo");
+  s = s.replace(/इनफिनिक्स|इनफ़िनिक्स/gi, "infinix");
+  s = s.replace(/टेक्नो|टेकनो/gi, "tecno");
   s = s.replace(/लावा/gi, "lava");
   s = s.replace(/नोकिया/gi, "nokia");
   s = s.replace(/सोनी/gi, "sony");
   s = s.replace(/हॉनर|ऑनर/gi, "honor");
-  s = s.replace(/आसुस/gi, "asus");
+  s = s.replace(/आसुस|असुस/gi, "asus");
 
   // 4. Model Terms and Letter-Series (Handle Speech-to-Text variants of "S" like "एस", "इज़", "इस", "इज")
-  s = s.replace(/(?:^|\s+)(?:एस|इज़|इस|इज|स)(?:\s+|$)/gi, " s ");
-  s = s.replace(/अल्ट्रा|अलट्रा/gi, "ultra");
-  s = s.replace(/प्रो/gi, "pro");
-  s = s.replace(/मैक्स|मेक्स/gi, "max");
-  s = s.replace(/प्लस/gi, "plus");
-  s = s.replace(/मिनी/gi, "mini");
-  s = s.replace(/गैलेक्सी|गेलेक्सी/gi, "galaxy");
-  s = s.replace(/फोल्ड/gi, "fold");
-  s = s.replace(/फ्लिप/gi, "flip");
-  s = s.replace(/नोट/gi, "note");
-  s = s.replace(/जीबी|जी\s*बी/gi, "gb");
-  s = s.replace(/टीबी|टी\s*बी/gi, "tb");
-  s = s.replace(/रैम/gi, "ram");
+  s = s.replace(/(?:^|\s+)(?:एस|एस्|इज़|इस|इज|ईस|ईज़|स)(?:\s+|$)/gi, " s ");
+  s = s.replace(/(?:^|\s+)(?:अल्ट्रा|अलट्रा|उल्ट्रा)(?:\s+|$)/gi, " ultra ");
+  s = s.replace(/(?:^|\s+)(?:प्रो|प्रॉ)(?:\s+|$)/gi, " pro ");
+  s = s.replace(/(?:^|\s+)(?:मैक्स|मेक्स|मेकस)(?:\s+|$)/gi, " max ");
+  s = s.replace(/(?:^|\s+)(?:प्लस|पल्स)(?:\s+|$)/gi, " plus ");
+  s = s.replace(/(?:^|\s+)मिनी(?:\s+|$)/gi, " mini ");
+  s = s.replace(/(?:^|\s+)(?:गैलेक्सी|गेलेक्सी|गेलेकसी)(?:\s+|$)/gi, " galaxy ");
+  s = s.replace(/(?:^|\s+)(?:फोल्ड|फ़ोल्ड)(?:\s+|$)/gi, " fold ");
+  s = s.replace(/(?:^|\s+)(?:फ्लिप|फ़्लिप)(?:\s+|$)/gi, " flip ");
+  s = s.replace(/(?:^|\s+)नोट(?:\s+|$)/gi, " note ");
+  s = s.replace(/(?:^|\s+)(?:जीबी|जी\s*बी)(?:\s+|$)/gi, " gb ");
+  s = s.replace(/(?:^|\s+)(?:टीबी|टी\s*बी)(?:\s+|$)/gi, " tb ");
+  s = s.replace(/(?:^|\s+)रैम(?:\s+|$)/gi, " ram ");
 
   // 5. Intent and Business keywords
   s = s.replace(/स्टॉक|स्टाक/gi, "stock");

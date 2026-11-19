@@ -107,6 +107,7 @@ interface AppContextType {
 
   addPurchase: (purchase: Partial<PurchaseOrder>) => PurchaseOrder;
   addSale: (sale: Partial<SalesOrder>) => SalesOrder;
+  deleteSale: (id: string) => void;
   updateSalesDeliveryStatus: (id: string, status: SalesOrder["deliveryStatus"]) => void;
 
   addStockMovement: (movement: Partial<StockMovement>) => void;
@@ -676,9 +677,26 @@ export function AppProvider({ children }: { children: ReactNode }) {
       trackingNumber: `TFD-SHIP-${Math.floor(100000 + Math.random() * 900000)}`,
       warrantyMonths: sale.warrantyMonths || 12,
       warrantyExpiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+      purchasePrice: sale.purchasePrice,
+      profitMargin: sale.profitMargin,
+      paymentTxnId: sale.paymentTxnId || (sale.splitPayment?.onlineTxnId),
+      storeName: sale.storeName || "Lucknow Flagship Store (LKO-01)",
+      storeCode: sale.storeCode || "LKO-01",
     };
 
-    const updatedSales = [fullSale, ...sales];
+    // Deduplicate / update existing invoice record if re-issued or re-printed
+    const existingIndex = sales.findIndex(
+      (s) =>
+        (sale.invoiceNumber && s.invoiceNumber === sale.invoiceNumber) ||
+        (sale.id && s.id === sale.id)
+    );
+    let updatedSales: SalesOrder[];
+    if (existingIndex >= 0) {
+      updatedSales = [...sales];
+      updatedSales[existingIndex] = { ...updatedSales[existingIndex], ...fullSale };
+    } else {
+      updatedSales = [fullSale, ...sales];
+    }
     setSales(updatedSales);
 
     if (typeof window !== "undefined") {
@@ -696,7 +714,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         deviceId: sale.deviceId,
         deviceModel: fullSale.deviceModel,
         imei: fullSale.imei,
-        fromLocation: "Lucknow Store (LKO-01)",
+        fromLocation: fullSale.storeName || "Lucknow Store (LKO-01)",
         toLocation: `Customer (${fullSale.customerName})`,
         quantity: 1,
         value: fullSale.finalAmount,
@@ -705,8 +723,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
       });
     }
 
-    showToast(`Order ${fullSale.id} created for ${fullSale.customerName}!`, "success");
+    showToast(`Tax Invoice ${fullSale.invoiceNumber || fullSale.id} saved for ${fullSale.customerName}!`, "success");
     return fullSale;
+  };
+
+  const deleteSale = (id: string) => {
+    const updated = sales.filter((s) => s.id !== id && s.invoiceNumber !== id);
+    setSales(updated);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(STORAGE_KEYS.sales, JSON.stringify(updated));
+      } catch (e) {}
+    }
+    showToast("Invoice removed from saved bills record", "info");
   };
 
   const updateSalesDeliveryStatus = (id: string, status: SalesOrder["deliveryStatus"]) => {
@@ -1612,6 +1641,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setAllDevicesInStock,
         addPurchase,
         addSale,
+        deleteSale,
         updateSalesDeliveryStatus,
         addStockMovement,
         submitQCInspection,
