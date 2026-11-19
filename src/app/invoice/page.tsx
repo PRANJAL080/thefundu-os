@@ -36,6 +36,7 @@ import {
   Filter,
   Phone,
   Clock,
+  ScanLine,
 } from "lucide-react";
 import { useApp } from "@/lib/store";
 import { Device, SalesOrder, SalesChannelCode, SaleTypeCode } from "@/lib/types";
@@ -59,6 +60,7 @@ export default function InvoiceGeneratorPage() {
     invoiceSettings,
     addSale,
     deleteSale,
+    clearAllSales,
     sales,
     showToast,
     isCashierMode,
@@ -77,15 +79,40 @@ export default function InvoiceGeneratorPage() {
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [copiedImei, setCopiedImei] = useState<string | null>(null);
 
-  // Auto-switch to history tab if ?tab=history is in the URL
+  // Auto-switch to history tab or auto-select handset from URL parameters
   useEffect(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       if (params.get("tab") === "history" || params.get("tab") === "saved") {
         setActiveTab("history");
       }
+      const qDev = params.get("deviceId") || params.get("id");
+      const qImei = params.get("imei");
+      if (qDev) {
+        const found = devices.find(
+          (d) =>
+            d.id.toUpperCase() === qDev.toUpperCase() ||
+            d.id.replace(/[^A-Z0-9]/g, "").toUpperCase() === qDev.replace(/[^A-Z0-9]/g, "").toUpperCase()
+        );
+        if (found) {
+          setSelectedDeviceId(found.id);
+          setPurchasePriceX(found.costs.purchasePrice || 25000);
+          const newSell = found.costs.sellingPrice || 30000;
+          setSellingPriceY(newSell);
+          setActiveTab("generator");
+        }
+      } else if (qImei) {
+        const found = devices.find((d) => d.imei1 === qImei || d.imei2 === qImei);
+        if (found) {
+          setSelectedDeviceId(found.id);
+          setPurchasePriceX(found.costs.purchasePrice || 25000);
+          const newSell = found.costs.sellingPrice || 30000;
+          setSellingPriceY(newSell);
+          setActiveTab("generator");
+        }
+      }
     }
-  }, []);
+  }, [devices]);
 
   // Active Store Outlet (Dynamic multi-store support)
   const currentStore =
@@ -312,6 +339,66 @@ export default function InvoiceGeneratorPage() {
       const half = Math.round(newFinal / 2);
       setSplitCashAmount(half);
       setSplitOnlineAmount(Math.max(0, newFinal - half));
+    }
+  };
+
+  // Barcode Gun Scanning State & Handler for Tax Invoice Desk
+  const [barcodeScanQuery, setBarcodeScanQuery] = useState("");
+
+  const playScanBeep = (success: boolean) => {
+    try {
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      if (success) {
+        osc.frequency.setValueAtTime(1760, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+        osc.start(audioCtx.currentTime);
+        osc.stop(audioCtx.currentTime + 0.12);
+      } else {
+        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+        osc.start(audioCtx.currentTime);
+        osc.stop(audioCtx.currentTime + 0.25);
+      }
+    } catch {}
+  };
+
+  const handleBarcodeScanDirect = (rawInput: string, isSubmit = false) => {
+    const clean = rawInput.replace(/[\r\n\t]/g, "").trim().toUpperCase();
+    if (!clean) return;
+
+    const cleanNoDash = clean.replace(/[^A-Z0-9]/g, "");
+
+    const found = devices.find((d) => {
+      const dIdUpper = d.id.toUpperCase();
+      const dIdNoDash = dIdUpper.replace(/[^A-Z0-9]/g, "");
+      const dSerialUpper = d.serialNumber?.toUpperCase() || "";
+      const dSkuUpper = d.sku?.toUpperCase() || "";
+
+      return (
+        d.imei1 === clean ||
+        d.imei2 === clean ||
+        dIdUpper === clean ||
+        dIdNoDash === cleanNoDash ||
+        dSerialUpper === clean ||
+        dSkuUpper === clean ||
+        (clean.length >= 5 && /^\d+$/.test(clean) && dIdNoDash.endsWith(clean))
+      );
+    });
+
+    if (found) {
+      handleDeviceChange(found.id);
+      playScanBeep(true);
+      showToast(`✓ Scanned: ${found.brand} ${found.model} (${found.id})`, "success");
+      setBarcodeScanQuery("");
+    } else if (isSubmit) {
+      playScanBeep(false);
+      showToast(`Koi handset nahi mila with Barcode/IMEI: "${clean}"`, "error");
     }
   };
 
@@ -710,6 +797,68 @@ https://thefundu.com/verify/${serialNo}
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-3 space-y-3 text-xs">
+              {/* Direct Barcode & Laser Gun Quick-Scan Box */}
+              <div className="bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/70 p-2.5 rounded-lg space-y-1.5 shadow-2xs">
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-bold text-emerald-900 dark:text-emerald-300 flex items-center gap-1.5">
+                    <ScanLine className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                    <span>Barcode Gun / Quick IMEI Scan</span>
+                    <span className="flex items-center gap-1 text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded bg-emerald-200/80 dark:bg-emerald-900/80 text-emerald-800 dark:text-emerald-200">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping" />
+                      USB Scanner Gun Active
+                    </span>
+                  </label>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Box / Sticker scan karein</span>
+                </div>
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Input
+                      placeholder="Scan Barcode or type 15-digit IMEI / Fun Code..."
+                      value={barcodeScanQuery}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setBarcodeScanQuery(val);
+                        // Fast instant match when full 15-digit IMEI or Fun-Code scanned
+                        const clean = val.replace(/[\r\n\t]/g, "").trim().toUpperCase();
+                        if (
+                          (clean.length === 15 && /^\d+$/.test(clean)) ||
+                          (clean.startsWith("FUN-26") && clean.length >= 9) ||
+                          (clean.startsWith("FUN26") && clean.length >= 8)
+                        ) {
+                          handleBarcodeScanDirect(clean, false);
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleBarcodeScanDirect(barcodeScanQuery, true);
+                        }
+                      }}
+                      className="h-8 text-xs font-mono bg-white dark:bg-slate-900 pr-7 border-emerald-300 focus:border-emerald-500"
+                    />
+                    {barcodeScanQuery && (
+                      <button
+                        type="button"
+                        onClick={() => setBarcodeScanQuery("")}
+                        className="absolute right-2 top-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs font-bold"
+                      >
+                        ×
+                      </button>
+                    )}
+                  </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="fundu"
+                    onClick={() => handleBarcodeScanDirect(barcodeScanQuery, true)}
+                    className="h-8 text-xs font-semibold px-3 shrink-0 gap-1"
+                  >
+                    <Search className="h-3 w-3" />
+                    <span>Find</span>
+                  </Button>
+                </div>
+              </div>
+
               <div>
                 <label className="font-semibold block mb-1">
                   Choose Available Handset *{" "}
@@ -1551,24 +1700,63 @@ https://thefundu.com/verify/${serialNo}
                 </CardDescription>
               </div>
 
-              <Button
-                variant="fundu"
-                size="sm"
-                onClick={() => setActiveTab("generator")}
-                className="text-xs gap-1 font-semibold"
-              >
-                <FileText className="w-3.5 h-3.5" />
-                <span>+ Create New Bill</span>
-              </Button>
+              <div className="flex items-center gap-2">
+                {sales.length > 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      if (confirm("Kya aap Tax Invoice Ledger ke saare bills delete/clear karna chahte hain?")) {
+                        clearAllSales();
+                      }
+                    }}
+                    className="text-xs gap-1 border-rose-300 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40"
+                    title="Clear all saved bills from ledger"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Clear All Bills</span>
+                  </Button>
+                )}
+                <Button
+                  variant="fundu"
+                  size="sm"
+                  onClick={() => setActiveTab("generator")}
+                  className="text-xs gap-1 font-semibold"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  <span>+ Create New Bill</span>
+                </Button>
+              </div>
             </CardHeader>
 
             <div className="overflow-x-auto">
-              {filteredHistorySales.length === 0 ? (
+              {sales.length === 0 ? (
+                <div className="py-20 text-center text-slate-500">
+                  <div className="h-16 w-16 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-3.5 text-slate-400">
+                    <ReceiptText className="h-8 w-8 text-fundu-500" />
+                  </div>
+                  <p className="text-base font-bold text-slate-800 dark:text-slate-100">
+                    Abhi tak koi bill nahi kata gaya hai (0 Bills Recorded)
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 max-w-md mx-auto">
+                    Saare dummy bills ledger se successfully hata diye gaye hain. Pehla tax bill generate karne ke liye upar &apos;+ Create New Bill&apos; button par click karein.
+                  </p>
+                  <Button
+                    variant="fundu"
+                    size="sm"
+                    onClick={() => setActiveTab("generator")}
+                    className="mt-5 gap-1.5 font-semibold text-xs h-9 px-4"
+                  >
+                    <FileText className="h-4 w-4" />
+                    <span>+ Pehla Bill Generate Karein</span>
+                  </Button>
+                </div>
+              ) : filteredHistorySales.length === 0 ? (
                 <div className="py-16 text-center text-slate-500">
                   <ReceiptText className="h-12 w-12 text-slate-300 mx-auto mb-3" />
-                  <p className="text-sm font-semibold">Koi bill nahi mila</p>
+                  <p className="text-sm font-semibold">Koi matching bill nahi mila</p>
                   <p className="text-xs text-slate-400 mt-1">
-                    Search query ya filter adjust karein ya naya bill generate karein.
+                    Search query ya filter adjust karein.
                   </p>
                   <Button
                     variant="outline"

@@ -7,50 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { QRCodeSVG } from "@/components/common/QRCodeSVG";
+import { BarcodeSVG } from "@/components/common/BarcodeSVG";
 
 interface ThermalBarcodeStickerProps {
   device: Device;
   labelSize?: "50x25" | "50x38" | "100x50";
-}
-
-// Generate deterministic Code128-like barcode SVG lines for IMEI
-function BarcodeSVG({ value, width = 140, height = 28 }: { value: string; width?: number; height?: number }) {
-  // Deterministic bar widths based on ASCII codes
-  const pattern = [
-    2, 1, 3, 1, 1, 2, 3, 2, 1, 1, 2, 3, 1, 2, 1, 3, 2, 1, 2, 1, 3, 1, 2, 2, 1, 3, 1, 1, 2, 3,
-    1, 2, 2, 1, 3, 2, 1, 1, 2, 3, 1, 3, 2, 1, 1, 2, 1, 3, 2, 1
-  ];
-
-  return (
-    <div className="flex flex-col items-center select-none">
-      <svg
-        className="w-full"
-        style={{ maxWidth: `${width}px`, height: `${height}px` }}
-        viewBox="0 0 160 30"
-        fill="currentColor"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <rect x="0" y="0" width="160" height="30" fill="white" />
-        {pattern.slice(0, 32).map((p, idx) => {
-          const x = 4 + idx * 4.8;
-          const barWidth = p === 3 ? 2.8 : p === 2 ? 1.9 : 1.1;
-          return (
-            <rect
-              key={idx}
-              x={x}
-              y="1"
-              width={barWidth}
-              height="28"
-              fill="#000000"
-            />
-          );
-        })}
-      </svg>
-      <span className="font-mono text-[8.5px] font-black tracking-widest text-black leading-tight mt-0.5">
-        {value}
-      </span>
-    </div>
-  );
 }
 
 export function ThermalBarcodeSticker({

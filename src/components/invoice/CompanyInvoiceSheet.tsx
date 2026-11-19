@@ -4,6 +4,7 @@ import React, { useMemo } from "react";
 import { Device, SalesOrder, SalesChannelCode, SaleTypeCode, Warehouse } from "@/lib/types";
 import { COMPANY_CONFIG, DEFAULT_INVOICE_TERMS } from "@/lib/company-config";
 import { formatDate } from "@/lib/utils";
+import { BarcodeSVG } from "@/components/common/BarcodeSVG";
 
 export interface CompanyInvoiceSheetProps {
   device?: Device | null;
@@ -48,46 +49,6 @@ export interface CompanyInvoiceSheetProps {
   channelOrderNo?: string;
   orderNo?: string;
   warrantyDays?: number;
-}
-
-// Crisp SVG Barcode Generator (Code128 visual style)
-function BarcodeSVG({ value }: { value: string }) {
-  const bars: { width: number; space: number }[] = [];
-  let seed = 0;
-  for (let i = 0; i < value.length; i++) {
-    seed = (seed * 31 + value.charCodeAt(i)) % 100000;
-  }
-  const pattern = [2, 1, 3, 1, 1, 2, 3, 2, 1, 1, 2, 3, 1, 2, 1, 3, 2, 1, 2, 1, 3, 1, 2, 2, 1, 3, 1, 1, 2, 3];
-  
-  return (
-    <div className="flex flex-col items-center">
-      <svg
-        className="w-48 h-10"
-        viewBox="0 0 160 40"
-        fill="currentColor"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <rect x="0" y="0" width="160" height="40" fill="white" />
-        {pattern.map((p, idx) => {
-          const x = 5 + idx * 5;
-          const barWidth = p === 3 ? 3 : p === 2 ? 2 : 1.2;
-          return (
-            <rect
-              key={idx}
-              x={x}
-              y="2"
-              width={barWidth}
-              height="34"
-              fill="#000000"
-            />
-          );
-        })}
-      </svg>
-      <span className="font-mono text-[9px] font-bold tracking-wider text-black mt-0.5">
-        {value}
-      </span>
-    </div>
-  );
 }
 
 // Official Round Blue Seal & Corporate Stamp (Compact, 100% Contained in Circle - No Individual Name)

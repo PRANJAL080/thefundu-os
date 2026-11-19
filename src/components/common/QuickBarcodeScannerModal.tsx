@@ -87,18 +87,29 @@ export function QuickBarcodeScannerModal({
   };
 
   const handleLookup = (query: string) => {
-    const clean = query.trim().toUpperCase();
+    // Strip carriage return, linefeed, control chars sent by hardware guns
+    const clean = query.replace(/[\r\n\t]/g, "").trim().toUpperCase();
     if (!clean) return;
 
-    // Search by exact IMEI1, IMEI2, Inventory ID, SKU or Serial Number
-    const found = devices.find(
-      (d) =>
+    const cleanNoDash = clean.replace(/[^A-Z0-9]/g, "");
+
+    // Search by exact IMEI1, IMEI2, Inventory ID, SKU, Serial Number, or flexible partial match
+    const found = devices.find((d) => {
+      const dIdUpper = d.id.toUpperCase();
+      const dIdNoDash = dIdUpper.replace(/[^A-Z0-9]/g, "");
+      const dSerialUpper = d.serialNumber?.toUpperCase() || "";
+      const dSkuUpper = d.sku?.toUpperCase() || "";
+
+      return (
         d.imei1 === clean ||
         d.imei2 === clean ||
-        d.id.toUpperCase() === clean ||
-        d.serialNumber?.toUpperCase() === clean ||
-        d.sku?.toUpperCase() === clean
-    );
+        dIdUpper === clean ||
+        dIdNoDash === cleanNoDash ||
+        dSerialUpper === clean ||
+        dSkuUpper === clean ||
+        (clean.length >= 5 && /^\d+$/.test(clean) && dIdNoDash.endsWith(clean))
+      );
+    });
 
     setHasSearched(true);
     if (found) {
@@ -152,10 +163,16 @@ export function QuickBarcodeScannerModal({
             placeholder="Scan barcode or type IMEI 1 / IMEI 2 / Inventory ID (e.g. 354086485372166)..."
             value={scannedInput}
             onChange={(e) => {
-              setScannedInput(e.target.value);
-              // If hardware gun emits 15 digits quickly
-              if (e.target.value.length === 15 && /^\d+$/.test(e.target.value)) {
-                handleLookup(e.target.value);
+              const val = e.target.value;
+              setScannedInput(val);
+              const cleanVal = val.replace(/[\r\n\t]/g, "").trim().toUpperCase();
+              // Instant auto-lookup for hardware scanner guns emitting complete IMEI or Fun Code
+              if (
+                (cleanVal.length === 15 && /^\d+$/.test(cleanVal)) ||
+                (cleanVal.startsWith("FUN-26") && cleanVal.length >= 9) ||
+                (cleanVal.startsWith("FUN26") && cleanVal.length >= 8)
+              ) {
+                handleLookup(cleanVal);
               }
             }}
             onKeyDown={handleKeyDown}

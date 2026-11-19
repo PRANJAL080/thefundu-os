@@ -73,7 +73,7 @@ export function InvoiceModal({
   invoiceDate,
   invoiceTime,
 }: InvoiceModalProps) {
-  const { warehouses, selectedStoreId, invoiceSettings } = useApp();
+  const { warehouses, selectedStoreId, invoiceSettings, addSale, showToast } = useApp();
   const currentStore = warehouses.find((w) => w.id === selectedStoreId || w.code === selectedStoreId) || warehouses[0];
   const printContainerRef = useRef<HTMLDivElement>(null);
 
@@ -97,6 +97,30 @@ export function InvoiceModal({
   const marginTax18 = Math.round((profitMarginZ * 18 / 118) * 100) / 100;
 
   const handlePrint = () => {
+    if (device && device.status !== "Sold") {
+      const rawId = device.id.replace(/\D/g, "") || "26001";
+      const storeCode = (currentStore?.code || "LKO-01").replace(/-/g, "");
+      const invNumber = `INV${storeCode}2611-${rawId}`;
+      const cleanTitle = `${device.brand} ${device.model} (${device.storage}) Refurbished ${device.colour && device.colour !== "Default Edition" ? device.colour : ""}`.replace(/\s+/g, " ").trim();
+      addSale({
+        invoiceNumber: invNumber,
+        deviceId: device.id,
+        deviceModel: cleanTitle,
+        imei: device.imei1,
+        serialNumber: device.serialNumber || `SN${rawId}`,
+        sellingPrice: sellPriceY,
+        discount: discountD,
+        taxAmount: marginTax18,
+        finalAmount: finalSellingPrice,
+        paymentMethod: (paymentInfo?.mode as any) || "UPI",
+        customerName: customCustomer?.name || "Abhay verma",
+        customerPhone: customCustomer?.phone || "7991990508",
+        customerEmail: customCustomer?.email || "abhayverma7380@gmail.com",
+        customerAddress: customCustomer?.address || "Gomti nagar, Lucknow, Uttar Pradesh 226010",
+        customerAadhaar: customCustomer?.aadhaar || "",
+        placeOfSupply: customCustomer?.placeOfSupply || "Uttar Pradesh",
+      });
+    }
     window.print();
   };
 

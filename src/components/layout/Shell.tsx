@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { TopNav } from "./TopNav";
 import { GlobalSearch } from "@/components/common/GlobalSearch";
@@ -32,6 +32,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
   const { toasts, dismissToast, currentUser } = useApp();
   const pathname = usePathname();
+  const router = useRouter();
 
   // Public routes (Customers scanning QR codes on phone boxes/invoices) bypass staff login
   const isPublicRoute = pathname?.startsWith("/verify");
@@ -58,8 +59,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   };
 
   const handleOpenInvoice = (device: Device) => {
-    setInvoiceDevice(device);
-    setIsInvoiceOpen(true);
+    router.push(`/invoice?deviceId=${encodeURIComponent(device.id)}`);
   };
 
   const handleOpenDetails = (device: Device) => {

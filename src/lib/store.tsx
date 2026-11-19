@@ -116,6 +116,7 @@ interface AppContextType {
   addPurchase: (purchase: Partial<PurchaseOrder>) => PurchaseOrder;
   addSale: (sale: Partial<SalesOrder>) => SalesOrder;
   deleteSale: (id: string) => void;
+  clearAllSales: () => void;
   updateSalesDeliveryStatus: (id: string, status: SalesOrder["deliveryStatus"]) => void;
 
   addStockMovement: (movement: Partial<StockMovement>) => void;
@@ -275,7 +276,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     repairs: "thefundu_repairs_v5",
     qcInspections: "thefundu_qc_v5",
     warehouses: "thefundu_stores_v6",
-    sales: "thefundu_sales_v5",
+    sales: "thefundu_sales_v6",
     purchases: "thefundu_purchases_v5",
     spareParts: "thefundu_spareparts_v5",
     buybacks: "thefundu_buybacks_v5",
@@ -330,10 +331,32 @@ export function AppProvider({ children }: { children: ReactNode }) {
         const parsed = JSON.parse(storedStores);
         if (Array.isArray(parsed) && parsed.length > 0) setWarehouses(parsed);
       }
+      // Clear out legacy dummy sales if previously cached
+      localStorage.removeItem("thefundu_sales_v5");
+      localStorage.removeItem("thefundu_sales_v4");
       const storedSales = localStorage.getItem(STORAGE_KEYS.sales);
       if (storedSales) {
-        const parsed = JSON.parse(storedSales);
-        if (Array.isArray(parsed) && parsed.length > 0) setSales(parsed);
+        try {
+          const parsed = JSON.parse(storedSales);
+          if (Array.isArray(parsed)) {
+            // Strip out any hardcoded dummy demo sales
+            const realSales = parsed.filter(
+              (s: SalesOrder) =>
+                !s.id?.startsWith("TFD-FSO-2611-0001") &&
+                !s.id?.startsWith("TFD-ONS-2611-0002") &&
+                !s.id?.startsWith("TFD-FOR-2611-0003") &&
+                !s.id?.startsWith("TFD-DS-2611-0004") &&
+                !s.invoiceNumber?.startsWith("INVLKO2611-000")
+            );
+            setSales(realSales);
+            localStorage.setItem(STORAGE_KEYS.sales, JSON.stringify(realSales));
+          }
+        } catch {
+          setSales([]);
+        }
+      } else {
+        setSales([]);
+        localStorage.setItem(STORAGE_KEYS.sales, JSON.stringify([]));
       }
       const storedPurchases = localStorage.getItem(STORAGE_KEYS.purchases);
       if (storedPurchases) {
@@ -930,6 +953,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
 
     showToast("Invoice removed from ledger & handset returned to In Stock", "info");
+  };
+
+  const clearAllSales = () => {
+    setSales([]);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(STORAGE_KEYS.sales, JSON.stringify([]));
+      } catch (e) {}
+    }
+    showToast("Tax Invoice Ledger cleared! All dummy/test bills removed.", "info");
   };
 
   const updateSalesDeliveryStatus = (id: string, status: SalesOrder["deliveryStatus"]) => {
@@ -1840,6 +1873,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         addPurchase,
         addSale,
         deleteSale,
+        clearAllSales,
         updateSalesDeliveryStatus,
         addStockMovement,
         submitQCInspection,
