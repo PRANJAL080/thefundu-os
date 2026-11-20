@@ -81,7 +81,26 @@ export default function InvoiceGeneratorPage() {
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [copiedImei, setCopiedImei] = useState<string | null>(null);
 
-  // Month-wise JSON export state
+  // Month-wise JSON & Excel export state
+  const [historyMonthFilter, setHistoryMonthFilter] = useState("all");
+  const [customPickYear, setCustomPickYear] = useState("2026");
+  const [customPickMonth, setCustomPickMonth] = useState("11");
+
+  const ALL_CALENDAR_MONTHS = [
+    { value: "01", name: "January" },
+    { value: "02", name: "February" },
+    { value: "03", name: "March" },
+    { value: "04", name: "April" },
+    { value: "05", name: "May" },
+    { value: "06", name: "June" },
+    { value: "07", name: "July" },
+    { value: "08", name: "August" },
+    { value: "09", name: "September" },
+    { value: "10", name: "October" },
+    { value: "11", name: "November" },
+    { value: "12", name: "December" },
+  ];
+
   const availableBillMonths = useMemo(() => {
     const set = new Set<string>();
     sales.forEach((s) => {
@@ -735,7 +754,11 @@ https://thefundu.com/verify/${serialNo}
       (s.storeCode && s.storeCode === historyStoreFilter) ||
       (s.channelName && s.channelName.includes(historyStoreFilter));
 
-    return matchesSearch && matchesPayment && matchesStore;
+    const matchesMonth =
+      historyMonthFilter === "all" ||
+      (s.date && s.date.startsWith(historyMonthFilter));
+
+    return matchesSearch && matchesPayment && matchesStore && matchesMonth;
   });
 
   const totalBilledRevenue = sales.reduce((acc, s) => acc + (s.finalAmount || s.sellingPrice || 0), 0);
@@ -2095,6 +2118,205 @@ https://thefundu.com/verify/${serialNo}
             </Card>
           </div>
 
+          {/* ============================================================== */}
+          {/* DEDICATED MONTH-WISE BILLS ARCHIVE & DOWNLOADER CARD */}
+          {/* ============================================================== */}
+          <Card className="border-indigo-200 dark:border-indigo-900 bg-gradient-to-br from-indigo-50/60 via-white to-indigo-50/30 dark:from-indigo-950/40 dark:via-slate-900 dark:to-indigo-950/20 shadow-xs">
+            <CardHeader className="py-3 px-4 border-b border-indigo-100 dark:border-indigo-900/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5">
+                <div className="h-9 w-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs">
+                  <Download className="h-5 w-5" />
+                </div>
+                <div>
+                  <CardTitle className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                    <span>Month-Wise Bills Downloader (JSON &amp; Excel)</span>
+                    <Badge variant="fundu" size="sm">
+                      1-Click Laptop Download
+                    </Badge>
+                  </CardTitle>
+                  <CardDescription className="text-xs text-slate-500">
+                    Jis bhi mahine ka bill download karna ho, yahan se direct JSON ya Excel register laptop me download karein.
+                  </CardDescription>
+                </div>
+              </div>
+
+              {/* Master All-Months JSON Button */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  exportMonthWiseBillsJSON(sales, "all");
+                  showToast("Downloaded Master All-Months Consolidated Bills JSON!", "success");
+                }}
+                className="text-xs h-8 gap-1.5 font-bold border-indigo-300 text-indigo-700 bg-white hover:bg-indigo-50 dark:bg-slate-900 dark:text-indigo-300 dark:border-indigo-800 shrink-0"
+                title="Download all bills across all months in one master JSON"
+              >
+                <Download className="h-3.5 w-3.5 text-indigo-600" />
+                <span>All Months Master JSON ({sales.length} Bills)</span>
+              </Button>
+            </CardHeader>
+
+            <CardContent className="p-4 space-y-4">
+              {/* Row 1: Active Month Cards */}
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-wider text-indigo-900 dark:text-indigo-300 mb-2">
+                  Issued Months:
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                  {availableBillMonths.map((m) => {
+                    const mSales = sales.filter((s) => (s.date || "").startsWith(m));
+                    const mRev = mSales.reduce((sum, s) => sum + (s.finalAmount || s.sellingPrice || 0), 0);
+                    return (
+                      <div
+                        key={m}
+                        className="p-3 rounded-xl border border-indigo-200 dark:border-indigo-800/60 bg-white dark:bg-slate-900 shadow-2xs flex flex-col justify-between gap-3 hover:border-indigo-400 transition-colors"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <p className="font-bold text-sm text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                              <Calendar className="h-3.5 w-3.5 text-indigo-600" />
+                              <span>{getMonthLabel(m)}</span>
+                            </p>
+                            <p className="text-xs text-slate-500 mt-0.5 font-mono">
+                              {mSales.length} Invoices • {formatINR(mRev)}
+                            </p>
+                          </div>
+                          <Badge variant="fundu" size="sm">
+                            {mSales.length} Bills
+                          </Badge>
+                        </div>
+
+                        <div className="flex items-center gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              exportMonthWiseBillsJSON(sales, m);
+                              showToast(`Downloaded ${getMonthLabel(m)} Bills JSON file!`, "success");
+                            }}
+                            className="flex-1 h-7 text-[11px] gap-1 font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-2xs"
+                            title={`Download ${getMonthLabel(m)} bills as JSON file`}
+                          >
+                            <Download className="h-3 w-3" />
+                            <span>Download JSON</span>
+                          </Button>
+
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              exportSavedBillsCSV(sales, undefined, m);
+                              showToast(`Downloaded ${getMonthLabel(m)} Bills Excel/CSV!`, "success");
+                            }}
+                            className="h-7 text-[11px] px-2 gap-1 font-semibold text-emerald-700 border-emerald-300 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-300"
+                            title={`Download ${getMonthLabel(m)} bills as Excel/CSV file`}
+                          >
+                            <Download className="h-3 w-3 text-emerald-600" />
+                            <span>CSV</span>
+                          </Button>
+
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => {
+                              setHistoryMonthFilter(m);
+                              showToast(`Table filtered to ${getMonthLabel(m)} bills!`, "info");
+                            }}
+                            className="h-7 text-[11px] px-2 text-slate-600 hover:text-slate-900 dark:text-slate-400"
+                            title="Filter table below to show only this month's bills"
+                          >
+                            <Eye className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Row 2: Universal Custom Month & Year Picker */}
+              <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/60 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-indigo-600 shrink-0" />
+                  <div>
+                    <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                      Download Any Calendar Month:
+                    </p>
+                    <p className="text-[11px] text-slate-500">
+                      Koi bhi specific Month &amp; Year chunein aur turant uski JSON file download karein
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 flex-wrap w-full md:w-auto">
+                  {/* Month Dropdown */}
+                  <select
+                    value={customPickMonth}
+                    onChange={(e) => setCustomPickMonth(e.target.value)}
+                    className="h-8 px-2.5 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-semibold"
+                  >
+                    {ALL_CALENDAR_MONTHS.map((m) => (
+                      <option key={m.value} value={m.value}>
+                        {m.name}
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* Year Dropdown */}
+                  <select
+                    value={customPickYear}
+                    onChange={(e) => setCustomPickYear(e.target.value)}
+                    className="h-8 px-2.5 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-semibold"
+                  >
+                    <option value="2026">2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                    <option value="2027">2027</option>
+                  </select>
+
+                  {/* Bill Count Pill for picked month */}
+                  {(() => {
+                    const pickedKey = `${customPickYear}-${customPickMonth}`;
+                    const count = sales.filter((s) => (s.date || "").startsWith(pickedKey)).length;
+                    return (
+                      <span className="text-[11px] font-mono font-semibold px-2 py-1 rounded bg-indigo-100 dark:bg-indigo-900/60 text-indigo-800 dark:text-indigo-200">
+                        {count} Bills
+                      </span>
+                    );
+                  })()}
+
+                  {/* Download Picked Month JSON Button */}
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      const pickedKey = `${customPickYear}-${customPickMonth}`;
+                      exportMonthWiseBillsJSON(sales, pickedKey);
+                      showToast(`Downloaded ${getMonthLabel(pickedKey)} Bills JSON!`, "success");
+                    }}
+                    className="h-8 text-xs font-bold gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white shadow-2xs"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    <span>Download Month JSON</span>
+                  </Button>
+
+                  {/* Download Picked Month CSV Button */}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      const pickedKey = `${customPickYear}-${customPickMonth}`;
+                      exportSavedBillsCSV(sales, undefined, pickedKey);
+                      showToast(`Downloaded ${getMonthLabel(pickedKey)} Bills Excel/CSV!`, "success");
+                    }}
+                    className="h-8 text-xs font-semibold gap-1.5 border-emerald-300 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-800 dark:text-emerald-300"
+                  >
+                    <Download className="h-3.5 w-3.5 text-emerald-600" />
+                    <span>CSV</span>
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Search, Filter & Quick Action Bar */}
           <Card className="border-slate-200 dark:border-slate-800 shadow-xs">
             <CardContent className="p-4">
@@ -2120,8 +2342,26 @@ https://thefundu.com/verify/${serialNo}
                   )}
                 </div>
 
-                {/* Filter by Payment Mode */}
+                {/* Filter by Month */}
                 <div className="flex items-center gap-2 flex-wrap">
+                  <select
+                    value={historyMonthFilter}
+                    onChange={(e) => setHistoryMonthFilter(e.target.value)}
+                    className="h-10 px-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-medium"
+                    title="Filter table bills by month"
+                  >
+                    <option value="all">All Months ({sales.length} Bills)</option>
+                    {availableBillMonths.map((m) => {
+                      const count = sales.filter((s) => (s.date || "").startsWith(m)).length;
+                      return (
+                        <option key={m} value={m}>
+                          {getMonthLabel(m)} ({count} bills)
+                        </option>
+                      );
+                    })}
+                  </select>
+
+                  {/* Filter by Payment Mode */}
                   <select
                     value={historyPaymentFilter}
                     onChange={(e) => setHistoryPaymentFilter(e.target.value)}
@@ -2148,55 +2388,35 @@ https://thefundu.com/verify/${serialNo}
                     ))}
                   </select>
 
-                  {/* Export CSV Button */}
+                  {/* Export Filtered CSV Button */}
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => {
-                      exportSavedBillsCSV(sales);
-                      showToast("Exported all saved tax invoices with Fun Code & IMEI to CSV!", "success");
+                      exportSavedBillsCSV(sales, undefined, historyMonthFilter);
+                      showToast(`Exported ${historyMonthFilter === "all" ? "all" : getMonthLabel(historyMonthFilter)} bills to CSV!`, "success");
                     }}
                     className="h-10 text-xs gap-1.5 font-semibold border-emerald-300 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800 shrink-0"
-                    title="Export all saved tax invoices with IMEI, Fun Code, Aadhaar, Addresses, and GST Rule 32(5) breakdown"
+                    title="Export saved tax invoices to CSV / Excel"
                   >
                     <Download className="h-3.5 w-3.5" />
                     <span>Export CSV</span>
                   </Button>
 
-                  {/* Per-Month Bills JSON Downloader */}
-                  <div className="flex items-center gap-1.5 bg-indigo-50/70 dark:bg-indigo-950/40 p-1 rounded-lg border border-indigo-200 dark:border-indigo-800 shrink-0">
-                    <select
-                      value={selectedExportMonth}
-                      onChange={(e) => setSelectedExportMonth(e.target.value)}
-                      className="h-8 px-2 text-xs rounded border border-indigo-200 dark:border-indigo-700 bg-white dark:bg-slate-900 text-indigo-950 dark:text-indigo-200 font-semibold focus:outline-hidden"
-                      title="Select month to download bills JSON file"
-                    >
-                      <option value="all">All Months JSON ({sales.length} Bills)</option>
-                      {availableBillMonths.map((m) => {
-                        const count = sales.filter((s) => (s.date || "").startsWith(m)).length;
-                        return (
-                          <option key={m} value={m}>
-                            {getMonthLabel(m)} ({count} bills)
-                          </option>
-                        );
-                      })}
-                    </select>
-
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={() => {
-                        exportMonthWiseBillsJSON(sales, selectedExportMonth);
-                        const label = selectedExportMonth === "all" ? "All Months" : getMonthLabel(selectedExportMonth);
-                        showToast(`Downloaded ${label} Bills JSON file directly to laptop!`, "success");
-                      }}
-                      className="h-8 text-xs gap-1.5 font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-2xs"
-                      title="Download clean structured JSON file of bills for this month"
-                    >
-                      <Download className="h-3.5 w-3.5" />
-                      <span>Download Month JSON</span>
-                    </Button>
-                  </div>
+                  {/* Download Filtered Month JSON */}
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => {
+                      exportMonthWiseBillsJSON(sales, historyMonthFilter);
+                      showToast(`Downloaded ${historyMonthFilter === "all" ? "All Months" : getMonthLabel(historyMonthFilter)} bills JSON!`, "success");
+                    }}
+                    className="h-10 text-xs gap-1.5 font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-2xs shrink-0"
+                    title="Download bills for the selected filter as JSON"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    <span>Download Month JSON</span>
+                  </Button>
                 </div>
               </div>
             </CardContent>

@@ -104,7 +104,19 @@ export function exportGSTRule32AuditCSV(devices: Device[], filename = "TheFundu_
 /**
  * Export All Saved Tax Invoices with Fun Code, IMEI, Aadhaar, Addresses, and Payment Breakdown
  */
-export function exportSavedBillsCSV(sales: SalesOrder[], filename = "TheFundu_Saved_Bills_Register.csv") {
+export function exportSavedBillsCSV(
+  sales: SalesOrder[],
+  filename = "TheFundu_Saved_Bills_Register.csv",
+  targetMonth?: string
+) {
+  let targetSales = sales;
+  if (targetMonth && targetMonth !== "all") {
+    targetSales = sales.filter((s) => (s.date || "").startsWith(targetMonth));
+    if (filename === "TheFundu_Saved_Bills_Register.csv") {
+      filename = `TheFundu_Bills_${targetMonth}_(${getMonthLabel(targetMonth).replace(/\s+/g, "_")}).csv`;
+    }
+  }
+
   const headers = [
     "Invoice Number",
     "Invoice Date",
@@ -132,7 +144,7 @@ export function exportSavedBillsCSV(sales: SalesOrder[], filename = "TheFundu_Sa
     "Payment Status"
   ];
 
-  const rows = sales.map((s) => {
+  const rows = targetSales.map((s) => {
     const isSplit = Boolean(s.splitPayment || s.paymentMethod?.includes("Split"));
     const cashAmt = isSplit && s.splitPayment
       ? Number(s.splitPayment.cashAmount ?? (s.splitPayment.mode1 === "Cash" ? s.splitPayment.amount1 : s.splitPayment.mode2 === "Cash" ? s.splitPayment.amount2 : s.splitPayment.amount1) ?? 0)
@@ -378,8 +390,8 @@ export function exportMonthWiseBillsJSON(
 
   const availableMonths = Object.keys(grouped).sort();
 
-  if (selectedMonth !== "all" && grouped[selectedMonth]) {
-    const monthSales = grouped[selectedMonth];
+  if (selectedMonth !== "all") {
+    const monthSales = grouped[selectedMonth] || [];
     const items = monthSales.map(mapSaleToItem);
     const totalGross = items.reduce((sum, i) => sum + i.pricingAndTax.sellingPrice, 0);
     const totalDisc = items.reduce((sum, i) => sum + i.pricingAndTax.discount, 0);
