@@ -49,6 +49,8 @@ import { Badge } from "@/components/ui/badge";
 import { CompanyInvoiceSheet } from "@/components/invoice/CompanyInvoiceSheet";
 import { InvoiceModal } from "@/components/invoice/InvoiceModal";
 import { InvoiceSettingsModal } from "@/components/invoice/InvoiceSettingsModal";
+import { StorePurchaseReceiptModal } from "@/components/buyback/StorePurchaseReceiptModal";
+import { BuybackRecord } from "@/lib/types";
 import { formatINR } from "@/lib/utils";
 import { exportGSTRule32AuditCSV, exportSavedBillsCSV, exportMonthWiseBillsJSON, getMonthLabel } from "@/lib/exportGSTRule32";
 import { downloadInvoicePDF } from "@/lib/pdfDownloader";
@@ -65,14 +67,18 @@ export default function InvoiceGeneratorPage() {
     clearAllSales,
     recoverAllSales,
     sales,
+    buybacks,
     showToast,
     isCashierMode,
   } = useApp();
 
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
-  // Active Tab: "generator" (create/print bill) or "history" (all saved bills)
-  const [activeTab, setActiveTab] = useState<"generator" | "history">("generator");
+  // Active Tab: "generator" (sales bill) | "history" (sales ledger) | "store-purchase" (phone sell bills)
+  const [activeTab, setActiveTab] = useState<"generator" | "history" | "store-purchase">("generator");
+  const [selectedPurchaseReceipt, setSelectedPurchaseReceipt] = useState<BuybackRecord | null>(null);
+  const [isPurchaseReceiptModalOpen, setIsPurchaseReceiptModalOpen] = useState(false);
+  const [purchaseSearch, setPurchaseSearch] = useState("");
 
   // Saved Bills History filters and state
   const [historySearch, setHistorySearch] = useState("");
@@ -914,9 +920,42 @@ https://thefundu.com/verify/${serialNo}
               {sales.length} Bills
             </span>
           </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab("store-purchase")}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-2xs ${
+              activeTab === "store-purchase"
+                ? "bg-teal-600 text-white shadow-teal-200 dark:shadow-none ring-2 ring-teal-600/30"
+                : "bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/80"
+            }`}
+          >
+            <Smartphone className="w-4 h-4 text-teal-500" />
+            <span>Store Sell Bills (फोन खरीदने की रसीदें)</span>
+            <span
+              className={`px-2 py-0.5 rounded-full text-[11px] font-extrabold ${
+                activeTab === "store-purchase"
+                  ? "bg-white/20 text-white"
+                  : "bg-teal-100 dark:bg-teal-950/80 text-teal-700 dark:text-teal-300"
+              }`}
+            >
+              {buybacks.length} Sell Bills
+            </span>
+          </button>
         </div>
 
-        {activeTab === "generator" ? (
+        {activeTab === "store-purchase" ? (
+          <Link href="/buyback">
+            <Button
+              variant="primary"
+              size="sm"
+              className="text-xs gap-1.5 font-semibold bg-teal-600 hover:bg-teal-500 text-white shadow-sm"
+            >
+              <Smartphone className="w-3.5 h-3.5" />
+              <span>+ New Customer Phone Sell / Buyback Desk</span>
+            </Button>
+          </Link>
+        ) : activeTab === "generator" ? (
           <Button
             variant="outline"
             size="sm"
@@ -934,7 +973,7 @@ https://thefundu.com/verify/${serialNo}
             className="text-xs gap-1.5 font-semibold"
           >
             <FileText className="w-3.5 h-3.5" />
-            <span>+ Create New Tax Invoice</span>
+            <span>+ Create New Tax Bill</span>
           </Button>
         )}
       </div>
@@ -2770,6 +2809,162 @@ https://thefundu.com/verify/${serialNo}
         </div>
       )}
 
+      {/* ============================================================== */}
+      {/* 3. STORE PURCHASE RECEIPTS TAB (CUSTOMER SELL BILLS)           */}
+      {/* ============================================================== */}
+      {activeTab === "store-purchase" && (
+        <div className="space-y-5 print:hidden">
+          {/* Quick Header Banner */}
+          <Card className="bg-gradient-to-r from-teal-900/30 via-slate-900 to-slate-900 border-teal-800/40">
+            <CardHeader className="pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <CardTitle className="text-base text-white flex items-center gap-2">
+                    <Smartphone className="h-5 w-5 text-teal-400" />
+                    <span>Store Purchase Receipts &amp; Customer Sell Bills</span>
+                  </CardTitle>
+                  <CardDescription className="text-xs text-slate-300 mt-1">
+                    When customers sell their phone at TheFundu store, this desk stores their official Store Purchase Receipt with legal Indemnity Bond and serial service number.
+                  </CardDescription>
+                </div>
+                <Link href="/buyback">
+                  <Button
+                    size="sm"
+                    variant="primary"
+                    className="bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs h-9 gap-1.5 shadow-md shrink-0"
+                  >
+                    <Smartphone className="h-4 w-4" />
+                    <span>+ New Customer Buyback / Phone Sell</span>
+                  </Button>
+                </Link>
+              </div>
+            </CardHeader>
+          </Card>
+
+          {/* Search Bar */}
+          <div className="flex items-center gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+              <Input
+                placeholder="Search by customer name, phone, handset model, IMEI, or service number (TF-2026...)..."
+                value={purchaseSearch}
+                onChange={(e) => setPurchaseSearch(e.target.value)}
+                className="pl-9 h-10 text-xs"
+              />
+            </div>
+            {purchaseSearch && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPurchaseSearch("")}
+                className="h-10 text-xs"
+              >
+                Clear
+              </Button>
+            )}
+          </div>
+
+          {/* Table of Store Purchase Bills */}
+          <Card>
+            <CardContent className="p-0 overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 font-semibold border-b border-slate-200 dark:border-slate-800">
+                  <tr>
+                    <th className="p-3">Service / Receipt No.</th>
+                    <th className="p-3">Handset Model &amp; Specs</th>
+                    <th className="p-3">IMEI 1</th>
+                    <th className="p-3">Customer (Seller)</th>
+                    <th className="p-3 text-right">Purchase Price</th>
+                    <th className="p-3">Date</th>
+                    <th className="p-3">Payment</th>
+                    <th className="p-3 text-center">Receipt &amp; Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {buybacks.filter((bb) => {
+                    const q = purchaseSearch.toLowerCase().trim();
+                    if (!q) return true;
+                    return (
+                      (bb.serviceNumber && bb.serviceNumber.toLowerCase().includes(q)) ||
+                      (bb.id && bb.id.toLowerCase().includes(q)) ||
+                      (bb.sellerName && bb.sellerName.toLowerCase().includes(q)) ||
+                      (bb.sellerPhone && bb.sellerPhone.includes(q)) ||
+                      (bb.brand && bb.brand.toLowerCase().includes(q)) ||
+                      (bb.model && bb.model.toLowerCase().includes(q)) ||
+                      (bb.imei1 && bb.imei1.includes(q))
+                    );
+                  }).length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="p-8 text-center text-slate-400">
+                        No store purchase receipts found. Click "+ New Customer Buyback / Phone Sell" to generate one.
+                      </td>
+                    </tr>
+                  ) : (
+                    buybacks
+                      .filter((bb) => {
+                        const q = purchaseSearch.toLowerCase().trim();
+                        if (!q) return true;
+                        return (
+                          (bb.serviceNumber && bb.serviceNumber.toLowerCase().includes(q)) ||
+                          (bb.id && bb.id.toLowerCase().includes(q)) ||
+                          (bb.sellerName && bb.sellerName.toLowerCase().includes(q)) ||
+                          (bb.sellerPhone && bb.sellerPhone.includes(q)) ||
+                          (bb.brand && bb.brand.toLowerCase().includes(q)) ||
+                          (bb.model && bb.model.toLowerCase().includes(q)) ||
+                          (bb.imei1 && bb.imei1.includes(q))
+                        );
+                      })
+                      .map((bb) => (
+                        <tr key={bb.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
+                          <td className="p-3 font-mono font-bold text-teal-600 dark:text-teal-400">
+                            {bb.serviceNumber || `TF-${(bb.date || "2026-11-20").replace(/-/g, "")}-001`}
+                          </td>
+                          <td className="p-3 font-semibold text-slate-800 dark:text-slate-200">
+                            {bb.brand} {bb.model} ({bb.storage}) {bb.colour ? `• ${bb.colour}` : ""}
+                          </td>
+                          <td className="p-3 font-mono text-slate-500 text-[11px]">
+                            {bb.imei1}
+                          </td>
+                          <td className="p-3">
+                            <p className="font-semibold text-slate-800 dark:text-slate-200">{bb.sellerName}</p>
+                            <p className="text-[10px] text-slate-400 font-mono">{bb.sellerPhone}</p>
+                          </td>
+                          <td className="p-3 text-right font-bold text-emerald-600 dark:text-emerald-400">
+                            {formatINR(bb.finalOfferedPrice)}
+                          </td>
+                          <td className="p-3 text-slate-600 dark:text-slate-300">
+                            {bb.date}
+                          </td>
+                          <td className="p-3">
+                            <span className="font-medium text-slate-700 dark:text-slate-300">
+                              {bb.payoutMethod} ({bb.payoutStatus})
+                            </span>
+                          </td>
+                          <td className="p-3 text-center">
+                            <Button
+                              size="sm"
+                              variant="primary"
+                              onClick={() => {
+                                setSelectedPurchaseReceipt(bb);
+                                setIsPurchaseReceiptModalOpen(true);
+                              }}
+                              className="h-7 text-xs font-semibold gap-1 bg-teal-600 hover:bg-teal-500 text-white shadow-sm"
+                              title="View & Download Official Store Purchase Receipt PDF"
+                            >
+                              <Download className="h-3 w-3" />
+                              <span>View Receipt (PDF)</span>
+                            </Button>
+                          </td>
+                        </tr>
+                      ))
+                  )}
+                </tbody>
+              </table>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       {/* View / Reprint Tax Invoice Sheet Modal for History */}
       {selectedHistoryOrder && (
         <InvoiceModal
@@ -2826,6 +3021,16 @@ https://thefundu.com/verify/${serialNo}
           invoiceTime={selectedHistoryOrder.time}
         />
       )}
+
+      {/* Store Purchase Receipt Modal (Customer Sell Bill) */}
+      <StorePurchaseReceiptModal
+        record={selectedPurchaseReceipt}
+        isOpen={isPurchaseReceiptModalOpen}
+        onClose={() => {
+          setIsPurchaseReceiptModalOpen(false);
+          setSelectedPurchaseReceipt(null);
+        }}
+      />
 
       {/* Invoice & Multi-Store Settings Modal */}
       <InvoiceSettingsModal

@@ -78,7 +78,7 @@ export function Sidebar() {
       items: [
         { title: "Purchases", href: "/purchases", icon: ShoppingBag, permissionKey: "purchases" },
         { title: "Stock Inward", href: "/stock-inward", icon: ArrowDownToLine, permissionKey: "stock_inward" },
-        { title: "Customer Buyback", href: "/buyback", icon: ArrowRightLeft, badge: "Trade-In", badgeVariant: "fundu", permissionKey: "buyback" },
+        { title: "Customer Buyback (Phone Sell)", href: "/buyback", icon: ArrowRightLeft, badge: "Sell Bill", badgeVariant: "fundu", permissionKey: "buyback" },
         {
           title: "Quality Check",
           href: "/quality-check",
@@ -102,6 +102,7 @@ export function Sidebar() {
       group: "Outward & Commerce",
       items: [
         { title: "Tax Invoice Desk", href: "/invoice", icon: FileText, badge: "GST", badgeVariant: "fundu", permissionKey: "invoice" },
+        { title: "Store Sell Bills (Purchase)", href: "/buyback", icon: ReceiptText, badge: "Receipt", badgeVariant: "fundu", permissionKey: "buyback" },
         { title: "Warranty Portal", href: "/verify", icon: ShieldCheck, badge: "QR", badgeVariant: "fundu", permissionKey: "verify" },
         { title: "Day-End Closing", href: "/day-end-closing", icon: Receipt, badge: "Z-Slip", badgeVariant: "warning", permissionKey: "day_end_closing" },
         { title: "Stock Outward", href: "/stock-outward", icon: ArrowUpFromLine, permissionKey: "stock_outward" },
