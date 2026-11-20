@@ -308,18 +308,22 @@ export async function syncBidirectionalDevices(localDevices: Device[]): Promise<
     }
   }
 
-  // 3. Merge: prefer local status if recently updated, otherwise cloud
+  // 3. Merge: Local authoritative Excel devices ALWAYS take precedence for costs, sellingPrice, buyPrice!
   const mergedMap = new Map<string, Device>();
-  // Start with cloud devices
+  // Start with cloud devices (for custom devices added from another device)
   cloudMap.forEach((d, id) => mergedMap.set(id, d));
-  // Overlay local updates
+  // Overlay local devices: local Excel prices, costs, model, storage, imei are 100% authoritative!
   localMap.forEach((d, id) => {
-    // If local was marked Sold, keep it Sold
     const existing = mergedMap.get(id);
     if (existing) {
-      if (d.status === "Sold") {
-        mergedMap.set(id, { ...existing, status: "Sold" });
-      }
+      mergedMap.set(id, {
+        ...existing,
+        ...d,
+        costs: { ...d.costs },
+        sellingPrice: d.costs.sellingPrice,
+        purchasePrice: d.costs.purchasePrice,
+        status: (d.status === "Sold" || existing.status === "Sold") ? "Sold" : d.status,
+      });
     } else {
       mergedMap.set(id, d);
     }
