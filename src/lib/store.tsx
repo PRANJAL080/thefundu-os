@@ -277,8 +277,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     repairs: "thefundu_repairs_v5",
     qcInspections: "thefundu_qc_v5",
     warehouses: "thefundu_stores_v6",
-    sales: "thefundu_sales_v20261120_v3",
-    salesBackup: "thefundu_sales_vault_v20261120_v3",
+    sales: "thefundu_sales_v20261120_v5",
+    salesBackup: "thefundu_sales_vault_v20261120_v5",
     purchases: "thefundu_purchases_v5",
     spareParts: "thefundu_spareparts_v5",
     buybacks: "thefundu_buybacks_v5",
@@ -335,7 +335,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
 
       // Active purge of all legacy / deprecated localStorage keys so deleted dummy bills never reappear
+      try {
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith("thefundu_sales") && k !== STORAGE_KEYS.sales && k !== STORAGE_KEYS.salesBackup) {
+            localStorage.removeItem(k);
+          }
+        }
+      } catch (e) {}
+
       const legacySalesKeys = [
+        "thefundu_sales_v20261120_v4",
+        "thefundu_sales_vault_v20261120_v4",
+        "thefundu_sales_v20261120_v3",
+        "thefundu_sales_vault_v20261120_v3",
         "thefundu_sales_v20261120_clean",
         "thefundu_sales_vault_v20261120_clean",
         "thefundu_sales_v6",
@@ -362,10 +375,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       // Strict validation: Only authentic user bills (ALTAF and MANISH SINGH)
       const isAuthenticSale = (s: any): boolean => {
         if (!s || typeof s !== "object") return false;
-        // Specifically block the incorrect/fake bill INVLKO012611-0001
+        // Specifically block incorrect/fake bills
         if (
           s.invoiceNumber === "INVLKO012611-0001" ||
           s.id === "TFD-FSO-2611-0001" ||
+          s.deviceId === "Fun-26000" ||
           (s.deviceId === "Fun-26001" && (s.customerName || "").toLowerCase().includes("manish"))
         ) {
           return false;
@@ -393,6 +407,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
           "priya srivastava",
         ].some((d) => name.includes(d));
         if (isDummy) return false;
+        const isAuthenticInvoice = [
+          "INVLKO012611-26083",
+          "INVLKO012611-26043",
+          "INVLKO012611-0002",
+        ].includes(s.invoiceNumber);
+        if (isAuthenticInvoice) return true;
         return name.includes("altaf") || name.includes("manish");
       };
 
@@ -1049,6 +1069,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (
         s.invoiceNumber === "INVLKO012611-0001" ||
         s.id === "TFD-FSO-2611-0001" ||
+        s.deviceId === "Fun-26000" ||
         (s.deviceId === "Fun-26001" && (s.customerName || "").toLowerCase().includes("manish"))
       ) {
         return false;
@@ -1076,6 +1097,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         "priya srivastava",
       ].some((d) => name.includes(d));
       if (isDummy) return false;
+      const isAuthenticInvoice = [
+        "INVLKO012611-26083",
+        "INVLKO012611-26043",
+        "INVLKO012611-0002",
+      ].includes(s.invoiceNumber);
+      if (isAuthenticInvoice) return true;
       return name.includes("altaf") || name.includes("manish");
     };
 

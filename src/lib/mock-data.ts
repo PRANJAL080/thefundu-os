@@ -249,12 +249,12 @@ export const initialCustomers: Customer[] = [
     phone: "8299800996",
     email: "hkltha1235@gmail.com",
     city: "Lucknow",
-    totalOrders: 1,
-    lifetimeValue: 11000,
-    activeWarrantyCount: 1,
+    totalOrders: 2,
+    lifetimeValue: 26000,
+    activeWarrantyCount: 2,
     returnsCount: 0,
-    lastPurchaseDate: "2026-11-16",
-    loyaltyTier: "Gold",
+    lastPurchaseDate: "2026-11-19",
+    loyaltyTier: "Platinum",
   },
 ];
 
@@ -4169,6 +4169,57 @@ export const initialDevices: Device[] = [
     },
     "activityTimeline": [],
     "repairHistory": []
+  },
+  {
+    "id": "Fun-26083",
+    "brand": "Xiaomi",
+    "model": "Xiaomi 11 i Hyper Charge (128GB)",
+    "storage": "128GB",
+    "ram": "8GB",
+    "colour": "Stealth Black",
+    "imei1": "867179050310196",
+    "imei2": "",
+    "serialNumber": "SN26083",
+    "sku": "APL-IP15-128-NT",
+    "batteryHealth": 94,
+    "grade": "A+",
+    "status": "In Stock",
+    "warehouse": "Lucknow Store (LKO-01)",
+    "costs": {
+      "purchasePrice": 14152.54,
+      "repairCost": 0,
+      "testingCost": 250,
+      "packagingCost": 0,
+      "logisticsCost": 0,
+      "otherCost": 0,
+      "totalLandedCost": 14152.54,
+      "sellingPrice": 15000,
+      "projectedProfit": 847.46,
+      "profitMarginPercent": 5.65
+    },
+    "supplierId": "SUP-001",
+    "supplierName": "Esterline Bonaparte Corporation Private Limited",
+    "purchaseDate": "2026-11-18",
+    "images": [
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
+    ],
+    "specifications": {
+      "chipset": "Dimensity 920 5G",
+      "screenSize": "6.67 inch AMOLED 120Hz",
+      "cameraSpecs": "108MP Triple Camera",
+      "network": "5G Dual SIM",
+      "osVersion": "Android 13 / MIUI"
+    },
+    "activityTimeline": [
+      {
+        "id": "ACT-83-1",
+        "timestamp": "2026-11-18 10:00",
+        "user": "Intake Lead (Vikram Singhania)",
+        "action": "Inward Intake Verified",
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26083. IMEI verified."
+      }
+    ],
+    "repairHistory": []
   }
 ];
 
@@ -4195,6 +4246,44 @@ export const initialPurchases: PurchaseOrder[] = [
 ];
 
 export const initialSales: SalesOrder[] = [
+  {
+    id: "TFD-FSO-2611-26083",
+    orderNo: "TFD-FSO-2611-26083",
+    channelOrderNo: "#FSO-LKO-01-26083 (FSO)",
+    channel: "FSO",
+    channelName: "Store Outlet",
+    typeOfSale: "B2C",
+    invoiceNumber: "INVLKO012611-26083",
+    customerName: "MANISH SINGH",
+    customerPhone: "8299800996",
+    customerEmail: "hkltha1235@gmail.com",
+    customerAddress: "S/o Munna Singh,E-3/413, Vineet Khand , Gomti Nagar, Lucknow U.P.-226010",
+    customerLocalAddress: "S/o Munna Singh,E-3/413, Vineet Khand , Gomti Nagar, Lucknow U.P.-226010",
+    customerPermanentAddress: "S/o Munna Singh,E-3/413, Vineet Khand , Gomti Nagar, Lucknow U.P.-226010",
+    customerAadhaar: "7385 5337 6952",
+    customerGstin: "NA",
+    placeOfSupply: "Uttar Pradesh (09)",
+    date: "2026-11-19",
+    time: "06:55 pm",
+    deviceId: "Fun-26083",
+    deviceModel: "Xiaomi 11 i Hyper Charge (128GB) Refurbished Stealth Black",
+    imei: "867179050310196",
+    serialNumber: "SN26083",
+    sellingPrice: 15000,
+    discount: 0,
+    taxAmount: 152.54,
+    finalAmount: 15000,
+    purchasePrice: 14152.54,
+    profitMargin: 847.46,
+    paymentMethod: "Google Pay",
+    paymentTxnId: "TXN26001LKO982, K811T17950...",
+    paymentStatus: "Completed",
+    deliveryStatus: "Delivered",
+    warrantyMonths: 6,
+    warrantyExpiry: "2027-05-19",
+    storeName: "Lucknow Store B-124 (LKO-01)",
+    storeCode: "LKO-01",
+  },
   {
     id: "TFD-FSO-2611-26043",
     orderNo: "TFD-FSO-2611-0002",
@@ -4303,6 +4392,21 @@ export const initialStockMovements: StockMovement[] = [
     value: 43000,
     initiatedBy: "Sales Engine",
     notes: "Tax Invoice INVLKO012611-0002 dispatch",
+  },
+  {
+    id: "MOV-403",
+    date: "2026-11-19 18:55",
+    type: "Outward",
+    reason: "Sold",
+    deviceId: "Fun-26083",
+    deviceModel: "Xiaomi 11 i Hyper Charge (128GB) Refurbished Stealth Black",
+    imei: "867179050310196",
+    fromLocation: "Lucknow Store B-124 (LKO-01)",
+    toLocation: "Customer (MANISH SINGH)",
+    quantity: 1,
+    value: 15000,
+    initiatedBy: "Sales Engine",
+    notes: "Tax Invoice INVLKO012611-26083 dispatch",
   },
 ];
 

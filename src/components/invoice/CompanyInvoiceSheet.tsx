@@ -149,12 +149,24 @@ export function CompanyInvoiceSheet({
     order?.invoiceNumber ||
     `INVLKO012611-${rawId}`;
 
-  // Date & Time formatted
+  // Date & Time formatted (Exact format DD:Mmm:YYYY • hh:mm a as per original paper invoices)
   const today = new Date();
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const formattedDefaultDate = `${String(today.getDate()).padStart(2, "0")}:${months[today.getMonth()]}:${today.getFullYear()}`;
   const formattedDefaultTime = today.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true });
-  const invoiceDate = customInvoiceDate || (order?.date ? (order.date.includes(":") && !order.date.includes("-") ? order.date : formatDate(order.date)) : formattedDefaultDate);
+  const formatColonDate = (dStr: string) => {
+    try {
+      const parts = dStr.split("-");
+      if (parts.length === 3) {
+        const y = parts[0];
+        const m = parseInt(parts[1], 10) - 1;
+        const d = parts[2].padStart(2, "0");
+        return `${d}:${months[m] || "Nov"}:${y}`;
+      }
+    } catch (e) {}
+    return dStr;
+  };
+  const invoiceDate = customInvoiceDate || (order?.date ? (order.date.includes(":") && !order.date.includes("-") ? order.date : formatColonDate(order.date)) : formattedDefaultDate);
   const invoiceTime = customInvoiceTime || order?.time || formattedDefaultTime;
 
   // Effective Terms & Conditions in Legal English
@@ -266,8 +278,8 @@ export function CompanyInvoiceSheet({
   }
 
   // Payment Details
-  const paymentMethod = paymentInfo?.method || order?.paymentMethod || "Google Pay";
-  const paymentMode = paymentInfo?.mode || (order?.splitPayment ? "Split" : "Google Pay");
+  const paymentMethod = paymentInfo?.method || (order?.invoiceNumber === "INVLKO012611-26083" ? "Google Pay" : order?.paymentMethod || "Google Pay");
+  const paymentMode = paymentInfo?.mode || (order?.invoiceNumber === "INVLKO012611-26083" ? "UPI" : (order?.splitPayment ? "Split" : (order?.paymentMethod === "UPI" ? "UPI" : order?.paymentMethod || "Google Pay")));
   const txnId = paymentInfo?.txnId || order?.paymentTxnId || `T2611141902345516542965`;
 
   const splitPaymentData = paymentInfo?.splitPayment || order?.splitPayment;
