@@ -2369,20 +2369,45 @@ https://thefundu.com/verify/${serialNo}
                                 <span>WhatsApp</span>
                               </Button>
 
-                              {/* Delete Record */}
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => {
-                                  if (confirm(`Remove bill ${s.invoiceNumber || s.id} from ledger?`)) {
-                                    deleteSale(s.id);
-                                  }
-                                }}
-                                className="h-7 w-7 p-0 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30"
-                                title="Delete bill from ledger"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </Button>
+                              {/* Protected vs Delete Record */}
+                              {[
+                                "INVLKO012611-26083",
+                                "INVLKO012611-26043",
+                                "INVLKO012611-0002",
+                                "TFD-FSO-2611-26083",
+                                "TFD-FSO-2611-26043",
+                                "TFD-FSO-2611-0002",
+                              ].includes(s.invoiceNumber || "") ||
+                              [
+                                "INVLKO012611-26083",
+                                "INVLKO012611-26043",
+                                "INVLKO012611-0002",
+                                "TFD-FSO-2611-26083",
+                                "TFD-FSO-2611-26043",
+                                "TFD-FSO-2611-0002",
+                              ].includes(s.id || "") ? (
+                                <span
+                                  className="h-7 px-2 inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-300 rounded dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800 cursor-default select-none"
+                                  title="Authentic verified company tax invoice (Locked for legal GST compliance & cannot be deleted)"
+                                >
+                                  <ShieldCheck className="w-3 h-3 text-amber-600" />
+                                  <span>Audited</span>
+                                </span>
+                              ) : (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => {
+                                    if (confirm(`Remove bill ${s.invoiceNumber || s.id} from ledger?`)) {
+                                      deleteSale(s.id);
+                                    }
+                                  }}
+                                  className="h-7 w-7 p-0 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30"
+                                  title="Delete bill from ledger"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </Button>
+                              )}
                             </div>
                           </td>
                         </tr>

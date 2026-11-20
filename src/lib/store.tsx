@@ -372,7 +372,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         } catch (e) {}
       });
 
-      // Strict validation: Only authentic user bills (ALTAF and MANISH SINGH)
+      // Strict validation: Reject old dummy seeds, protect authentic bills & all genuine new bills
       const isAuthenticSale = (s: any): boolean => {
         if (!s || typeof s !== "object") return false;
         // Specifically block incorrect/fake bills
@@ -389,13 +389,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
           "retail customer",
           "store retail customer",
           "abhay verma",
-          "abhay",
           "vikas singh",
-          "vikas",
           "pooja sharma",
-          "pooja",
           "amitabh srivastava",
-          "amitabh",
           "ramesh kumar",
           "aakash varma",
           "gaurav malhotra",
@@ -405,7 +401,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           "kavya sundaram",
           "rahul saxena",
           "priya srivastava",
-        ].some((d) => name.includes(d));
+        ].some((d) => name === d || name.startsWith(d + " "));
         if (isDummy) return false;
         const isAuthenticInvoice = [
           "INVLKO012611-26083",
@@ -413,7 +409,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
           "INVLKO012611-0002",
         ].includes(s.invoiceNumber);
         if (isAuthenticInvoice) return true;
-        return name.includes("altaf") || name.includes("manish");
+        // Any genuine bill created by the user is retained permanently
+        return Boolean((s.invoiceNumber || s.id) && s.customerName);
       };
 
       let loadedSales: SalesOrder[] = [];
@@ -1019,12 +1016,30 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const deleteSale = (id: string) => {
+    const PROTECTED_INVOICES = [
+      "INVLKO012611-26083",
+      "INVLKO012611-26043",
+      "INVLKO012611-0002",
+      "TFD-FSO-2611-26083",
+      "TFD-FSO-2611-26043",
+      "TFD-FSO-2611-0002",
+    ];
     const saleToDelete = sales.find((s) => s.id === id || s.invoiceNumber === id);
+    if (
+      PROTECTED_INVOICES.includes(id) ||
+      (saleToDelete?.invoiceNumber ? PROTECTED_INVOICES.includes(saleToDelete.invoiceNumber) : false) ||
+      (saleToDelete?.id ? PROTECTED_INVOICES.includes(saleToDelete.id) : false)
+    ) {
+      showToast("Ye authentic tax invoice GST compliance aur legal audit ke liye locked hai. Isse delete nahi kiya ja sakta.", "error");
+      return;
+    }
+
     const updated = sales.filter((s) => s.id !== id && s.invoiceNumber !== id);
     setSales(updated);
     if (typeof window !== "undefined") {
       try {
         localStorage.setItem(STORAGE_KEYS.sales, JSON.stringify(updated));
+        localStorage.setItem(STORAGE_KEYS.salesBackup, JSON.stringify(updated));
       } catch (e) {}
     }
 
@@ -1053,13 +1068,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   };
 
   const clearAllSales = () => {
-    setSales([]);
+    // Keep authentic baseline bills safe forever
+    setSales(initialSales);
     if (typeof window !== "undefined") {
       try {
-        localStorage.setItem(STORAGE_KEYS.sales, JSON.stringify([]));
+        localStorage.setItem(STORAGE_KEYS.sales, JSON.stringify(initialSales));
+        localStorage.setItem(STORAGE_KEYS.salesBackup, JSON.stringify(initialSales));
       } catch (e) {}
     }
-    showToast("Tax Invoice Ledger cleared! All dummy/test bills removed.", "info");
+    showToast("Ledger protected: Authentic verified bills preserved.", "info");
   };
 
   const recoverAllSales = (): number => {
@@ -1079,13 +1096,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
         "retail customer",
         "store retail customer",
         "abhay verma",
-        "abhay",
         "vikas singh",
-        "vikas",
         "pooja sharma",
-        "pooja",
         "amitabh srivastava",
-        "amitabh",
         "ramesh kumar",
         "aakash varma",
         "gaurav malhotra",
@@ -1095,7 +1108,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         "kavya sundaram",
         "rahul saxena",
         "priya srivastava",
-      ].some((d) => name.includes(d));
+      ].some((d) => name === d || name.startsWith(d + " "));
       if (isDummy) return false;
       const isAuthenticInvoice = [
         "INVLKO012611-26083",
@@ -1103,7 +1116,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         "INVLKO012611-0002",
       ].includes(s.invoiceNumber);
       if (isAuthenticInvoice) return true;
-      return name.includes("altaf") || name.includes("manish");
+      // Retain all genuine bills created by user
+      return Boolean((s.invoiceNumber || s.id) && s.customerName);
     };
 
     const currentSalesMap = new Map<string, SalesOrder>();
