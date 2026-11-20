@@ -138,50 +138,69 @@ export function matchesDeviceSearch(dev: Device, query: string): boolean {
   if (!query || !query.trim()) return true;
 
   const rawQ = query.trim().toLowerCase();
+  const cleanQ = rawQ.replace(/[^a-z0-9]/g, "");
 
-  // 1. Direct IMEI exact/partial match, SKU, or Inventory ID
+  // 1. Direct IMEI exact/partial match, SKU, Serial Number, or Inventory ID
   if (
     (dev.imei1 && dev.imei1.includes(rawQ)) ||
     (dev.imei2 && dev.imei2.includes(rawQ)) ||
     (dev.sku && dev.sku.toLowerCase().includes(rawQ)) ||
-    (dev.id && dev.id.toLowerCase() === rawQ) ||
-    (dev.id && dev.id.toLowerCase().replace(/[^0-9]/g, "").endsWith(rawQ))
+    (dev.serialNumber && dev.serialNumber.toLowerCase().includes(rawQ)) ||
+    (dev.id && dev.id.toLowerCase().includes(rawQ)) ||
+    (dev.id && cleanQ && dev.id.toLowerCase().replace(/[^a-z0-9]/g, "").includes(cleanQ))
   ) {
     return true;
   }
 
+  // 2. Direct Price Match (e.g. "95000", "95,000", "₹95,000", "45000", "70000")
+  const numOnlyQ = rawQ.replace(/[^0-9]/g, "");
+  if (numOnlyQ && numOnlyQ.length >= 4) {
+    const qNum = parseInt(numOnlyQ, 10);
+    const sellingPrice = dev.costs?.sellingPrice ?? dev.sellingPrice ?? 0;
+    const purchasePrice = dev.costs?.purchasePrice ?? dev.purchasePrice ?? 0;
+    if (sellingPrice === qNum || purchasePrice === qNum) return true;
+    if (String(sellingPrice).includes(numOnlyQ) || String(purchasePrice).includes(numOnlyQ)) return true;
+  }
+
+  // 3. Multi-token smart matching across all attributes
   const brand = (dev.brand || "").toLowerCase();
   const model = (dev.model || "").toLowerCase();
   const storage = (dev.storage || "").toLowerCase();
   const colour = (dev.colour || "").toLowerCase();
+  const idStr = (dev.id || "").toLowerCase();
+  const idClean = idStr.replace(/[^a-z0-9]/g, "");
+  const serialStr = (dev.serialNumber || "").toLowerCase();
+  const fullText = `${idStr} ${idClean} ${serialStr} ${brand} ${model} ${storage} ${colour} ${dev.costs?.sellingPrice || ""} ${dev.costs?.purchasePrice || ""}`.toLowerCase();
 
-  // 2. Normalize letter-number spacing: e.g. "s 26" -> "s26", "s 24" -> "s24", "a 54" -> "a54"
+  // Normalize letter-number spacing: e.g. "s 26" -> "s26", "fun 26082" -> "fun-26082"
   const normalizedQ = rawQ
     .replace(/\b([a-z])\s+(\d+)\b/gi, "$1$2")
+    .replace(/\bfun\s+(\d+)\b/gi, "fun-$1")
     .trim();
 
-  // 3. Multi-token smart matching:
-  const tokens = normalizedQ.split(/\s+/).filter(Boolean);
+  const tokens = normalizedQ.split(/[\s,]+/).filter(Boolean);
 
   const allTokensMatch = tokens.every((token) => {
-    // A) Purely numeric token (e.g. "12", "16", "13", "14", "15", "26"):
-    // Must match as a discrete number in the MODEL name (e.g. \b12\b in "iPhone 12 Pro")
-    // or as exact storage capacity (e.g. "128", "256", "512", "64")
+    const cleanToken = token.replace(/[^a-z0-9]/g, "");
+    if (fullText.includes(token)) return true;
+    if (cleanToken && fullText.includes(cleanToken)) return true;
+
+    // A) Purely numeric token
     if (/^\d+$/.test(token)) {
       const modelNumRegex = new RegExp(`(?:^|[^0-9])${token}(?:[^0-9]|$)`, "i");
-      if (modelNumRegex.test(model)) {
-        return true;
-      }
+      if (modelNumRegex.test(model)) return true;
+      if (model.includes(token)) return true;
+      if (storage.includes(token)) return true;
+      if (idStr.includes(token)) return true;
+      if (String(dev.costs?.sellingPrice || "").includes(token)) return true;
       if (["32", "64", "128", "256", "512", "1024"].includes(token)) {
         const storageNumRegex = new RegExp(`(?:^|[^0-9])${token}(?:gb|tb|[^0-9]|$)`, "i");
-        if (storageNumRegex.test(storage)) {
-          return true;
-        }
+        if (storageNumRegex.test(storage)) return true;
       }
       return false;
     }
 
-    // B) Letter + digit series token (e.g. "s26", "s24", "a54", "z6"):
+    // B) Letter + digit series token
     const letterDigit = token.match(/^([a-z]+)(\d+)$/i);
     if (letterDigit) {
       const [, prefix, num] = letterDigit;
@@ -197,7 +216,7 @@ export function matchesDeviceSearch(dev: Device, query: string): boolean {
       return false;
     }
 
-    // C) Word token (e.g. "apple", "iphone", "pro", "max", "samsung", "galaxy", "ultra", "pink"):
+    // C) Word token
     if (brand.includes(token)) return true;
     if (model.includes(token)) return true;
     if (storage.includes(token)) return true;

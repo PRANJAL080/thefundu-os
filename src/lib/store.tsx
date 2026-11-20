@@ -273,7 +273,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // LocalStorage keys for cross-tab & session persistence
   const STORAGE_KEYS = {
-    devices: "thefundu_devices_v20261120_v5",
+    devices: "thefundu_devices_v20261120_v6",
     repairs: "thefundu_repairs_v5",
     qcInspections: "thefundu_qc_v5",
     warehouses: "thefundu_stores_v6",
@@ -296,24 +296,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
+      // Dynamic active purge of all legacy device keys from localStorage
       try {
-        [
-          "thefundu_devices_v20261120_v4",
-          "thefundu_devices_v20261120_v3",
-          "thefundu_devices_v20261120_v2",
-          "thefundu_devices_v20261120_v1",
-          "thefundu_devices_v10",
-          "thefundu_devices_v9",
-          "thefundu_devices_v8",
-          "thefundu_devices_v7",
-          "thefundu_devices_v6",
-          "thefundu_devices_v5",
-          "thefundu_devices_v4",
-          "thefundu_devices_v3",
-          "thefundu_devices_v2",
-          "thefundu_devices_v1",
-          "thefundu_devices",
-        ].forEach((k) => localStorage.removeItem(k));
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith("thefundu_devices") && k !== STORAGE_KEYS.devices) {
+            localStorage.removeItem(k);
+          }
+        }
       } catch (e) {}
 
       // Collect known sold handset IDs and IMEIs from baseline sales
@@ -340,55 +330,44 @@ export function AppProvider({ children }: { children: ReactNode }) {
       ]);
 
       const storedDevs = localStorage.getItem(STORAGE_KEYS.devices);
+      // 1. Authoritative baseline: Seed with 100% exact Excel devices
+      const devMap = new Map<string, Device>();
+      initialDevices.forEach((d) => devMap.set(d.id, { ...d }));
+
+      // 2. Only preserve user-created devices and user-updated Sold status
       if (storedDevs) {
-        const parsed = JSON.parse(storedDevs);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          // Merge initialDevices with parsed, but ALWAYS guarantee Excel prices & costs take precedence
-          const devMap = new Map<string, Device>();
-          parsed.forEach((d: Device) => devMap.set(d.id, d));
-          initialDevices.forEach((d) => {
-            const existing = devMap.get(d.id);
-            if (existing) {
-              devMap.set(d.id, {
-                ...existing,
-                ...d,
-                costs: { ...d.costs },
-                sellingPrice: d.costs.sellingPrice,
-                purchasePrice: d.costs.purchasePrice,
-                status: (d.status === "Sold" || existing.status === "Sold") ? "Sold" : d.status,
-              });
-            } else {
-              devMap.set(d.id, d);
-            }
-          });
-          const allMapped = Array.from(devMap.values()).map((d: Device) => {
-            const isSold =
-              d.status === "Sold" ||
-              soldIdentifiers.has(d.id.toLowerCase()) ||
-              (d.imei1 && soldIdentifiers.has(d.imei1)) ||
-              (d.imei2 && soldIdentifiers.has(d.imei2));
-            return {
-              ...d,
-              status: (isSold ? "Sold" : "In Stock") as DeviceStatus,
-              warehouse: (d.warehouse === "STR-LKO-01" || !d.warehouse) ? "Lucknow Store (LKO-01)" : d.warehouse,
-            };
-          });
-          setDevices(allMapped);
-        }
-      } else {
-        setDevices(initialDevices.map((d: Device) => {
-          const isSold =
-            d.status === "Sold" ||
-            soldIdentifiers.has(d.id.toLowerCase()) ||
-            (d.imei1 && soldIdentifiers.has(d.imei1)) ||
-            (d.imei2 && soldIdentifiers.has(d.imei2));
-          return {
-            ...d,
-            status: (isSold ? "Sold" : "In Stock") as DeviceStatus,
-            warehouse: (d.warehouse === "STR-LKO-01" || !d.warehouse) ? "Lucknow Store (LKO-01)" : d.warehouse,
-          };
-        }));
+        try {
+          const parsed = JSON.parse(storedDevs);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            parsed.forEach((d: Device) => {
+              if (!devMap.has(d.id)) {
+                // Device manually added by user through UI
+                devMap.set(d.id, d);
+              } else {
+                // If baseline phone was marked Sold during current session, preserve it
+                const baseline = devMap.get(d.id)!;
+                if (d.status === "Sold") {
+                  baseline.status = "Sold";
+                }
+              }
+            });
+          }
+        } catch (e) {}
       }
+
+      const allMapped = Array.from(devMap.values()).map((d: Device) => {
+        const isSold =
+          d.status === "Sold" ||
+          soldIdentifiers.has(d.id.toLowerCase()) ||
+          (d.imei1 && soldIdentifiers.has(d.imei1)) ||
+          (d.imei2 && soldIdentifiers.has(d.imei2));
+        return {
+          ...d,
+          status: (isSold ? "Sold" : "In Stock") as DeviceStatus,
+          warehouse: (d.warehouse === "STR-LKO-01" || !d.warehouse) ? "Lucknow Store (LKO-01)" : d.warehouse,
+        };
+      });
+      setDevices(allMapped);
       const storedRepairs = localStorage.getItem(STORAGE_KEYS.repairs);
       if (storedRepairs) {
         const parsed = JSON.parse(storedRepairs);
