@@ -235,7 +235,7 @@ export interface SalesOrder {
   deliveryStatus: 'Order Placed' | 'Packed' | 'Shipped' | 'Out for Delivery' | 'Delivered' | 'Returned';
   trackingNumber?: string;
   warrantyMonths: number;
-  warrantyExpiry: string;
+  warrantyExpiry?: string;
   invoiceUrl?: string;
   invoiceNumber?: string;
   purchasePrice?: number;

@@ -61,6 +61,7 @@ export default function InvoiceGeneratorPage() {
     addSale,
     deleteSale,
     clearAllSales,
+    recoverAllSales,
     sales,
     showToast,
     isCashierMode,
@@ -137,20 +138,28 @@ export default function InvoiceGeneratorPage() {
     inStockDevices[0] ||
     devices[0];
 
-  // Customer State
-  const [customerName, setCustomerName] = useState("Abhay verma");
-  const [customerPhone, setCustomerPhone] = useState("7991990508");
-  const [customerEmail, setCustomerEmail] = useState("abhayverma7380@gmail.com");
+  // Customer State - Default blank so each customer gets their own clean bill
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [customerEmail, setCustomerEmail] = useState("");
   const [customerAadhaar, setCustomerAadhaar] = useState("");
-  const [customerLocalAddress, setCustomerLocalAddress] = useState(
-    "Gomti nagar, Lucknow, Uttar Pradesh, 226010"
-  );
-  const [customerPermanentAddress, setCustomerPermanentAddress] = useState(
-    "Gomti nagar, Lucknow, Uttar Pradesh, 226010"
-  );
+  const [customerLocalAddress, setCustomerLocalAddress] = useState("");
+  const [customerPermanentAddress, setCustomerPermanentAddress] = useState("");
   const [isSameAddress, setIsSameAddress] = useState(true);
   const [customerGstin, setCustomerGstin] = useState("");
   const [placeOfSupply, setPlaceOfSupply] = useState("Uttar Pradesh");
+
+  // Reset Customer Form for next bill
+  const resetCustomerForm = () => {
+    setCustomerName("");
+    setCustomerPhone("");
+    setCustomerEmail("");
+    setCustomerAadhaar("");
+    setCustomerLocalAddress("");
+    setCustomerPermanentAddress("");
+    setCustomerGstin("");
+    setIsSameAddress(true);
+  };
 
   // Address & Aadhaar handler helpers
   const handleLocalAddressChange = (addr: string) => {
@@ -482,12 +491,12 @@ export default function InvoiceGeneratorPage() {
     const finalTxn2 = splitMode2 === "Cash" ? "Store Cash Counter" : (splitTxnId2.trim() || `PPAY${cleanStoreCode}2611-${nextInvoiceSerial}`);
 
     const recordedSale = addSale({
-      customerName,
-      customerPhone,
-      customerEmail,
-      customerAddress: customerLocalAddress,
-      customerLocalAddress,
-      customerPermanentAddress,
+      customerName: customerName.trim() || "Retail Customer",
+      customerPhone: customerPhone.trim() || "+91 98000 00000",
+      customerEmail: customerEmail.trim(),
+      customerAddress: customerLocalAddress.trim() || "Lucknow, Uttar Pradesh",
+      customerLocalAddress: customerLocalAddress.trim() || "Lucknow, Uttar Pradesh",
+      customerPermanentAddress: customerPermanentAddress.trim() || customerLocalAddress.trim() || "Lucknow, Uttar Pradesh",
       customerAadhaar: customerAadhaar.trim() || undefined,
       customerGstin,
       placeOfSupply,
@@ -596,6 +605,7 @@ Have a wonderful experience with your device!`;
       return;
     }
     autoRecordCurrentInvoice();
+    resetCustomerForm();
     setActiveTab("history");
     showToast(`Tax Invoice ${invoiceNumber} created & recorded! Handset stock se hata diya gaya.`, "success");
   };
@@ -703,6 +713,18 @@ https://thefundu.com/verify/${serialNo}
           >
             <Download className="h-3.5 w-3.5 text-emerald-600" />
             <span>Export CA Margin Audit</span>
+          </Button>
+
+          {/* Download Bill (PDF) Button */}
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={handlePrint}
+            className="gap-1.5 shadow-sm font-bold bg-blue-600 hover:bg-blue-700 text-white"
+            title="Download & Save Tax Invoice as PDF file"
+          >
+            <Download className="h-3.5 w-3.5" />
+            <span>Download Bill (PDF)</span>
           </Button>
 
           <Button
@@ -1290,9 +1312,24 @@ https://thefundu.com/verify/${serialNo}
                   <User className="h-4 w-4 text-fundu-600" />
                   <span>3. Buyer / Customer Information</span>
                 </CardTitle>
-                <Badge variant="outline" size="sm" className="text-[10px]">
-                  KYC &amp; Invoice Billing
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      resetCustomerForm();
+                      showToast("Customer fields cleared for next bill!", "info");
+                    }}
+                    className="h-6 text-[10.5px] px-2 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200"
+                    title="Clear customer details for fresh invoice"
+                  >
+                    Clear / New Customer
+                  </Button>
+                  <Badge variant="outline" size="sm" className="text-[10px]">
+                    KYC &amp; Invoice Billing
+                  </Badge>
+                </div>
               </div>
             </CardHeader>
             <CardContent className="pt-3 space-y-3 text-xs">
@@ -1816,9 +1853,26 @@ https://thefundu.com/verify/${serialNo}
                 <FileText className="h-4 w-4 text-fundu-600" />
                 <span>Live PDF Invoice Preview (A4 Formatted)</span>
               </span>
-              <span className="text-[10px] text-slate-400">
-                Click &quot;Print Invoice&quot; to print or save as PDF
-              </span>
+              <div className="flex items-center gap-1.5">
+                <Button
+                  size="sm"
+                  onClick={handlePrint}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold gap-1 text-[11px] h-6 px-2.5 shadow-xs"
+                  title="Download and save Tax Invoice PDF"
+                >
+                  <Download className="h-3 w-3" />
+                  <span>Download PDF</span>
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handlePrint}
+                  className="gap-1 text-[11px] h-6 px-2"
+                >
+                  <Printer className="h-3 w-3" />
+                  <span>Print</span>
+                </Button>
+              </div>
             </div>
 
             {/* LIVE INVOICE SHEET CONTAINER WITH BOX SHADOW */}
@@ -2044,6 +2098,18 @@ https://thefundu.com/verify/${serialNo}
               </div>
 
               <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    recoverAllSales();
+                  }}
+                  className="text-xs gap-1.5 font-bold border-blue-300 text-blue-700 bg-blue-50/70 hover:bg-blue-100 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800"
+                  title="Saare khoye hue bills aur sold phones ka record wapas restore karein"
+                >
+                  <RefreshCw className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Restore / Recover Bills</span>
+                </Button>
                 {sales.length > 0 && (
                   <Button
                     variant="outline"
@@ -2284,6 +2350,24 @@ https://thefundu.com/verify/${serialNo}
                               >
                                 <Printer className="w-3 h-3 text-fundu-600" />
                                 <span>Reprint</span>
+                              </Button>
+
+                              {/* 1-Click Download PDF */}
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => {
+                                  setSelectedHistoryOrder(s);
+                                  setIsHistoryModalOpen(true);
+                                  setTimeout(() => {
+                                    window.print();
+                                  }, 300);
+                                }}
+                                className="h-7 text-xs px-2 gap-1 font-bold border-blue-300 text-blue-700 bg-blue-50/70 hover:bg-blue-100 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800 shadow-2xs"
+                                title="Download & Save this Bill directly as PDF"
+                              >
+                                <Download className="w-3 h-3 text-blue-600" />
+                                <span>Download PDF</span>
                               </Button>
 
                               {/* WhatsApp Share */}

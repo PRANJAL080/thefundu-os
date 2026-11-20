@@ -243,7 +243,7 @@ export default function CustomersPage() {
                             <Badge variant="info" size="sm">{s.deliveryStatus}</Badge>
                           </td>
                           <td className="p-2 text-emerald-600 font-semibold">
-                            Exp {formatDate(s.warrantyExpiry)}
+                            {s.warrantyExpiry ? `Exp ${formatDate(s.warrantyExpiry)}` : "6 Months (TheFundu)"}
                           </td>
                         </tr>
                       ))}

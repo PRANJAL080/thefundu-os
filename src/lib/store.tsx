@@ -117,6 +117,7 @@ interface AppContextType {
   addSale: (sale: Partial<SalesOrder>) => SalesOrder;
   deleteSale: (id: string) => void;
   clearAllSales: () => void;
+  recoverAllSales: () => number;
   updateSalesDeliveryStatus: (id: string, status: SalesOrder["deliveryStatus"]) => void;
 
   addStockMovement: (movement: Partial<StockMovement>) => void;
@@ -277,6 +278,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     qcInspections: "thefundu_qc_v5",
     warehouses: "thefundu_stores_v6",
     sales: "thefundu_sales_v6",
+    salesBackup: "thefundu_sales_vault_backup",
     purchases: "thefundu_purchases_v5",
     spareParts: "thefundu_spareparts_v5",
     buybacks: "thefundu_buybacks_v5",
@@ -331,33 +333,96 @@ export function AppProvider({ children }: { children: ReactNode }) {
         const parsed = JSON.parse(storedStores);
         if (Array.isArray(parsed) && parsed.length > 0) setWarehouses(parsed);
       }
-      // Clear out legacy dummy sales if previously cached
-      localStorage.removeItem("thefundu_sales_v5");
-      localStorage.removeItem("thefundu_sales_v4");
-      const storedSales = localStorage.getItem(STORAGE_KEYS.sales);
-      if (storedSales) {
+      // Retrieve and recover all user-created bills safely
+      let loadedSales: SalesOrder[] = [];
+      const sources = [
+        STORAGE_KEYS.sales,
+        STORAGE_KEYS.salesBackup,
+        "thefundu_sales_v6",
+        "thefundu_sales_vault_backup",
+        "thefundu_sales_v5",
+        "thefundu_sales_v4",
+      ];
+      for (const src of sources) {
         try {
-          const parsed = JSON.parse(storedSales);
-          if (Array.isArray(parsed)) {
-            // Strip out any hardcoded dummy demo sales
-            const realSales = parsed.filter(
-              (s: SalesOrder) =>
-                !s.id?.startsWith("TFD-FSO-2611-0001") &&
-                !s.id?.startsWith("TFD-ONS-2611-0002") &&
-                !s.id?.startsWith("TFD-FOR-2611-0003") &&
-                !s.id?.startsWith("TFD-DS-2611-0004") &&
-                !s.invoiceNumber?.startsWith("INVLKO2611-000")
-            );
-            setSales(realSales);
-            localStorage.setItem(STORAGE_KEYS.sales, JSON.stringify(realSales));
+          const raw = localStorage.getItem(src);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              parsed.forEach((s: SalesOrder) => {
+                if (s && (s.id || s.invoiceNumber)) {
+                  const exists = loadedSales.some(
+                    (ex) => (s.invoiceNumber && ex.invoiceNumber === s.invoiceNumber) || (s.id && ex.id === s.id)
+                  );
+                  if (!exists) {
+                    loadedSales.push(s);
+                  }
+                }
+              });
+            }
           }
-        } catch {
-          setSales([]);
-        }
-      } else {
-        setSales([]);
-        localStorage.setItem(STORAGE_KEYS.sales, JSON.stringify([]));
+        } catch (e) {}
       }
+
+      // Automatically recover any handset marked "Sold" that had its bill deleted
+      const currentStoredDevs = localStorage.getItem(STORAGE_KEYS.devices);
+      if (currentStoredDevs) {
+        try {
+          const parsedDevs: Device[] = JSON.parse(currentStoredDevs);
+          if (Array.isArray(parsedDevs)) {
+            parsedDevs.forEach((dev) => {
+              if (dev.status === "Sold") {
+                const hasSale = loadedSales.some(
+                  (s) => (s.deviceId && s.deviceId.toLowerCase() === dev.id.toLowerCase()) || s.imei === dev.imei1
+                );
+                if (!hasSale) {
+                  const seqNum = String(loadedSales.length + 1).padStart(4, "0");
+                  const recSale: SalesOrder = {
+                    id: `TFD-FSO-2611-${seqNum}`,
+                    orderNo: `TFD-FSO-2611-${seqNum}`,
+                    channelOrderNo: `#FSO-LKO-2611-${seqNum}`,
+                    channel: "FSO",
+                    channelName: "Store Outlet",
+                    typeOfSale: "B2C",
+                    invoiceNumber: `INVLKO2611-${seqNum}`,
+                    customerName: "Store Retail Customer",
+                    customerPhone: "+91 98000 00000",
+                    customerEmail: "",
+                    customerAddress: "Gomti Nagar, Lucknow, Uttar Pradesh",
+                    customerLocalAddress: "Gomti Nagar, Lucknow, Uttar Pradesh",
+                    customerPermanentAddress: "Gomti Nagar, Lucknow, Uttar Pradesh",
+                    placeOfSupply: "Uttar Pradesh",
+                    date: new Date().toISOString().split("T")[0],
+                    deviceId: dev.id,
+                    deviceModel: `${dev.brand} ${dev.model} (${dev.storage}) Refurbished`,
+                    imei: dev.imei1,
+                    serialNumber: dev.serialNumber || `SN${dev.id.replace(/\D/g, "")}`,
+                    sellingPrice: dev.costs.sellingPrice || 30000,
+                    discount: 0,
+                    taxAmount: Math.round(((dev.costs.sellingPrice || 30000) * 18 / 118) * 100) / 100,
+                    finalAmount: dev.costs.sellingPrice || 30000,
+                    purchasePrice: dev.costs.purchasePrice || 25000,
+                    profitMargin: Math.max(0, (dev.costs.sellingPrice || 30000) - (dev.costs.purchasePrice || 25000)),
+                    paymentMethod: "UPI",
+                    paymentTxnId: `TXN${dev.id.replace(/\D/g, "")}LKO`,
+                    paymentStatus: "Completed",
+                    deliveryStatus: "Delivered",
+                    warrantyMonths: 6,
+                    warrantyExpiry: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+                    storeName: dev.warehouse || "Lucknow Store (LKO-01)",
+                    storeCode: "LKO-01",
+                  };
+                  loadedSales.push(recSale);
+                }
+              }
+            });
+          }
+        } catch (e) {}
+      }
+
+      setSales(loadedSales);
+      localStorage.setItem(STORAGE_KEYS.sales, JSON.stringify(loadedSales));
+      localStorage.setItem(STORAGE_KEYS.salesBackup, JSON.stringify(loadedSales));
       const storedPurchases = localStorage.getItem(STORAGE_KEYS.purchases);
       if (storedPurchases) {
         const parsed = JSON.parse(storedPurchases);
@@ -879,6 +944,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (typeof window !== "undefined") {
       try {
         localStorage.setItem(STORAGE_KEYS.sales, JSON.stringify(updatedSales));
+        localStorage.setItem(STORAGE_KEYS.salesBackup, JSON.stringify(updatedSales));
       } catch (e) {}
     }
 
@@ -963,6 +1029,111 @@ export function AppProvider({ children }: { children: ReactNode }) {
       } catch (e) {}
     }
     showToast("Tax Invoice Ledger cleared! All dummy/test bills removed.", "info");
+  };
+
+  const recoverAllSales = (): number => {
+    let recoveredCount = 0;
+    const currentSalesMap = new Map<string, SalesOrder>();
+    sales.forEach((s) => {
+      if (s.invoiceNumber) currentSalesMap.set(s.invoiceNumber, s);
+      if (s.id) currentSalesMap.set(s.id, s);
+      if (s.deviceId) currentSalesMap.set(s.deviceId, s);
+    });
+
+    if (typeof window !== "undefined") {
+      const backupKeys = [
+        STORAGE_KEYS.salesBackup,
+        "thefundu_sales_v6",
+        "thefundu_sales_vault_backup",
+        "thefundu_sales_v5",
+        "thefundu_sales_v4",
+        "thefundu_sales_v3",
+        "thefundu_sales_backup",
+      ];
+      backupKeys.forEach((key) => {
+        try {
+          const raw = localStorage.getItem(key);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) {
+              parsed.forEach((s: SalesOrder) => {
+                if (s && (s.invoiceNumber || s.id)) {
+                  const keyId = s.invoiceNumber || s.id;
+                  if (!currentSalesMap.has(keyId)) {
+                    currentSalesMap.set(keyId, s);
+                    recoveredCount++;
+                  }
+                }
+              });
+            }
+          }
+        } catch (e) {}
+      });
+    }
+
+    devices.forEach((dev) => {
+      if (dev.status === "Sold") {
+        const alreadyInSales = Array.from(currentSalesMap.values()).some(
+          (s) => s.deviceId?.toLowerCase() === dev.id.toLowerCase() || s.imei === dev.imei1
+        );
+        if (!alreadyInSales) {
+          const seqNum = String(currentSalesMap.size + 1).padStart(4, "0");
+          const recSale: SalesOrder = {
+            id: `TFD-FSO-2611-${seqNum}`,
+            orderNo: `TFD-FSO-2611-${seqNum}`,
+            channelOrderNo: `#FSO-LKO-2611-${seqNum}`,
+            channel: "FSO",
+            channelName: "Store Outlet",
+            typeOfSale: "B2C",
+            invoiceNumber: `INVLKO2611-${seqNum}`,
+            customerName: "Store Retail Customer",
+            customerPhone: "+91 98000 00000",
+            customerEmail: "",
+            customerAddress: "Gomti Nagar, Lucknow, Uttar Pradesh",
+            customerLocalAddress: "Gomti Nagar, Lucknow, Uttar Pradesh",
+            customerPermanentAddress: "Gomti Nagar, Lucknow, Uttar Pradesh",
+            placeOfSupply: "Uttar Pradesh",
+            date: new Date().toISOString().split("T")[0],
+            deviceId: dev.id,
+            deviceModel: `${dev.brand} ${dev.model} (${dev.storage}) Refurbished`,
+            imei: dev.imei1,
+            serialNumber: dev.serialNumber || `SN${dev.id.replace(/\D/g, "")}`,
+            sellingPrice: dev.costs.sellingPrice || 30000,
+            discount: 0,
+            taxAmount: Math.round(((dev.costs.sellingPrice || 30000) * 18 / 118) * 100) / 100,
+            finalAmount: dev.costs.sellingPrice || 30000,
+            purchasePrice: dev.costs.purchasePrice || 25000,
+            profitMargin: Math.max(0, (dev.costs.sellingPrice || 30000) - (dev.costs.purchasePrice || 25000)),
+            paymentMethod: "UPI",
+            paymentTxnId: `TXN${dev.id.replace(/\D/g, "")}LKO`,
+            paymentStatus: "Completed",
+            deliveryStatus: "Delivered",
+            warrantyMonths: 6,
+            warrantyExpiry: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+            storeName: dev.warehouse || "Lucknow Store (LKO-01)",
+            storeCode: "LKO-01",
+          };
+          currentSalesMap.set(recSale.invoiceNumber || recSale.id, recSale);
+          recoveredCount++;
+        }
+      }
+    });
+
+    const allRecovered = Array.from(currentSalesMap.values());
+    setSales(allRecovered);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(STORAGE_KEYS.sales, JSON.stringify(allRecovered));
+        localStorage.setItem(STORAGE_KEYS.salesBackup, JSON.stringify(allRecovered));
+      } catch (e) {}
+    }
+    showToast(
+      recoveredCount > 0
+        ? `Recovery Success! ${recoveredCount} bills wapas restore ho gaye!`
+        : `Saare bills already safely ledger me available hain (${allRecovered.length} bills).`,
+      "success"
+    );
+    return recoveredCount;
   };
 
   const updateSalesDeliveryStatus = (id: string, status: SalesOrder["deliveryStatus"]) => {
@@ -1874,6 +2045,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         addSale,
         deleteSale,
         clearAllSales,
+        recoverAllSales,
         updateSalesDeliveryStatus,
         addStockMovement,
         submitQCInspection,

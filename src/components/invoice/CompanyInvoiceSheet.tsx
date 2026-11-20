@@ -308,18 +308,18 @@ export function CompanyInvoiceSheet({
   const effectiveTerms = customTerms && customTerms.length > 0 ? customTerms : DEFAULT_INVOICE_TERMS;
 
   // Customer Data
-  const customerName = customCustomer?.name || order?.customerName || "Abhay verma";
-  const customerPhone = customCustomer?.phone || order?.customerPhone || "7991990508";
-  const customerEmail = customCustomer?.email || order?.customerEmail || "abhayverma7380@gmail.com";
+  const customerName = customCustomer?.name?.trim() || order?.customerName?.trim() || "Retail Customer";
+  const customerPhone = customCustomer?.phone?.trim() || order?.customerPhone?.trim() || "";
+  const customerEmail = customCustomer?.email?.trim() || order?.customerEmail?.trim() || "";
   const customerLocalAddress =
-    customCustomer?.localAddress ||
-    order?.customerLocalAddress ||
-    customCustomer?.address ||
-    order?.customerAddress ||
-    "Gomti nagar, Lucknow, Uttar Pradesh, 226010";
+    customCustomer?.localAddress?.trim() ||
+    order?.customerLocalAddress?.trim() ||
+    customCustomer?.address?.trim() ||
+    order?.customerAddress?.trim() ||
+    "Lucknow, Uttar Pradesh";
   const customerPermanentAddress =
-    customCustomer?.permanentAddress ||
-    order?.customerPermanentAddress ||
+    customCustomer?.permanentAddress?.trim() ||
+    order?.customerPermanentAddress?.trim() ||
     customerLocalAddress;
   const customerAddress = customerLocalAddress;
   const customerGstin = customCustomer?.gstin || order?.customerGstin || "URP (Unregistered)";
@@ -454,394 +454,402 @@ export function CompanyInvoiceSheet({
         </span>
       </div>
 
-      <div className="text-center py-1.5 border-t border-black">
-        <h1 className="text-base font-black uppercase tracking-wider text-black">
-          TAX INVOICE
-        </h1>
-      </div>
-
-      {/* SUPPLIER NAME & ADDRESS BOX */}
-      <div className="border border-black flex">
-        <div className="w-[28%] p-2 font-bold border-r border-black bg-white flex items-center">
-          Supplier Name &amp; Address
-        </div>
-        <div className="w-[72%] p-2 space-y-0.5">
-          <p className="font-bold text-[11px]">
-            {companyLegalName}
-          </p>
-          <p>
-            <strong>Registered Office Address:</strong> {companyRegisteredAddress}
-          </p>
-          <p>
-            <strong>Store Outlet:</strong> <span className="font-bold text-black">{storeName}</span> — {storeAddress}
-          </p>
-          <p className="font-semibold">
-            GSTIN: {companyGstin} &nbsp;&nbsp;&nbsp; CIN: {companyCin} &nbsp;&nbsp;&nbsp; PAN: {companyPan}
-          </p>
-        </div>
-      </div>
-
-      {/* ORDER & INVOICE METADATA GRID */}
-      <div className="border-x border-b border-black text-[9px]">
-        {/* Row 1 */}
-        <div className="flex border-b border-black">
-          <div className="w-[38%] p-1.5 border-r border-black">
-            Channel Order No.: <span className="font-bold">{channelOrderNo}</span> ({activeChannelCode})
-          </div>
-          <div className="w-[34%] p-1.5 border-r border-black">
-            Order No.: <span className="font-bold">{orderNo}</span>
-          </div>
-          <div className="w-[28%] p-1.5">
-            Type of Sales: <span className="font-bold">{activeTypeOfSale}</span>
-          </div>
+      {/* SINGLE UNIFIED CRISP OUTER BORDER BOX */}
+      <div className="border border-black">
+        {/* ROW 1: TAX INVOICE TITLE */}
+        <div className="text-center py-1.5 border-b border-black bg-slate-50">
+          <h1 className="text-base font-black uppercase tracking-wider text-black">
+            TAX INVOICE
+          </h1>
         </div>
 
-        {/* Row 2 */}
-        <div className="flex border-b border-black">
-          <div className="w-[30%] p-1.5 border-r border-black truncate">
-            Invoice Number: <span className="font-bold">{invoiceNumber}</span>
+        {/* ROW 2: SUPPLIER NAME & ADDRESS */}
+        <div className="border-b border-black flex">
+          <div className="w-[28%] p-2 font-bold border-r border-black bg-white flex items-center">
+            Supplier Name &amp; Address
           </div>
-          <div className="w-[32%] p-1.5 border-r border-black truncate">
-            Date &amp; Time: <span className="font-bold">{invoiceDate}{invoiceTime ? ` • ${invoiceTime}` : ""}</span>
-          </div>
-          <div className="w-[18%] p-1.5 border-r border-black">
-            Sales Channel: <span className="font-bold">{activeChannelCode}</span>
-          </div>
-          <div className="w-[20%] p-1.5">
-            Place of Supply: <span className="font-bold">{companyStateName} ({companyStateCode})</span>
-          </div>
-        </div>
-
-        {/* Row 3 */}
-        <div className="flex">
-          <div className="w-[72%] p-1.5 border-r border-black">
-            Store Location: <span className="font-bold">{displayStoreLocation}</span>
-          </div>
-          <div className="w-[28%] p-1.5 font-bold">
-            GSTIN: {companyGstin}
-          </div>
-        </div>
-      </div>
-
-      {/* BILL TO & SHIP TO SECTION */}
-      <div className="border-x border-b border-black flex text-[8.5px] leading-tight">
-        {/* Bill To */}
-        <div className="w-1/2 p-1.5 border-r border-black space-y-0.5">
-          <div className="flex">
-            <span className="font-bold w-14 shrink-0 text-black">Bill To:</span>
-            <div className="flex-1 space-y-0.5">
-              <p className="font-bold text-[10px] text-black">{customerName}</p>
-              <p><span className="font-semibold">Ph:</span> {customerPhone} {customerEmail ? <span>&nbsp;|&nbsp; <span className="font-semibold">Email:</span> {customerEmail}</span> : null}</p>
-              {customerAadhaar ? (
-                <p className="font-mono font-bold text-black"><span className="font-sans font-bold">KYC NO:</span> {customerAadhaar}</p>
-              ) : null}
-              <p><span className="font-semibold">Local Address:</span> {customerLocalAddress}</p>
-              {customerPermanentAddress ? (
-                <p><span className="font-semibold">Permanent Address:</span> {customerPermanentAddress}</p>
-              ) : null}
-              <p><span className="font-semibold">GSTIN:</span> {customerGstin} &nbsp;|&nbsp; <span className="font-semibold">Place of Supply:</span> {placeOfSupply}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Ship To */}
-        <div className="w-1/2 p-1.5 space-y-0.5">
-          <div className="flex">
-            <span className="font-bold w-14 shrink-0 text-black">Ship To:</span>
-            <div className="flex-1 space-y-0.5">
-              <p className="font-bold text-[10px] text-black">{customerName} &nbsp;&nbsp; <span className="font-normal text-[8.5px] font-semibold">Ph: {customerPhone}</span></p>
-              <p><span className="font-semibold">Delivery Address:</span> {customerLocalAddress}</p>
-              {customerPermanentAddress && customerPermanentAddress !== customerLocalAddress ? (
-                <p><span className="font-semibold">Permanent Address:</span> {customerPermanentAddress}</p>
-              ) : null}
-              {customerAadhaar ? (
-                <p className="font-mono text-[8.5px] font-bold text-black"><span className="font-sans font-bold">KYC NO:</span> {customerAadhaar}</p>
-              ) : null}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* MAIN ITEMS TABLE - STRICTLY NO GRADING (NO A+ / GRADE BADGES) */}
-      <div className="border-x border-b border-black">
-        <table className="w-full text-[9px] border-collapse">
-          <thead>
-            <tr className="border-b border-black text-center font-bold">
-              <th className="p-1 border-r border-black w-[4%]">S. No.</th>
-              <th className="p-1 border-r border-black w-[13%]">Barcode</th>
-              <th className="p-1 border-r border-black w-[35%] text-left">Description of Goods</th>
-              <th className="p-1 border-r border-black w-[12%]">Product Type</th>
-              <th className="p-1 border-r border-black w-[8%]">HSN / SAC</th>
-              <th className="p-1 border-r border-black w-[7%]">Warranty</th>
-              <th className="p-1 border-r border-black w-[9%]">Warranty Type</th>
-              <th className="p-1 border-r border-black w-[4%]">Qty</th>
-              <th className="p-1 border-r border-black w-[9%] text-right">Price (INR)</th>
-              <th className="p-1 w-[9%] text-right">Amount (INR)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="border-b border-black align-top">
-              <td className="p-1 text-center border-r border-black font-semibold">1</td>
-              <td className="p-1 border-r border-black font-mono text-[8px] text-center">{barcode}</td>
-              {/* DESCRIPTION: Includes "Refurbished", strictly NO grading */}
-              <td className="p-1 border-r border-black text-left font-semibold">
-                {goodsDescription}
-              </td>
-              <td className="p-1 border-r border-black text-center">
-                Refurbished Mobiles
-              </td>
-              <td className="p-1 border-r border-black text-center font-mono">
-                851712
-              </td>
-              <td className="p-1 border-r border-black text-center font-bold">
-                {warrantyDays} Days
-              </td>
-              <td className="p-1 border-r border-black text-center">
-                TheFundu Warranty
-              </td>
-              <td className="p-1 border-r border-black text-center font-bold">
-                1
-              </td>
-              <td className="p-1 border-r border-black text-right font-semibold">
-                {sellingPriceY.toFixed(2)}
-              </td>
-              <td className="p-1 text-right font-bold">
-                {sellingPriceY.toFixed(2)}
-              </td>
-            </tr>
-
-            {/* Subtotal */}
-            <tr className="border-b border-black">
-              <td colSpan={7} className="border-r border-black"></td>
-              <td className="p-1 text-center font-bold border-r border-black">Sub Total</td>
-              <td className="p-1 text-center font-bold border-r border-black">1</td>
-              <td className="p-1 text-right font-bold">{sellingPriceY.toFixed(2)}</td>
-            </tr>
-
-            {/* Total Tax on Margin */}
-            <tr className="border-b border-black">
-              <td colSpan={8} className="border-r border-black"></td>
-              <td className="p-1 text-right font-bold border-r border-black">Total Tax</td>
-              <td className="p-1 text-right font-bold">{totalTax.toFixed(2)}</td>
-            </tr>
-
-            {/* Discount */}
-            <tr className="border-b border-black">
-              <td colSpan={8} className="border-r border-black"></td>
-              <td className="p-1 text-right font-bold border-r border-black">Discount</td>
-              <td className="p-1 text-right font-bold">{discountD.toFixed(2)}</td>
-            </tr>
-
-            {/* Grand Total */}
-            <tr>
-              <td colSpan={8} className="border-r border-black"></td>
-              <td className="p-1 text-right font-black border-r border-black text-[10px]">Grand Total</td>
-              <td className="p-1 text-right font-black text-[10px]">{finalAmount.toFixed(2)}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      {/* AMOUNT IN WORDS */}
-      <div className="border-x border-b border-black p-1.5 flex text-[9px]">
-        <span className="font-bold w-28">Amount in words:</span>
-        <span className="font-bold flex-1">{numberToWords(finalAmount)}</span>
-      </div>
-
-      {/* THREE-COLUMN SUMMARY ROW (IMEI / PAYMENT SUMMARY / TAX SUMMARY) */}
-      <div className="border-x border-b border-black flex">
-        {/* Box 1: IMEI / SERIAL NO. */}
-        <div className="w-[24%] p-1.5 border-r border-black space-y-1 text-[8.5px]">
-          <p className="font-bold uppercase tracking-wider text-[9px] border-b border-black pb-0.5">
-            IMEI / SERIAL NO.
-          </p>
-          <div>
-            <p className="font-bold">IMEI No:</p>
-            <p className="font-mono font-bold">[{imei1}]</p>
-          </div>
-          <div>
-            <p className="font-bold">Serial No: [{serialNo}]</p>
-          </div>
-        </div>
-
-        {/* Box 2: PAYMENT SUMMARY */}
-        <div className="w-[46%] p-1.5 border-r border-black text-[8.5px]">
-          <div className="border-b border-black pb-0.5 mb-1 flex items-center justify-between">
-            <p className="font-bold uppercase tracking-wider text-[9px]">
-              PAYMENT SUMMARY
+          <div className="w-[72%] p-2 space-y-0.5">
+            <p className="font-bold text-[11px]">
+              {companyLegalName}
             </p>
-            {isSplitPayment && (
-              <span className="text-[7px] font-black uppercase tracking-wider bg-black text-white px-1 py-0.2 rounded-sm">
-                Split ({part1Mode} + {part2Mode})
-              </span>
-            )}
+            <p>
+              <strong>Registered Office Address:</strong> {companyRegisteredAddress}
+            </p>
+            <p>
+              <strong>Store Outlet:</strong> <span className="font-bold text-black">{storeName}</span> — {storeAddress}
+            </p>
+            <p className="font-semibold">
+              GSTIN: {companyGstin} &nbsp;&nbsp;&nbsp; CIN: {companyCin} &nbsp;&nbsp;&nbsp; PAN: {companyPan}
+            </p>
           </div>
-          {isSplitPayment ? (
-            <table className="w-full text-center border-collapse">
-              <thead>
-                <tr className="border-b border-black font-bold bg-slate-50">
-                  <th className="p-0.5 border-r border-black text-left pl-1">Payment Mode</th>
-                  <th className="p-0.5 border-r border-black">Payment Method</th>
-                  <th className="p-0.5 border-r border-black">Transaction ID / UPI Ref</th>
-                  <th className="p-0.5 text-right pr-1">Amount (INR)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-black/40">
-                  <td className="p-0.5 border-r border-black font-bold text-left pl-1">
-                    {part1Mode}
-                  </td>
-                  <td className="p-0.5 border-r border-black font-medium">
-                    {part1Method}
-                  </td>
-                  <td className="p-0.5 border-r border-black font-mono font-semibold text-[7.5px] max-w-[130px] break-all">
-                    {part1Txn}
-                  </td>
-                  <td className="p-0.5 text-right font-bold pr-1 font-mono">
-                    {part1Amount.toFixed(2)}
-                  </td>
-                </tr>
-                <tr className="border-b border-black/40">
-                  <td className="p-0.5 border-r border-black font-bold text-left pl-1">
-                    {part2Mode}
-                  </td>
-                  <td className="p-0.5 border-r border-black font-medium">
-                    {part2Method}
-                  </td>
-                  <td className="p-0.5 border-r border-black font-mono font-semibold text-[7.5px] max-w-[130px] break-all">
-                    {part2Txn}
-                  </td>
-                  <td className="p-0.5 text-right font-bold pr-1 font-mono">
-                    {part2Amount.toFixed(2)}
-                  </td>
-                </tr>
-                <tr className="font-bold bg-slate-100">
-                  <td colSpan={3} className="p-0.5 border-r border-black text-right pr-1 font-bold">
-                    Total Received (INR):
-                  </td>
-                  <td className="p-0.5 text-right font-black pr-1 font-mono">
-                    {finalAmount.toFixed(2)}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          ) : (
-            <table className="w-full text-center border-collapse">
-              <thead>
-                <tr className="border-b border-black font-bold">
-                  <th className="p-0.5 border-r border-black">Payment Mode</th>
-                  <th className="p-0.5 border-r border-black">Payment Method</th>
-                  <th className="p-0.5 border-r border-black">Transaction ID</th>
-                  <th className="p-0.5 text-right">Amount (INR)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="p-0.5 border-r border-black font-bold">{paymentMode}</td>
-                  <td className="p-0.5 border-r border-black font-medium">{paymentMethod}</td>
-                  <td className="p-0.5 border-r border-black font-mono text-[8px] truncate max-w-[120px]">
-                    {paymentMode === "Cash" ? "Store Cash Counter" : txnId}
-                  </td>
-                  <td className="p-0.5 text-right font-bold font-mono">{finalAmount.toFixed(2)}</td>
-                </tr>
-              </tbody>
-            </table>
-          )}
         </div>
 
-        {/* Box 3: TAX SUMMARY (MARGIN GST RULE 32(5)) */}
-        <div className="w-[30%] p-1.5 text-[8.5px]">
-          <p className="font-bold uppercase tracking-wider text-[9px] border-b border-black pb-0.5 mb-1">
-            TAX SUMMARY (RULE 32(5))
-          </p>
-          <table className="w-full text-center border-collapse">
+        {/* ROW 3: ORDER & INVOICE METADATA GRID */}
+        <div className="border-b border-black text-[9px]">
+          {/* Row 3.1 */}
+          <div className="flex border-b border-black">
+            <div className="w-[38%] p-1.5 border-r border-black">
+              Channel Order No.: <span className="font-bold">{channelOrderNo}</span> ({activeChannelCode})
+            </div>
+            <div className="w-[34%] p-1.5 border-r border-black">
+              Order No.: <span className="font-bold">{orderNo}</span>
+            </div>
+            <div className="w-[28%] p-1.5">
+              Type of Sales: <span className="font-bold">{activeTypeOfSale}</span>
+            </div>
+          </div>
+
+          {/* Row 3.2 */}
+          <div className="flex border-b border-black">
+            <div className="w-[30%] p-1.5 border-r border-black truncate">
+              Invoice Number: <span className="font-bold">{invoiceNumber}</span>
+            </div>
+            <div className="w-[32%] p-1.5 border-r border-black truncate">
+              Date &amp; Time: <span className="font-bold">{invoiceDate}{invoiceTime ? ` • ${invoiceTime}` : ""}</span>
+            </div>
+            <div className="w-[18%] p-1.5 border-r border-black">
+              Sales Channel: <span className="font-bold">{activeChannelCode}</span>
+            </div>
+            <div className="w-[20%] p-1.5">
+              Place of Supply: <span className="font-bold">{companyStateName} ({companyStateCode})</span>
+            </div>
+          </div>
+
+          {/* Row 3.3 */}
+          <div className="flex">
+            <div className="w-[72%] p-1.5 border-r border-black">
+              Store Location: <span className="font-bold">{displayStoreLocation}</span>
+            </div>
+            <div className="w-[28%] p-1.5 font-bold">
+              GSTIN: {companyGstin}
+            </div>
+          </div>
+        </div>
+
+        {/* ROW 4: BILL TO & SHIP TO SECTION */}
+        <div className="border-b border-black flex text-[8.5px] leading-tight">
+          {/* Bill To */}
+          <div className="w-1/2 p-1.5 border-r border-black space-y-0.5">
+            <div className="flex">
+              <span className="font-bold w-14 shrink-0 text-black">Bill To:</span>
+              <div className="flex-1 space-y-0.5">
+                <p className="font-bold text-[10px] text-black">{customerName}</p>
+                <p><span className="font-semibold">Ph:</span> {customerPhone} {customerEmail ? <span>&nbsp;|&nbsp; <span className="font-semibold">Email:</span> {customerEmail}</span> : null}</p>
+                {customerAadhaar ? (
+                  <p className="font-mono font-bold text-black"><span className="font-sans font-bold">KYC NO:</span> {customerAadhaar}</p>
+                ) : null}
+                <p><span className="font-semibold">Local Address:</span> {customerLocalAddress}</p>
+                {customerPermanentAddress ? (
+                  <p><span className="font-semibold">Permanent Address:</span> {customerPermanentAddress}</p>
+                ) : null}
+                <p><span className="font-semibold">GSTIN:</span> {customerGstin} &nbsp;|&nbsp; <span className="font-semibold">Place of Supply:</span> {placeOfSupply}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Ship To */}
+          <div className="w-1/2 p-1.5 space-y-0.5">
+            <div className="flex">
+              <span className="font-bold w-14 shrink-0 text-black">Ship To:</span>
+              <div className="flex-1 space-y-0.5">
+                <p className="font-bold text-[10px] text-black">{customerName} &nbsp;&nbsp; <span className="font-normal text-[8.5px] font-semibold">Ph: {customerPhone}</span></p>
+                <p><span className="font-semibold">Delivery Address:</span> {customerLocalAddress}</p>
+                {customerPermanentAddress && customerPermanentAddress !== customerLocalAddress ? (
+                  <p><span className="font-semibold">Permanent Address:</span> {customerPermanentAddress}</p>
+                ) : null}
+                {customerAadhaar ? (
+                  <p className="font-mono text-[8.5px] font-bold text-black"><span className="font-sans font-bold">KYC NO:</span> {customerAadhaar}</p>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ROW 5: MAIN ITEMS TABLE */}
+        <div className="border-b border-black">
+          <table className="w-full text-[9px] border-collapse">
             <thead>
-              <tr className="border-b border-black font-bold">
-                <th className="p-0.5 border-r border-black text-left">Tax Category</th>
-                <th className="p-0.5 border-r border-black">Tax %</th>
-                <th className="p-0.5 text-right">Tax Amount</th>
+              <tr className="border-b border-black text-center font-bold">
+                <th className="p-1 border-r border-black w-[4%]">S. No.</th>
+                <th className="p-1 border-r border-black w-[13%]">Barcode</th>
+                <th className="p-1 border-r border-black w-[35%] text-left">Description of Goods</th>
+                <th className="p-1 border-r border-black w-[12%]">Product Type</th>
+                <th className="p-1 border-r border-black w-[8%]">HSN / SAC</th>
+                <th className="p-1 border-r border-black w-[7%]">Warranty</th>
+                <th className="p-1 border-r border-black w-[9%]">Warranty Type</th>
+                <th className="p-1 border-r border-black w-[4%]">Qty</th>
+                <th className="p-1 border-r border-black w-[9%] text-right">Price (INR)</th>
+                <th className="p-1 w-[9%] text-right">Amount (INR)</th>
               </tr>
             </thead>
             <tbody>
-              <tr className="border-b border-black/40">
-                <td className="p-0.5 border-r border-black text-left font-semibold">Margin SGST@9%</td>
-                <td className="p-0.5 border-r border-black">9</td>
-                <td className="p-0.5 text-right font-mono">{marginSgst.toFixed(2)}</td>
+              <tr className="border-b border-black align-top">
+                <td className="p-1 text-center border-r border-black font-semibold">1</td>
+                <td className="p-1 border-r border-black font-mono text-[8px] text-center">{barcode}</td>
+                <td className="p-1 border-r border-black text-left font-semibold">
+                  {goodsDescription}
+                </td>
+                <td className="p-1 border-r border-black text-center">
+                  Refurbished Mobiles
+                </td>
+                <td className="p-1 border-r border-black text-center font-mono">
+                  851712
+                </td>
+                <td className="p-1 border-r border-black text-center font-bold">
+                  {warrantyDays} Days
+                </td>
+                <td className="p-1 border-r border-black text-center">
+                  TheFundu Warranty
+                </td>
+                <td className="p-1 border-r border-black text-center font-bold">
+                  1
+                </td>
+                <td className="p-1 border-r border-black text-right font-semibold">
+                  {sellingPriceY.toFixed(2)}
+                </td>
+                <td className="p-1 text-right font-bold">
+                  {sellingPriceY.toFixed(2)}
+                </td>
               </tr>
-              <tr className="border-b border-black/40">
-                <td className="p-0.5 border-r border-black text-left font-semibold">Margin IGST@18%</td>
-                <td className="p-0.5 border-r border-black">18</td>
-                <td className="p-0.5 text-right font-mono">{marginIgst.toFixed(2)}</td>
+
+              {/* Subtotal */}
+              <tr className="border-b border-black">
+                <td colSpan={7} className="p-1 text-right font-bold border-r border-black pr-2">Sub Total (Before Tax &amp; Discount):</td>
+                <td className="p-1 text-center font-bold border-r border-black">1</td>
+                <td className="p-1 text-right font-bold border-r border-black">{sellingPriceY.toFixed(2)}</td>
+                <td className="p-1 text-right font-bold">{sellingPriceY.toFixed(2)}</td>
               </tr>
+
+              {/* Total Tax on Margin */}
+              <tr className="border-b border-black">
+                <td colSpan={7} className="p-1 text-right font-semibold border-r border-black pr-2">Total GST on Margin (Rule 32(5)):</td>
+                <td className="border-r border-black"></td>
+                <td className="p-1 text-right font-semibold border-r border-black">18%</td>
+                <td className="p-1 text-right font-bold">{totalTax.toFixed(2)}</td>
+              </tr>
+
+              {/* Discount */}
+              {discountD > 0 && (
+                <tr className="border-b border-black">
+                  <td colSpan={7} className="p-1 text-right font-semibold border-r border-black pr-2">Promotional Discount:</td>
+                  <td className="border-r border-black"></td>
+                  <td className="border-r border-black"></td>
+                  <td className="p-1 text-right font-bold text-rose-700">-{discountD.toFixed(2)}</td>
+                </tr>
+              )}
+
+              {/* Grand Total */}
               <tr>
-                <td className="p-0.5 border-r border-black text-left font-semibold">Margin CGST@9%</td>
-                <td className="p-0.5 border-r border-black">9</td>
-                <td className="p-0.5 text-right font-mono">{marginCgst.toFixed(2)}</td>
+                <td colSpan={7} className="p-1 text-right font-black border-r border-black pr-2 text-[10px]">Grand Total (Billed Amount):</td>
+                <td className="p-1 text-center font-black border-r border-black">1</td>
+                <td className="border-r border-black"></td>
+                <td className="p-1 text-right font-black text-[10px] font-mono">{finalAmount.toFixed(2)}</td>
               </tr>
             </tbody>
           </table>
         </div>
-      </div>
 
-      {/* TERMS & CONDITIONS + AUTHORISED SIGNATORY */}
-      <div className="border-x border-b border-black flex">
-        {/* Left: Dynamic Legal Terms and GST Rule 32(5) Declaration */}
-        <div className="w-[72%] p-2 border-r border-black space-y-1 text-[7.5px] leading-tight">
-          <p className="font-bold text-[9px] uppercase tracking-wide border-b border-black/30 pb-0.5 mb-1">
-            Terms &amp; Conditions (Warranty Policy &amp; Jurisdiction)
-          </p>
-          {effectiveTerms.map((term, tIdx) => (
-            <p key={tIdx} className="text-black font-normal">
-              {term}
+        {/* ROW 6: AMOUNT IN WORDS */}
+        <div className="border-b border-black p-1.5 flex text-[9px]">
+          <span className="font-bold w-28">Amount in words:</span>
+          <span className="font-bold flex-1">{numberToWords(finalAmount)}</span>
+        </div>
+
+        {/* ROW 7: THREE-COLUMN SUMMARY ROW */}
+        <div className="border-b border-black flex">
+          {/* Box 1: IMEI / SERIAL NO. */}
+          <div className="w-[24%] p-1.5 border-r border-black space-y-1 text-[8.5px]">
+            <p className="font-bold uppercase tracking-wider text-[9px] border-b border-black pb-0.5">
+              IMEI / SERIAL NO.
             </p>
-          ))}
-        </div>
+            <div>
+              <p className="font-bold">IMEI No:</p>
+              <p className="font-mono font-bold">[{imei1}]</p>
+            </div>
+            <div>
+              <p className="font-bold">Serial No: [{serialNo}]</p>
+            </div>
+          </div>
 
-        {/* Right: Signature Area (Without Stamp) */}
-        <div className="w-[28%] p-2 flex flex-col justify-between items-center text-center min-h-[90px]">
-          <p className="font-bold text-[8.5px]">
-            For {companyLegalName}
-          </p>
-          
-          <div className="my-auto py-5" />
+          {/* Box 2: PAYMENT SUMMARY */}
+          <div className="w-[46%] p-1.5 border-r border-black text-[8.5px]">
+            <div className="border-b border-black pb-0.5 mb-1 flex items-center justify-between">
+              <p className="font-bold uppercase tracking-wider text-[9px]">
+                PAYMENT SUMMARY
+              </p>
+              {isSplitPayment && (
+                <span className="text-[7px] font-black uppercase tracking-wider bg-black text-white px-1 py-0.2 rounded-sm">
+                  Split ({part1Mode} + {part2Mode})
+                </span>
+              )}
+            </div>
+            {isSplitPayment ? (
+              <table className="w-full text-center border-collapse">
+                <thead>
+                  <tr className="border-b border-black font-bold bg-slate-50">
+                    <th className="p-0.5 border-r border-black text-left pl-1">Payment Mode</th>
+                    <th className="p-0.5 border-r border-black">Payment Method</th>
+                    <th className="p-0.5 border-r border-black">Transaction ID / UPI Ref</th>
+                    <th className="p-0.5 text-right pr-1">Amount (INR)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-black/40">
+                    <td className="p-0.5 border-r border-black font-bold text-left pl-1">
+                      {part1Mode}
+                    </td>
+                    <td className="p-0.5 border-r border-black font-medium">
+                      {part1Method}
+                    </td>
+                    <td className="p-0.5 border-r border-black font-mono font-semibold text-[7.5px] max-w-[130px] break-all">
+                      {part1Txn}
+                    </td>
+                    <td className="p-0.5 text-right font-bold pr-1 font-mono">
+                      {part1Amount.toFixed(2)}
+                    </td>
+                  </tr>
+                  <tr className="border-b border-black/40">
+                    <td className="p-0.5 border-r border-black font-bold text-left pl-1">
+                      {part2Mode}
+                    </td>
+                    <td className="p-0.5 border-r border-black font-medium">
+                      {part2Method}
+                    </td>
+                    <td className="p-0.5 border-r border-black font-mono font-semibold text-[7.5px] max-w-[130px] break-all">
+                      {part2Txn}
+                    </td>
+                    <td className="p-0.5 text-right font-bold pr-1 font-mono">
+                      {part2Amount.toFixed(2)}
+                    </td>
+                  </tr>
+                  <tr className="font-bold bg-slate-100">
+                    <td colSpan={3} className="p-0.5 border-r border-black text-right pr-1 font-bold">
+                      Total Received (INR):
+                    </td>
+                    <td className="p-0.5 text-right font-black pr-1 font-mono">
+                      {finalAmount.toFixed(2)}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            ) : (
+              <table className="w-full text-center border-collapse">
+                <thead>
+                  <tr className="border-b border-black font-bold">
+                    <th className="p-0.5 border-r border-black">Payment Mode</th>
+                    <th className="p-0.5 border-r border-black">Payment Method</th>
+                    <th className="p-0.5 border-r border-black">Transaction ID</th>
+                    <th className="p-0.5 text-right">Amount (INR)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="p-0.5 border-r border-black font-bold">{paymentMode}</td>
+                    <td className="p-0.5 border-r border-black font-medium">{paymentMethod}</td>
+                    <td className="p-0.5 border-r border-black font-mono text-[8px] truncate max-w-[120px]">
+                      {paymentMode === "Cash" ? "Store Cash Counter" : txnId}
+                    </td>
+                    <td className="p-0.5 text-right font-bold font-mono">{finalAmount.toFixed(2)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            )}
+          </div>
 
-          <p className="font-bold text-[9px] border-t border-black w-full pt-1">
-            Authorised Signatory
-          </p>
-        </div>
-      </div>
-
-      {/* BARCODE & REGISTERED FOOTER BOX */}
-      <div className="border-x border-b border-black flex items-center p-2 text-[8px]">
-        {/* Left Barcode & Invoice Identifier */}
-        <div className="w-[38%] flex flex-col items-center justify-center border-r border-black pr-3">
-          <BarcodeSVG value={invoiceNumber} />
-          <span className="font-mono text-[7px] text-neutral-600 mt-0.5">INVOICE SERIAL BARCODE</span>
-        </div>
-
-        {/* Right Legal Corporate Declaration */}
-        <div className="w-[62%] pl-3 grid grid-cols-2 gap-2 text-[7.5px] leading-tight">
-          <div className="space-y-0.5">
-            <p>
-              <strong>Registered Office:</strong> {companyRegisteredAddress}
+          {/* Box 3: TAX SUMMARY (MARGIN GST RULE 32(5)) */}
+          <div className="w-[30%] p-1.5 text-[8.5px]">
+            <p className="font-bold uppercase tracking-wider text-[9px] border-b border-black pb-0.5 mb-1">
+              TAX SUMMARY (RULE 32(5))
             </p>
-            <p>
-              <strong>Store Outlet:</strong> {storeName} — {storeAddress}
+            <table className="w-full text-center border-collapse">
+              <thead>
+                <tr className="border-b border-black font-bold">
+                  <th className="p-0.5 border-r border-black text-left">Tax Category</th>
+                  <th className="p-0.5 border-r border-black">Tax %</th>
+                  <th className="p-0.5 text-right">Tax Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-black/40">
+                  <td className="p-0.5 border-r border-black text-left font-semibold">Margin SGST@9%</td>
+                  <td className="p-0.5 border-r border-black">9</td>
+                  <td className="p-0.5 text-right font-mono">{marginSgst.toFixed(2)}</td>
+                </tr>
+                <tr className="border-b border-black/40">
+                  <td className="p-0.5 border-r border-black text-left font-semibold">Margin IGST@18%</td>
+                  <td className="p-0.5 border-r border-black">18</td>
+                  <td className="p-0.5 text-right font-mono">{marginIgst.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td className="p-0.5 border-r border-black text-left font-semibold">Margin CGST@9%</td>
+                  <td className="p-0.5 border-r border-black">9</td>
+                  <td className="p-0.5 text-right font-mono">{marginCgst.toFixed(2)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* ROW 8: TERMS & CONDITIONS + AUTHORISED SIGNATORY */}
+        <div className="border-b border-black flex">
+          {/* Left: Dynamic Legal Terms and GST Rule 32(5) Declaration */}
+          <div className="w-[72%] p-2 border-r border-black space-y-1 text-[7.5px] leading-tight">
+            <p className="font-bold text-[9px] uppercase tracking-wide border-b border-black/30 pb-0.5 mb-1">
+              Terms &amp; Conditions (Warranty Policy &amp; Jurisdiction)
+            </p>
+            {effectiveTerms.map((term, tIdx) => (
+              <p key={tIdx} className="text-black font-normal">
+                {term}
+              </p>
+            ))}
+          </div>
+
+          {/* Right: Signature Area (Without Stamp) */}
+          <div className="w-[28%] p-2 flex flex-col justify-between items-center text-center min-h-[90px]">
+            <p className="font-bold text-[8.5px]">
+              For {companyLegalName}
+            </p>
+            
+            <div className="my-auto py-5" />
+
+            <p className="font-bold text-[9px] border-t border-black w-full pt-1">
+              Authorised Signatory
             </p>
           </div>
-          <div className="space-y-0.5 pl-2 border-l border-black/20">
-            <p>
-              <strong>CIN:</strong> {companyCin}
-            </p>
-            <p>
-              <strong>GSTIN:</strong> {companyGstin} &nbsp;|&nbsp; <strong>PAN:</strong> {companyPan}
-            </p>
-            <p>
-              <strong>State:</strong> {companyStateName} ({companyStateCode})
-            </p>
-            <p className="pt-0.5 font-medium">
-              <strong>Call &amp; WhatsApp:</strong> 6390616616 &nbsp;|&nbsp; <strong>Mail:</strong> {companySupportEmail}
-            </p>
+        </div>
+
+        {/* ROW 9: BARCODE & REGISTERED FOOTER BOX */}
+        <div className="flex items-center p-2 text-[8px]">
+          {/* Left Barcode & Invoice Identifier */}
+          <div className="w-[38%] flex flex-col items-center justify-center border-r border-black pr-3">
+            <BarcodeSVG value={invoiceNumber} />
+            <span className="font-mono text-[7px] text-neutral-600 mt-0.5">INVOICE SERIAL BARCODE</span>
+          </div>
+
+          {/* Right Legal Corporate Declaration */}
+          <div className="w-[62%] pl-3 grid grid-cols-2 gap-2 text-[7.5px] leading-tight">
+            <div className="space-y-0.5">
+              <p>
+                <strong>Registered Office:</strong> {companyRegisteredAddress}
+              </p>
+              <p>
+                <strong>Store Outlet:</strong> {storeName} — {storeAddress}
+              </p>
+            </div>
+            <div className="space-y-0.5 pl-2 border-l border-black/20">
+              <p>
+                <strong>CIN:</strong> {companyCin}
+              </p>
+              <p>
+                <strong>GSTIN:</strong> {companyGstin} &nbsp;|&nbsp; <strong>PAN:</strong> {companyPan}
+              </p>
+              <p>
+                <strong>State:</strong> {companyStateName} ({companyStateCode})
+              </p>
+              <p className="pt-0.5 font-medium">
+                <strong>Call &amp; WhatsApp:</strong> 6390616616 &nbsp;|&nbsp; <strong>Mail:</strong> {companySupportEmail}
+              </p>
+            </div>
           </div>
         </div>
       </div>
