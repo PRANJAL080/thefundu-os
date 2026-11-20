@@ -273,7 +273,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // LocalStorage keys for cross-tab & session persistence
   const STORAGE_KEYS = {
-    devices: "thefundu_devices_v10",
+    devices: "thefundu_devices_v20261120_v2",
     repairs: "thefundu_repairs_v5",
     qcInspections: "thefundu_qc_v5",
     warehouses: "thefundu_stores_v6",
@@ -296,6 +296,35 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
     try {
+      try {
+        localStorage.removeItem("thefundu_devices_v10");
+        localStorage.removeItem("thefundu_devices_v9");
+        localStorage.removeItem("thefundu_devices_v8");
+      } catch (e) {}
+
+      // Collect known sold handset IDs and IMEIs from baseline sales
+      const soldIdentifiers = new Set([
+        "fun-26083",
+        "fun-26043",
+        "fun-26049",
+        "fun-26000",
+        "fun-26004",
+        "fun-26005",
+        "fun-26008",
+        "fun-26014",
+        "fun-26016",
+        "fun-26038",
+        "fun-26040",
+        "fun-26046",
+        "fun-26050",
+        "fun-26062",
+        "fun-26075",
+        "867179050310196",
+        "867203075513251",
+        "356983557725459",
+        "356903557725459",
+      ]);
+
       const storedDevs = localStorage.getItem(STORAGE_KEYS.devices);
       if (storedDevs) {
         const parsed = JSON.parse(storedDevs);
@@ -304,19 +333,33 @@ export function AppProvider({ children }: { children: ReactNode }) {
           const devMap = new Map<string, Device>();
           initialDevices.forEach((d) => devMap.set(d.id, d));
           parsed.forEach((d: Device) => devMap.set(d.id, d));
-          const allInStock = Array.from(devMap.values()).map((d: Device) => ({
-            ...d,
-            status: (d.status === "Sold" ? "Sold" : "In Stock") as DeviceStatus,
-            warehouse: (d.warehouse === "STR-LKO-01" || !d.warehouse) ? "Lucknow Store (LKO-01)" : d.warehouse,
-          }));
-          setDevices(allInStock);
+          const allMapped = Array.from(devMap.values()).map((d: Device) => {
+            const isSold =
+              d.status === "Sold" ||
+              soldIdentifiers.has(d.id.toLowerCase()) ||
+              (d.imei1 && soldIdentifiers.has(d.imei1)) ||
+              (d.imei2 && soldIdentifiers.has(d.imei2));
+            return {
+              ...d,
+              status: (isSold ? "Sold" : "In Stock") as DeviceStatus,
+              warehouse: (d.warehouse === "STR-LKO-01" || !d.warehouse) ? "Lucknow Store (LKO-01)" : d.warehouse,
+            };
+          });
+          setDevices(allMapped);
         }
       } else {
-        setDevices(initialDevices.map((d: Device) => ({
-          ...d,
-          status: "In Stock" as DeviceStatus,
-          warehouse: (d.warehouse === "STR-LKO-01" || !d.warehouse) ? "Lucknow Store (LKO-01)" : d.warehouse,
-        })));
+        setDevices(initialDevices.map((d: Device) => {
+          const isSold =
+            d.status === "Sold" ||
+            soldIdentifiers.has(d.id.toLowerCase()) ||
+            (d.imei1 && soldIdentifiers.has(d.imei1)) ||
+            (d.imei2 && soldIdentifiers.has(d.imei2));
+          return {
+            ...d,
+            status: (isSold ? "Sold" : "In Stock") as DeviceStatus,
+            warehouse: (d.warehouse === "STR-LKO-01" || !d.warehouse) ? "Lucknow Store (LKO-01)" : d.warehouse,
+          };
+        }));
       }
       const storedRepairs = localStorage.getItem(STORAGE_KEYS.repairs);
       if (storedRepairs) {
@@ -874,10 +917,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setDevices((prev) =>
       prev.map((dev) => ({
         ...dev,
-        status: "In Stock" as DeviceStatus,
+        status: dev.status === "Sold" ? "Sold" : ("In Stock" as DeviceStatus),
       }))
     );
-    showToast("All smartphones updated to 'In Stock' status!", "success");
+    showToast("All active smartphones updated to 'In Stock' status (Sold phones remain Sold)!", "success");
   };
 
   // Purchase Order

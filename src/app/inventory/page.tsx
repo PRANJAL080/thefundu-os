@@ -12,6 +12,7 @@ import {
   ArrowUpDown,
   MoreVertical,
   Eye,
+  EyeOff,
   Edit,
   Trash2,
   CheckCircle2,
@@ -71,6 +72,7 @@ export default function InventoryPage() {
   const [brandFilter, setBrandFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("In Stock");
   const [storeFilter, setStoreFilter] = useState("all");
+  const [hideSold, setHideSold] = useState(true);
 
   // Advanced Price & Spec Filters State
   const [priceRangeFilter, setPriceRangeFilter] = useState("all");
@@ -181,7 +183,11 @@ export default function InventoryPage() {
         // 2. Brand Filter
         const matchesBrand = brandFilter === "all" || dev.brand.toLowerCase() === brandFilter.toLowerCase();
 
-        // 3. Status Filter (Default: "In Stock" shows only active, unsold phones)
+        // 3. Status Filter & Option to Hide Sold Phones
+        if (hideSold && statusFilter !== "Sold" && dev.status === "Sold") {
+          return false;
+        }
+
         const matchesStatus =
           statusFilter === "all"
             ? true
@@ -463,11 +469,11 @@ export default function InventoryPage() {
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100 flex items-center gap-2">
             <span>Smartphone Inventory</span>
             <Badge variant="fundu" size="sm">
-              {inStockCount} Units In Stock
+              {hideSold && statusFilter !== "Sold" ? `${inStockCount} Units Available` : `${devices.length} Total Units`}
             </Badge>
           </h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Individual IMEI serialised stock ledger across Lucknow store locations. Billed phones are automatically marked Sold and removed from active stock.
+            Individual IMEI serialised stock ledger across Lucknow store locations. Billed &amp; sold phones are automatically excluded from active stock count ({inStockCount} active • {soldCount} sold).
           </p>
         </div>
 
@@ -615,6 +621,33 @@ export default function InventoryPage() {
           }`}
         >
           <span>All Units ({devices.length})</span>
+        </button>
+
+        {/* Toggle to Hide / Show Sold Handsets */}
+        <button
+          type="button"
+          onClick={() => {
+            setHideSold(!hideSold);
+            setCurrentPage(1);
+          }}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all border sm:ml-auto ${
+            hideSold
+              ? "bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200"
+              : "bg-amber-50 dark:bg-amber-950/60 border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-200"
+          }`}
+          title="Sold / Billed phones ko active inventory me dikhana ya chupana"
+        >
+          {hideSold ? (
+            <>
+              <EyeOff className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>Hide Sold: ON ({soldCount} Hidden)</span>
+            </>
+          ) : (
+            <>
+              <Eye className="w-3.5 h-3.5 text-amber-600" />
+              <span>Hide Sold: OFF (Showing All)</span>
+            </>
+          )}
         </button>
       </div>
 
@@ -1289,6 +1322,9 @@ export default function InventoryPage() {
               {Math.min(currentPage * pageSize, filteredDevices.length)}
             </strong>{" "}
             of <strong className="text-slate-800 dark:text-slate-200">{filteredDevices.length}</strong> handsets
+            {hideSold && soldCount > 0 && statusFilter !== "Sold" && (
+              <span className="text-[11px] text-slate-400 font-medium"> ({soldCount} sold phones hidden)</span>
+            )}
           </div>
 
           <div className="flex items-center gap-1">
