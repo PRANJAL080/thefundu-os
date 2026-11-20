@@ -364,6 +364,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
         } catch (e) {}
       }
 
+      // Always merge baseline initialSales so saved bills are never missing or empty
+      initialSales.forEach((s) => {
+        const exists = loadedSales.some(
+          (ex) => (s.invoiceNumber && ex.invoiceNumber === s.invoiceNumber) || (s.id && ex.id === s.id)
+        );
+        if (!exists) {
+          loadedSales.push(s);
+        }
+      });
+
       // Automatically recover any handset marked "Sold" that had its bill deleted
       const currentStoredDevs = localStorage.getItem(STORAGE_KEYS.devices);
       if (currentStoredDevs) {
@@ -1070,6 +1080,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
         } catch (e) {}
       });
     }
+
+    // Recover baseline verified sales
+    initialSales.forEach((s) => {
+      const keyId = s.invoiceNumber || s.id;
+      if (!currentSalesMap.has(keyId)) {
+        currentSalesMap.set(keyId, s);
+        recoveredCount++;
+      }
+    });
 
     devices.forEach((dev) => {
       if (dev.status === "Sold") {
