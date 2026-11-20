@@ -25,6 +25,7 @@ import {
   Image as ImageIcon,
   Trash2,
   CreditCard,
+  Download,
 } from "lucide-react";
 import { useApp } from "@/lib/store";
 import { BuybackRecord, SMARTPHONE_BRANDS } from "@/lib/types";
@@ -35,6 +36,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatINR, formatDate, compressImage } from "@/lib/utils";
 import { COMPANY_CONFIG } from "@/lib/company-config";
 import { BuybackKycReportModal } from "@/components/buyback/BuybackKycReportModal";
+import { StorePurchaseReceiptModal } from "@/components/buyback/StorePurchaseReceiptModal";
 
 // Base price map for algorithmic valuation
 const MODEL_BASE_PRICES: Record<string, number> = {
@@ -91,9 +93,11 @@ export default function BuybackDeskPage() {
   const [ownershipSigned, setOwnershipSigned] = useState(false);
   const [payoutMethod, setPayoutMethod] = useState<"UPI" | "Cash" | "Bank Transfer">("UPI");
 
-  // Report Modal State
+  // Report & Store Purchase Receipt Modal States
   const [selectedReportRecord, setSelectedReportRecord] = useState<BuybackRecord | null>(null);
   const [isReportOpen, setIsReportOpen] = useState(false);
+  const [selectedReceiptRecord, setSelectedReceiptRecord] = useState<BuybackRecord | null>(null);
+  const [isReceiptOpen, setIsReceiptOpen] = useState(false);
 
   // File Input Refs
   const aadhaarFrontRef = React.useRef<HTMLInputElement | null>(null);
@@ -207,16 +211,16 @@ export default function BuybackDeskPage() {
         ceirStatus: "Clean",
         ownershipDeclarationSigned: true,
         evaluatedBy: "Abhay Verma (Store Manager)",
-        storeLocation: "Lucknow Store (LKO-01)",
+        storeLocation: "The Fundu – Gomti Nagar, Lucknow",
       },
       true // auto inward to inventory!
     );
 
-    setSelectedReportRecord(record);
-    setIsReportOpen(true);
+    setSelectedReceiptRecord(record);
+    setIsReceiptOpen(true);
 
     showToast(
-      `Buyback ${record.id} finalized! Payout of ${formatINR(valuation.finalOfferedPrice)} initiated & phone inwarded to inventory. Aadhaar Report generated!`,
+      `Store Purchase ${record.serviceNumber || record.id} completed! Payout of ${formatINR(valuation.finalOfferedPrice)} initiated & phone inwarded to inventory. Store Purchase Receipt generated!`,
       "success"
     );
   };
@@ -241,6 +245,21 @@ export default function BuybackDeskPage() {
         </div>
 
         <div className="flex items-center gap-2">
+          {buybacks.length > 0 && (
+            <Button
+              size="sm"
+              variant="primary"
+              onClick={() => {
+                setSelectedReceiptRecord(buybacks[0]);
+                setIsReceiptOpen(true);
+              }}
+              className="bg-teal-600 hover:bg-teal-500 text-white text-xs h-8 gap-1.5 font-semibold shadow-sm"
+              title="Preview / Print Authentic Store Purchase Receipt"
+            >
+              <Download className="h-3.5 w-3.5" />
+              <span>Sample Purchase Receipt</span>
+            </Button>
+          )}
           <Badge variant="secondary" className="gap-1.5 py-1 px-3 text-xs">
             <Store className="h-3.5 w-3.5 text-fundu-600" />
             <span>Store: Lucknow (LKO-01)</span>
@@ -763,15 +782,15 @@ export default function BuybackDeskPage() {
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 dark:bg-slate-900 text-slate-500 font-semibold border-b border-slate-200 dark:border-slate-800">
               <tr>
-                <th className="p-3">Buyback ID</th>
+                <th className="p-3">Service / Receipt No.</th>
                 <th className="p-3">Handset Model</th>
                 <th className="p-3">IMEI 1</th>
                 <th className="p-3">Customer (Seller)</th>
-                <th className="p-3 text-right">Offered Value</th>
+                <th className="p-3 text-right">Purchase Price</th>
                 <th className="p-3">CEIR Check</th>
                 <th className="p-3">Payout</th>
                 <th className="p-3">Inward Stock ID</th>
-                <th className="p-3 text-center">Aadhaar Police Report</th>
+                <th className="p-3 text-center">Receipt &amp; KYC</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -784,8 +803,13 @@ export default function BuybackDeskPage() {
               ) : (
                 buybacks.map((bb) => (
                 <tr key={bb.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
-                  <td className="p-3 font-mono font-bold text-slate-900 dark:text-slate-100">
-                    {bb.id}
+                  <td className="p-3">
+                    <span className="font-mono font-bold text-teal-600 dark:text-teal-400 text-xs block">
+                      {bb.serviceNumber || `TF-${(bb.date || "2026-11-20").replace(/-/g, "")}-001`}
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-mono">
+                      {bb.id}
+                    </span>
                   </td>
                   <td className="p-3 font-semibold">
                     {bb.brand} {bb.model} ({bb.storage})
@@ -817,19 +841,34 @@ export default function BuybackDeskPage() {
                     {bb.inwardDeviceId || "Auto-Inwarded"}
                   </td>
                   <td className="p-3 text-center">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        setSelectedReportRecord(bb);
-                        setIsReportOpen(true);
-                      }}
-                      className="h-7 text-xs font-semibold gap-1 text-blue-600 border-blue-200 hover:bg-blue-50 dark:border-blue-800 dark:hover:bg-blue-950/40"
-                      title="Print Official Second-Hand Mobile Purchase Voucher with Aadhaar KYC"
-                    >
-                      <Printer className="h-3 w-3" />
-                      <span>Print KYC Report</span>
-                    </Button>
+                    <div className="flex items-center justify-center gap-1.5">
+                      <Button
+                        size="sm"
+                        variant="primary"
+                        onClick={() => {
+                          setSelectedReceiptRecord(bb);
+                          setIsReceiptOpen(true);
+                        }}
+                        className="h-7 text-xs font-semibold gap-1 bg-teal-600 hover:bg-teal-500 text-white shadow-sm"
+                        title="View & Download Store Purchase Receipt (Customer Sell Bill)"
+                      >
+                        <Download className="h-3 w-3" />
+                        <span>Purchase Bill</span>
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setSelectedReportRecord(bb);
+                          setIsReportOpen(true);
+                        }}
+                        className="h-7 text-xs font-semibold gap-1 text-blue-600 border-blue-200 hover:bg-blue-50 dark:border-blue-800 dark:hover:bg-blue-950/40"
+                        title="Print Official Second-Hand Mobile Purchase Voucher with Aadhaar KYC"
+                      >
+                        <Printer className="h-3 w-3" />
+                        <span>KYC</span>
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               )))}
@@ -837,6 +876,18 @@ export default function BuybackDeskPage() {
           </table>
         </CardContent>
       </Card>
+
+      {/* Authentic Store Purchase Receipt Modal (Customer Sell Bill) */}
+      <StorePurchaseReceiptModal
+        record={selectedReceiptRecord}
+        isOpen={isReceiptOpen}
+        onClose={() => setIsReceiptOpen(false)}
+        onOpenKycReport={() => {
+          setSelectedReportRecord(selectedReceiptRecord);
+          setIsReceiptOpen(false);
+          setIsReportOpen(true);
+        }}
+      />
 
       {/* Official Buyback & Aadhaar Police CEIR Report Modal */}
       <BuybackKycReportModal

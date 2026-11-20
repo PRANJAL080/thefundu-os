@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
 import {
   FileText,
   Printer,
@@ -784,6 +785,18 @@ https://thefundu.com/verify/${serialNo}
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
+          {/* Customer Selling Phone / Buy-in Link */}
+          <Link href="/buyback">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 border-teal-300 text-teal-700 bg-teal-50/60 hover:bg-teal-100 dark:border-teal-800 dark:text-teal-300 dark:bg-teal-950/40 font-semibold"
+              title="Customer selling old phone to store? Open Store Purchase Receipt Desk"
+            >
+              <Smartphone className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
+              <span>Customer Sell Bill (Store Receipt)</span>
+            </Button>
+          </Link>
           <Button
             variant="outline"
             size="sm"

@@ -1940,9 +1940,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Buyback Implementation
   const addBuyback = (buyback: Partial<BuybackRecord>, autoInwardToInventory: boolean = true): BuybackRecord => {
     const id = `BB-LKO-2611-${String(buybacks.length + 1).padStart(3, "0")}`;
+    const dateStr = buyback.date || new Date().toISOString().split("T")[0];
+    const todayStr = dateStr.replace(/-/g, "");
+    const seq = String(buybacks.length + 1).padStart(3, "0");
+    const serviceNumber = buyback.serviceNumber || `TF-PUR-${todayStr}-${seq}`;
+
     const fullBB: BuybackRecord = {
       id,
-      date: buyback.date || new Date().toISOString().split("T")[0],
+      date: dateStr,
+      serviceNumber,
+      schemeTitle: buyback.schemeTitle || "Store Purchase",
+      pickupType: buyback.pickupType || "Store",
       brand: buyback.brand || "Apple",
       model: buyback.model || "iPhone 13",
       storage: buyback.storage || "128GB",

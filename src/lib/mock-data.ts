@@ -4656,7 +4656,42 @@ export const initialSpareParts: SparePart[] = [
   },
 ];
 
-export const initialBuybacks: BuybackRecord[] = [];
+export const initialBuybacks: BuybackRecord[] = [
+  {
+    id: "BB-LKO-2611-001",
+    serviceNumber: "TF-20261119-001",
+    date: "2026-11-19",
+    brand: "Samsung",
+    model: "Galaxy S24 5G Snapdragon",
+    storage: "8 GB/256 GB",
+    colour: "Amber Yellow",
+    imei1: "356016370598456",
+    schemeTitle: "Store Purchase",
+    pickupType: "Store",
+    screenCondition: "Flawless",
+    bodyCondition: "Flawless",
+    functionalIssues: [],
+    hasOriginalBox: true,
+    hasOriginalBill: true,
+    baseMarketValue: 16000,
+    deductionsTotal: 2000,
+    finalOfferedPrice: 14000,
+    payoutStatus: "Completed",
+    payoutMethod: "UPI",
+    sellerName: "Kaustubh Singh",
+    sellerPhone: "9758244973",
+    sellerEmail: "kaustubh.singh@gmail.com",
+    sellerAddress: "Flat No. 211, Block-B, Azea Botanica Apartment, Sector 11, Vrindavan Yojana, Raebareilly Road, Lucknow – 226029, Uttar Pradesh",
+    sellerIdType: "Aadhaar",
+    sellerIdNumber: "5421-8902-1244",
+    policeVerificationStatus: "Cleared",
+    ceirStatus: "Clean",
+    ownershipDeclarationSigned: true,
+    evaluatedBy: "Abhay Verma (Store Manager)",
+    storeLocation: "The Fundu – Gomti Nagar, Lucknow",
+    inwardDeviceId: "Fun-26080",
+  },
+];
 
 export const initialSettlements: DayEndSettlement[] = [];
 

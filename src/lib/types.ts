@@ -513,6 +513,9 @@ export interface BuybackRecord {
   evaluatedBy: string;
   storeLocation: string;
   inwardDeviceId?: string;
+  serviceNumber?: string;
+  schemeTitle?: string;
+  pickupType?: string;
 }
 
 // Daily Store Cash Drawer & Day-End Closing (Z-Report)
