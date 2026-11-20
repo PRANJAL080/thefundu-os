@@ -1020,16 +1020,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const isDummyName = (name: string = "") => {
       const lower = name.toLowerCase().trim();
       return [
+        "retail customer",
+        "store retail customer",
+        "abhay verma",
         "pooja sharma",
-        "vikas singh",
-        "amitabh srivastava",
-        "ramesh kumar",
         "aakash varma",
         "gaurav malhotra",
         "sneha kulkarni",
         "roshni sen",
-        "abhay verma",
-        "store retail customer",
         "mohit agarwal",
         "kavya sundaram",
         "rahul saxena",

@@ -2113,22 +2113,6 @@ https://thefundu.com/verify/${serialNo}
                   <RefreshCw className="w-3.5 h-3.5 text-blue-600" />
                   <span>Restore / Recover Bills</span>
                 </Button>
-                {sales.length > 0 && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      if (confirm("Kya aap Tax Invoice Ledger ke saare bills delete/clear karna chahte hain?")) {
-                        clearAllSales();
-                      }
-                    }}
-                    className="text-xs gap-1 border-rose-300 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40"
-                    title="Clear all saved bills from ledger"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    <span>Clear All Bills</span>
-                  </Button>
-                )}
                 <Button
                   variant="fundu"
                   size="sm"
