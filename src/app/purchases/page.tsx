@@ -42,7 +42,7 @@ export default function PurchasesPage() {
   const [warehouse, setWarehouse] = useState<WarehouseLocation>("Mumbai Central Hub");
   const [itemsCount, setItemsCount] = useState(10);
   const [totalAmount, setTotalAmount] = useState(450000);
-  const [notes, setNotes] = useState("Consignment batch ordered via B2B portal");
+  const [notes, setNotes] = useState("");
 
   const filteredPurchases = purchases.filter((po) => {
     const q = searchQuery.toLowerCase().trim();
@@ -154,7 +154,14 @@ export default function PurchasesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
-              {filteredPurchases.map((po) => (
+              {filteredPurchases.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="p-8 text-center text-slate-400">
+                    No purchase orders found. Click &quot;New Purchase Order&quot; to inward a consignment lot.
+                  </td>
+                </tr>
+              ) : (
+                filteredPurchases.map((po) => (
                 <tr
                   key={po.id}
                   className="hover:bg-slate-50/80 dark:hover:bg-slate-900/40 transition-colors"
@@ -222,7 +229,7 @@ export default function PurchasesPage() {
                     </Button>
                   </td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         </div>

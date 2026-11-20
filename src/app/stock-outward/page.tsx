@@ -31,12 +31,12 @@ export default function StockOutwardPage() {
 
   // Form State
   const [reason, setReason] = useState<StockMovement["reason"]>("Sold");
-  const [deviceModel, setDeviceModel] = useState("Samsung Galaxy S24 Ultra");
-  const [imei, setImei] = useState("86" + Math.floor(1000000000000 + Math.random() * 9000000000000));
-  const [fromLocation, setFromLocation] = useState<WarehouseLocation>("Mumbai Central Hub");
-  const [toLocation, setToLocation] = useState("Customer Delivery (BlueDart Express)");
-  const [value, setValue] = useState(97999);
-  const [notes, setNotes] = useState("Order dispatch packed with tamper-evident seal");
+  const [deviceModel, setDeviceModel] = useState("");
+  const [imei, setImei] = useState("");
+  const [fromLocation, setFromLocation] = useState<WarehouseLocation>("Lucknow Store (LKO-01)");
+  const [toLocation, setToLocation] = useState("");
+  const [value, setValue] = useState(0);
+  const [notes, setNotes] = useState("");
 
   const outwardMovements = stockMovements.filter((m) => {
     if (m.type !== "Outward") return false;
@@ -145,7 +145,14 @@ export default function StockOutwardPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
-              {outwardMovements.map((m) => (
+              {outwardMovements.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="p-8 text-center text-slate-400">
+                    No outward stock movements recorded yet.
+                  </td>
+                </tr>
+              ) : (
+                outwardMovements.map((m) => (
                 <tr
                   key={m.id}
                   className="hover:bg-slate-50/80 dark:hover:bg-slate-900/40 transition-colors"
@@ -197,7 +204,7 @@ export default function StockOutwardPage() {
                     {m.notes || "-"}
                   </td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         </div>

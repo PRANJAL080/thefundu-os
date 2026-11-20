@@ -46,12 +46,12 @@ export default function DashboardOverviewPage() {
 
   // Metrics calculation
   const totalPhonesPurchased = useMemo(() => {
-    return purchases.reduce((acc, p) => acc + p.itemsCount, 0) + devices.length;
+    return purchases.reduce((acc, p) => acc + p.itemsCount, 0) || devices.length;
   }, [purchases, devices]);
 
   const totalPhonesSold = useMemo(() => {
-    return sales.length + devices.filter((d) => d.status === "Sold").length;
-  }, [sales, devices]);
+    return sales.length;
+  }, [sales]);
 
   const availableStock = useMemo(() => {
     return devices.filter((d) => d.status === "In Stock" || d.status === "Ready for Sale").length;
@@ -80,7 +80,7 @@ export default function DashboardOverviewPage() {
   }, [devices]);
 
   const monthlyRevenue = useMemo(() => {
-    return sales.reduce((acc, s) => acc + (s.finalAmount || 0), 0) + 1845000;
+    return sales.reduce((acc, s) => acc + (s.finalAmount || 0), 0);
   }, [sales]);
 
   const monthlyProfit = useMemo(() => {

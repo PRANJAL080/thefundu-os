@@ -257,7 +257,14 @@ export default function RepairsPage() {
 
       {/* Repair Job Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {filteredRepairs.map((job) => (
+        {filteredRepairs.length === 0 ? (
+          <div className="col-span-2 text-center py-12 text-slate-400">
+            <Wrench className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+            <p className="font-medium text-sm">No active repair jobs</p>
+            <p className="text-xs text-slate-400 mt-1">All inventory handsets are 100% functional and QC verified.</p>
+          </div>
+        ) : (
+          filteredRepairs.map((job) => (
           <Card key={job.id} className="hover:border-slate-300 dark:hover:border-slate-700 transition-all">
             <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800 flex flex-row items-center justify-between">
               <div>
@@ -351,7 +358,7 @@ export default function RepairsPage() {
               </div>
             </CardContent>
           </Card>
-        ))}
+        )))}
       </div>
 
       {/* New Job Modal */}

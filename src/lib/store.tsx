@@ -336,7 +336,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
       // Retrieve and recover all user-created bills safely (purging fake dummy data)
       const isDummyName = (name: string = "") => {
         const lower = name.toLowerCase().trim();
-        return ["pooja sharma", "vikas singh", "amitabh srivastava", "ramesh kumar", "aakash varma", "gaurav malhotra", "sneha kulkarni", "roshni sen", "store retail customer"].some((d) => lower.includes(d));
+        return [
+          "pooja sharma",
+          "vikas singh",
+          "amitabh srivastava",
+          "ramesh kumar",
+          "aakash varma",
+          "gaurav malhotra",
+          "sneha kulkarni",
+          "roshni sen",
+          "abhay verma",
+          "store retail customer",
+          "mohit agarwal",
+          "kavya sundaram",
+          "rahul saxena",
+          "priya srivastava",
+        ].some((d) => lower.includes(d));
       };
 
       let loadedSales: SalesOrder[] = [];
@@ -383,6 +398,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSales(loadedSales);
       localStorage.setItem(STORAGE_KEYS.sales, JSON.stringify(loadedSales));
       localStorage.setItem(STORAGE_KEYS.salesBackup, JSON.stringify(loadedSales));
+      // Purge old deprecated keys so deleted dummy bills never resurrect
+      [
+        "thefundu_sales_v5",
+        "thefundu_sales_v4",
+        "thefundu_sales_v3",
+        "thefundu_sales_v2",
+        "thefundu_sales_backup",
+        "thefundu_buybacks_v5",
+        "thefundu_settlements_v5",
+        "thefundu_warranties_v5",
+      ].forEach((k) => localStorage.removeItem(k));
       const storedPurchases = localStorage.getItem(STORAGE_KEYS.purchases);
       if (storedPurchases) {
         const parsed = JSON.parse(storedPurchases);
@@ -995,7 +1021,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
     let recoveredCount = 0;
     const isDummyName = (name: string = "") => {
       const lower = name.toLowerCase().trim();
-      return ["pooja sharma", "vikas singh", "amitabh srivastava", "ramesh kumar", "aakash varma", "gaurav malhotra", "sneha kulkarni", "roshni sen", "store retail customer"].some((d) => lower.includes(d));
+      return [
+        "pooja sharma",
+        "vikas singh",
+        "amitabh srivastava",
+        "ramesh kumar",
+        "aakash varma",
+        "gaurav malhotra",
+        "sneha kulkarni",
+        "roshni sen",
+        "abhay verma",
+        "store retail customer",
+        "mohit agarwal",
+        "kavya sundaram",
+        "rahul saxena",
+        "priya srivastava",
+      ].some((d) => lower.includes(d));
     };
 
     const currentSalesMap = new Map<string, SalesOrder>();

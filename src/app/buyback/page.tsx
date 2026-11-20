@@ -775,7 +775,14 @@ export default function BuybackDeskPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-              {buybacks.map((bb) => (
+              {buybacks.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="p-8 text-center text-slate-400">
+                    No buyback records yet. Use the form above to evaluate and buy back a handset.
+                  </td>
+                </tr>
+              ) : (
+                buybacks.map((bb) => (
                 <tr key={bb.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
                   <td className="p-3 font-mono font-bold text-slate-900 dark:text-slate-100">
                     {bb.id}
@@ -825,7 +832,7 @@ export default function BuybackDeskPage() {
                     </Button>
                   </td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         </CardContent>

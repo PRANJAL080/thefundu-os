@@ -159,6 +159,9 @@ export default function InvoiceGeneratorPage() {
     setCustomerPermanentAddress("");
     setCustomerGstin("");
     setIsSameAddress(true);
+    setTxnId("");
+    setSplitTxnId1("");
+    setSplitTxnId2("");
   };
 
   // Address & Aadhaar handler helpers
@@ -214,7 +217,7 @@ export default function InvoiceGeneratorPage() {
   const [splitAmount2, setSplitAmount2] = useState<number>(15000);
   const [splitTxnId2, setSplitTxnId2] = useState<string>("");
 
-  const [txnId, setTxnId] = useState("TXN26001LKO982");
+  const [txnId, setTxnId] = useState("");
   const [warrantyDays, setWarrantyDays] = useState(180);
   const [channel, setChannel] = useState<SalesChannelCode>("FSO");
   const [typeOfSale, setTypeOfSale] = useState<SaleTypeCode>("B2C");

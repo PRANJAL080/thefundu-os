@@ -36,7 +36,7 @@ export default function CustomersPage() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [city, setCity] = useState("Mumbai");
+  const [city, setCity] = useState("Lucknow");
 
   const filteredCustomers = customers.filter((c) => {
     const q = searchQuery.toLowerCase().trim();
@@ -112,7 +112,14 @@ export default function CustomersPage() {
 
       {/* Customer Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {filteredCustomers.map((cust) => (
+        {filteredCustomers.length === 0 ? (
+          <div className="col-span-full text-center py-12 text-slate-400">
+            <Users className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+            <p className="font-medium text-sm">No customers registered yet</p>
+            <p className="text-xs text-slate-400 mt-1">Customers are automatically added when tax invoices are issued.</p>
+          </div>
+        ) : (
+          filteredCustomers.map((cust) => (
           <Card key={cust.id} className="hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between">
             <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center justify-between">
@@ -190,7 +197,7 @@ export default function CustomersPage() {
               </Button>
             </div>
           </Card>
-        ))}
+        )))}
       </div>
 
       {/* Customer Profile Modal */}

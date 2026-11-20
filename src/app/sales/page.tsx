@@ -44,12 +44,12 @@ export default function SalesOrdersPage() {
   const [isNewOrderOpen, setIsNewOrderOpen] = useState(false);
 
   // New Order Form State
-  const [customerName, setCustomerName] = useState("Vikrant Batra");
-  const [customerPhone, setCustomerPhone] = useState("+91 98200 44109");
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
   const [customerAadhaar, setCustomerAadhaar] = useState("");
-  const [customerEmail, setCustomerEmail] = useState("vikrant.b@gmail.com");
-  const [customerLocalAddress, setCustomerLocalAddress] = useState("102 Sea Green, Bandra West, Mumbai 400050");
-  const [customerPermanentAddress, setCustomerPermanentAddress] = useState("102 Sea Green, Bandra West, Mumbai 400050");
+  const [customerEmail, setCustomerEmail] = useState("");
+  const [customerLocalAddress, setCustomerLocalAddress] = useState("");
+  const [customerPermanentAddress, setCustomerPermanentAddress] = useState("");
   const [isSameAddress, setIsSameAddress] = useState(true);
   const [deviceId, setDeviceId] = useState(devices[0]?.id || "Fun-26001");
   const [channel, setChannel] = useState<SalesChannelCode>("FSO");
@@ -286,7 +286,14 @@ export default function SalesOrdersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
-              {filteredSales.map((s) => (
+              {filteredSales.length === 0 ? (
+                <tr>
+                  <td colSpan={10} className="p-8 text-center text-slate-400">
+                    No sales orders found. Use &quot;Create Sales Order&quot; or Tax Invoice Desk to issue a bill.
+                  </td>
+                </tr>
+              ) : (
+                filteredSales.map((s) => (
                 <tr
                   key={s.id}
                   className="hover:bg-slate-50/80 dark:hover:bg-slate-900/40 transition-colors"
@@ -384,7 +391,7 @@ export default function SalesOrdersPage() {
                     </Button>
                   </td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         </div>

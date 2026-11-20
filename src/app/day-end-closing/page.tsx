@@ -425,7 +425,14 @@ export default function DayEndClosingPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-              {dayEndSettlements.map((s) => (
+              {dayEndSettlements.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="p-8 text-center text-slate-400">
+                    No day-end settlements closed yet. Reconcile cash and click &quot;Finalize Day-End Closing&quot; at end of day.
+                  </td>
+                </tr>
+              ) : (
+                dayEndSettlements.map((s) => (
                 <tr key={s.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
                   <td className="p-3 font-mono font-bold text-slate-900 dark:text-slate-100">
                     {s.id}
@@ -467,7 +474,7 @@ export default function DayEndClosingPage() {
                     </Button>
                   </td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         </CardContent>

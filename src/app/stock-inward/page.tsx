@@ -31,12 +31,12 @@ export default function StockInwardPage() {
 
   // Form State
   const [reason, setReason] = useState<StockMovement["reason"]>("Purchase Received");
-  const [deviceModel, setDeviceModel] = useState("Apple iPhone 14 128GB");
-  const [imei, setImei] = useState("35" + Math.floor(1000000000000 + Math.random() * 9000000000000));
+  const [deviceModel, setDeviceModel] = useState("");
+  const [imei, setImei] = useState("");
   const [fromLocation, setFromLocation] = useState("Esterline Bulk Solutions");
-  const [toLocation, setToLocation] = useState<WarehouseLocation>("Mumbai Central Hub");
-  const [value, setValue] = useState(38000);
-  const [notes, setNotes] = useState("Intake lot verification passed");
+  const [toLocation, setToLocation] = useState<WarehouseLocation>("Lucknow Store (LKO-01)");
+  const [value, setValue] = useState(0);
+  const [notes, setNotes] = useState("");
 
   const inwardMovements = stockMovements.filter((m) => {
     if (m.type !== "Inward") return false;
@@ -145,7 +145,14 @@ export default function StockInwardPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
-              {inwardMovements.map((m) => (
+              {inwardMovements.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="p-8 text-center text-slate-400">
+                    No inward stock movements recorded yet.
+                  </td>
+                </tr>
+              ) : (
+                inwardMovements.map((m) => (
                 <tr
                   key={m.id}
                   className="hover:bg-slate-50/80 dark:hover:bg-slate-900/40 transition-colors"
@@ -188,7 +195,7 @@ export default function StockInwardPage() {
                     {m.notes || "-"}
                   </td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         </div>
