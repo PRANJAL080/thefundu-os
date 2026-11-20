@@ -59,151 +59,6 @@ export interface CompanyInvoiceSheetProps {
   warrantyDays?: number;
 }
 
-// Official Round Blue Seal & Corporate Stamp (Compact, 100% Contained in Circle - No Individual Name)
-function CompanyStamp() {
-  return (
-    <div className="relative w-20 h-20 mx-auto flex items-center justify-center select-none pointer-events-none my-1">
-      <svg
-        viewBox="0 0 120 120"
-        className="w-full h-full text-blue-800 dark:text-blue-700 transform -rotate-6"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          {/* Top Arc for Company Name: clockwise along upper circular ring */}
-          <path
-            id="stamp-top-arc-path"
-            d="M 16.5,60 A 43.5,43.5 0 0,1 103.5,60"
-            fill="none"
-          />
-          {/* Bottom Arc for Location: curves along lower circular ring */}
-          <path
-            id="stamp-bot-arc-path"
-            d="M 19,60 A 41,41 0 0,0 101,60"
-            fill="none"
-          />
-        </defs>
-
-        {/* Outer Dashed Border */}
-        <circle
-          cx="60"
-          cy="60"
-          r="57"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeDasharray="3.5 1.5"
-          opacity="0.9"
-        />
-
-        {/* Outer Solid Ring */}
-        <circle
-          cx="60"
-          cy="60"
-          r="52.5"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.4"
-          opacity="0.95"
-        />
-
-        {/* Inner Solid Circular Boundary */}
-        <circle
-          cx="60"
-          cy="60"
-          r="33.5"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1"
-          opacity="0.9"
-        />
-        {/* Innermost Dotted Ring */}
-        <circle
-          cx="60"
-          cy="60"
-          r="30.5"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="0.8"
-          strokeDasharray="2 1"
-          opacity="0.75"
-        />
-
-        {/* Top Curved Text - Follows circle radius 43.5 perfectly inside the ring */}
-        <text
-          fontSize="5.2"
-          fontWeight="900"
-          letterSpacing="0.4"
-          fill="currentColor"
-        >
-          <textPath href="#stamp-top-arc-path" startOffset="50%" textAnchor="middle">
-            ★ ESTERLINE BONAPARTE CORP PVT LTD ★
-          </textPath>
-        </text>
-
-        {/* Bottom Curved Text - Follows circle radius 41 perfectly inside the ring */}
-        <text
-          fontSize="4.8"
-          fontWeight="800"
-          letterSpacing="0.5"
-          fill="currentColor"
-        >
-          <textPath href="#stamp-bot-arc-path" startOffset="50%" textAnchor="middle">
-            ★ LUCKNOW • UTTAR PRADESH ★
-          </textPath>
-        </text>
-
-        {/* Center Details - Strictly inside center circle (radius 30.5) */}
-        <text
-          x="60"
-          y="47"
-          textAnchor="middle"
-          fontSize="6"
-          fontWeight="900"
-          fill="currentColor"
-        >
-          ★ ★ ★
-        </text>
-
-        <text
-          x="60"
-          y="57"
-          textAnchor="middle"
-          fontSize="7.5"
-          fontWeight="900"
-          letterSpacing="1"
-          fill="currentColor"
-        >
-          OFFICIAL
-        </text>
-
-        <text
-          x="60"
-          y="67"
-          textAnchor="middle"
-          fontSize="7.5"
-          fontWeight="900"
-          letterSpacing="1.2"
-          fill="currentColor"
-        >
-          SEAL
-        </text>
-
-        <text
-          x="60"
-          y="75"
-          textAnchor="middle"
-          fontSize="4.2"
-          fontWeight="bold"
-          letterSpacing="0.6"
-          fill="currentColor"
-        >
-          CERTIFIED
-        </text>
-      </svg>
-    </div>
-  );
-}
-
 // Convert numbers to Indian Rupees in words
 function numberToWords(num: number): string {
   const a = [
@@ -373,11 +228,11 @@ export function CompanyInvoiceSheet({
   // -------------------------------------------------------------
   const purchasePriceX = financials?.purchasePrice !== undefined 
     ? financials.purchasePrice 
-    : (device?.costs.purchasePrice || order?.purchasePrice || 35100); // Internal buy cost X
+    : (device?.costs.purchasePrice || order?.purchasePrice || 35100);
 
   const sellingPriceY = financials?.sellingPrice !== undefined 
     ? financials.sellingPrice 
-    : (Number(order?.sellingPrice) || Number(device?.costs.sellingPrice) || 43000); // Customer sell price Y
+    : (Number(order?.sellingPrice) || Number(device?.costs.sellingPrice) || 43000);
 
   const discountD = financials?.discount !== undefined 
     ? financials.discount 
@@ -443,7 +298,7 @@ export function CompanyInvoiceSheet({
         color: "#000000",
       }}
     >
-      {/* TOP HEADER: CIN & ORIGINAL FOR RECIPIENT */}
+      {/* TOP HEADER */}
       <div className="flex justify-between items-center text-[10.5px] font-bold pb-1 px-1">
         <span className="tracking-tight">
           <strong>CIN:</strong> <span className="font-mono font-bold tracking-wide">{companyCin}</span>
@@ -453,22 +308,22 @@ export function CompanyInvoiceSheet({
         </span>
       </div>
 
-      {/* INVOICE CONTENT (PREVIOUS FORMAT, CLEAN & LINE-FREE) */}
-      <div className="w-full">
+      {/* SINGLE UNIFIED CRISP OUTER BORDER BOX */}
+      <div className="border border-black">
         {/* ROW 1: TAX INVOICE TITLE */}
-        <div className="text-center py-1.5 bg-slate-50/70">
+        <div className="text-center py-1.5 border-b border-black bg-slate-50">
           <h1 className="text-base font-black uppercase tracking-wider text-black">
             TAX INVOICE
           </h1>
         </div>
 
         {/* ROW 2: SUPPLIER NAME & ADDRESS */}
-        <div className="flex py-2 px-1">
-          <div className="w-[28%] p-1 font-bold bg-white flex items-start text-black">
+        <div className="border-b border-black flex">
+          <div className="w-[28%] p-2 font-bold border-r border-black bg-white flex items-center">
             Supplier Name &amp; Address
           </div>
-          <div className="w-[72%] p-1 space-y-0.5">
-            <p className="font-bold text-[11px] text-black">
+          <div className="w-[72%] p-2 space-y-0.5">
+            <p className="font-bold text-[11px]">
               {companyLegalName}
             </p>
             <p>
@@ -484,55 +339,55 @@ export function CompanyInvoiceSheet({
         </div>
 
         {/* ROW 3: ORDER & INVOICE METADATA GRID */}
-        <div className="text-[9px] py-1 px-1 bg-slate-50/50">
+        <div className="border-b border-black text-[9px]">
           {/* Row 3.1 */}
-          <div className="flex py-0.5">
-            <div className="w-[38%] px-1">
+          <div className="flex border-b border-black">
+            <div className="w-[38%] p-1.5 border-r border-black">
               Channel Order No.: <span className="font-bold">{channelOrderNo}</span> ({activeChannelCode})
             </div>
-            <div className="w-[34%] px-1">
+            <div className="w-[34%] p-1.5 border-r border-black">
               Order No.: <span className="font-bold">{orderNo}</span>
             </div>
-            <div className="w-[28%] px-1">
+            <div className="w-[28%] p-1.5">
               Type of Sales: <span className="font-bold">{activeTypeOfSale}</span>
             </div>
           </div>
 
           {/* Row 3.2 */}
-          <div className="flex py-0.5">
-            <div className="w-[38%] px-1 truncate">
+          <div className="flex border-b border-black">
+            <div className="w-[38%] p-1.5 border-r border-black truncate">
               Invoice Number: <span className="font-bold font-mono">{invoiceNumber}</span>
             </div>
-            <div className="w-[34%] px-1 truncate">
+            <div className="w-[34%] p-1.5 border-r border-black truncate">
               Date &amp; Time: <span className="font-bold">{invoiceDate}{invoiceTime ? ` • ${invoiceTime}` : ""}</span>
             </div>
-            <div className="w-[14%] px-1">
+            <div className="w-[14%] p-1.5 border-r border-black">
               Sales Channel: <span className="font-bold">{activeChannelCode}</span>
             </div>
-            <div className="w-[14%] px-1">
+            <div className="w-[14%] p-1.5">
               Place of Supply: <span className="font-bold">{companyStateName} ({companyStateCode})</span>
             </div>
           </div>
 
           {/* Row 3.3 */}
-          <div className="flex py-0.5">
-            <div className="w-[72%] px-1">
+          <div className="flex">
+            <div className="w-[72%] p-1.5 border-r border-black">
               Store Location: <span className="font-bold">{displayStoreLocation}</span>
             </div>
-            <div className="w-[28%] px-1 font-bold">
+            <div className="w-[28%] p-1.5 font-bold">
               GSTIN: {companyGstin}
             </div>
           </div>
         </div>
 
         {/* ROW 4: BILL TO & SHIP TO SECTION */}
-        <div className="flex text-[8.5px] leading-tight py-2 px-1 gap-4">
+        <div className="border-b border-black flex text-[8.5px] leading-tight">
           {/* Bill To */}
-          <div className="w-1/2 p-1 space-y-0.5">
+          <div className="w-1/2 p-1.5 border-r border-black space-y-0.5">
             <div className="flex">
               <span className="font-bold w-14 shrink-0 text-black">Bill To:</span>
               <div className="flex-1 space-y-0.5">
-                <p className="font-bold text-[10.5px] text-black uppercase">{customerName}</p>
+                <p className="font-bold text-[10px] text-black uppercase">{customerName}</p>
                 <p><span className="font-semibold">Ph:</span> {customerPhone} {customerEmail ? <span>&nbsp;|&nbsp; <span className="font-semibold">Email:</span> {customerEmail}</span> : null}</p>
                 {customerAadhaar ? (
                   <p className="font-mono font-bold text-black"><span className="font-sans font-bold">KYC NO:</span> {customerAadhaar}</p>
@@ -547,11 +402,11 @@ export function CompanyInvoiceSheet({
           </div>
 
           {/* Ship To */}
-          <div className="w-1/2 p-1 space-y-0.5">
+          <div className="w-1/2 p-1.5 space-y-0.5">
             <div className="flex">
               <span className="font-bold w-14 shrink-0 text-black">Ship To:</span>
               <div className="flex-1 space-y-0.5">
-                <p className="font-bold text-[10.5px] text-black uppercase">{customerName} &nbsp;&nbsp; <span className="font-normal text-[8.5px] font-semibold">Ph: {customerPhone}</span></p>
+                <p className="font-bold text-[10px] text-black uppercase">{customerName} &nbsp;&nbsp; <span className="font-normal text-[8.5px] font-semibold">Ph: {customerPhone}</span></p>
                 <p><span className="font-semibold">Delivery Address:</span> {customerLocalAddress}</p>
                 {customerPermanentAddress && customerPermanentAddress !== customerLocalAddress ? (
                   <p><span className="font-semibold">Permanent Address:</span> {customerPermanentAddress}</p>
@@ -565,83 +420,83 @@ export function CompanyInvoiceSheet({
         </div>
 
         {/* ROW 5: MAIN ITEMS TABLE */}
-        <div className="py-1">
+        <div className="border-b border-black">
           <table className="w-full text-[9px] border-collapse">
             <thead>
-              <tr className="bg-slate-100/80 text-center font-bold text-black">
-                <th className="p-1.5 w-[4%]">S. No.</th>
-                <th className="p-1.5 w-[13%]">Barcode</th>
-                <th className="p-1.5 w-[35%] text-left">Description of Goods</th>
-                <th className="p-1.5 w-[12%]">Product Type</th>
-                <th className="p-1.5 w-[8%]">HSN / SAC</th>
-                <th className="p-1.5 w-[7%]">Warranty</th>
-                <th className="p-1.5 w-[9%]">Warranty Type</th>
-                <th className="p-1.5 w-[4%]">Qty</th>
-                <th className="p-1.5 w-[9%] text-right">Price (INR)</th>
-                <th className="p-1.5 w-[9%] text-right">Amount (INR)</th>
+              <tr className="border-b border-black text-center font-bold">
+                <th className="p-1 border-r border-black w-[4%]">S. No.</th>
+                <th className="p-1 border-r border-black w-[13%]">Barcode</th>
+                <th className="p-1 border-r border-black w-[35%] text-left">Description of Goods</th>
+                <th className="p-1 border-r border-black w-[12%]">Product Type</th>
+                <th className="p-1 border-r border-black w-[8%]">HSN / SAC</th>
+                <th className="p-1 border-r border-black w-[7%]">Warranty</th>
+                <th className="p-1 border-r border-black w-[9%]">Warranty Type</th>
+                <th className="p-1 border-r border-black w-[4%]">Qty</th>
+                <th className="p-1 border-r border-black w-[9%] text-right">Price (INR)</th>
+                <th className="p-1 w-[9%] text-right">Amount (INR)</th>
               </tr>
             </thead>
             <tbody>
-              <tr className="align-top">
-                <td className="p-1.5 text-center font-semibold">1</td>
-                <td className="p-1.5 font-mono text-[8px] text-center">{barcode}</td>
-                <td className="p-1.5 text-left font-semibold">
+              <tr className="border-b border-black align-top">
+                <td className="p-1 text-center border-r border-black font-semibold">1</td>
+                <td className="p-1 border-r border-black font-mono text-[8px] text-center">{barcode}</td>
+                <td className="p-1 border-r border-black text-left font-semibold">
                   {goodsDescription}
                 </td>
-                <td className="p-1.5 text-center">
+                <td className="p-1 border-r border-black text-center">
                   Refurbished Mobiles
                 </td>
-                <td className="p-1.5 text-center font-mono">
+                <td className="p-1 border-r border-black text-center font-mono">
                   851712
                 </td>
-                <td className="p-1.5 text-center font-bold">
+                <td className="p-1 border-r border-black text-center font-bold">
                   {warrantyDays} Days
                 </td>
-                <td className="p-1.5 text-center">
+                <td className="p-1 border-r border-black text-center">
                   TheFundu Warranty
                 </td>
-                <td className="p-1.5 text-center font-bold">
+                <td className="p-1 border-r border-black text-center font-bold">
                   1
                 </td>
-                <td className="p-1.5 text-right font-semibold font-mono">
+                <td className="p-1 border-r border-black text-right font-semibold">
                   {sellingPriceY.toFixed(2)}
                 </td>
-                <td className="p-1.5 text-right font-bold font-mono">
+                <td className="p-1 text-right font-bold">
                   {sellingPriceY.toFixed(2)}
                 </td>
               </tr>
 
               {/* Subtotal */}
-              <tr>
-                <td colSpan={7} className="p-1 text-right font-bold pr-2">Sub Total (Before Tax &amp; Discount):</td>
-                <td className="p-1 text-center font-bold">1</td>
-                <td className="p-1 text-right font-bold font-mono">{sellingPriceY.toFixed(2)}</td>
-                <td className="p-1 text-right font-bold font-mono">{sellingPriceY.toFixed(2)}</td>
+              <tr className="border-b border-black">
+                <td colSpan={7} className="p-1 text-right font-bold border-r border-black pr-2">Sub Total (Before Tax &amp; Discount):</td>
+                <td className="p-1 text-center font-bold border-r border-black">1</td>
+                <td className="p-1 text-right font-bold border-r border-black">{sellingPriceY.toFixed(2)}</td>
+                <td className="p-1 text-right font-bold">{sellingPriceY.toFixed(2)}</td>
               </tr>
 
               {/* Total Tax on Margin */}
-              <tr>
-                <td colSpan={7} className="p-1 text-right font-semibold pr-2">Total GST on Margin (Rule 32(5)):</td>
-                <td></td>
-                <td className="p-1 text-right font-semibold">18%</td>
-                <td className="p-1 text-right font-bold font-mono">{totalTax.toFixed(2)}</td>
+              <tr className="border-b border-black">
+                <td colSpan={7} className="p-1 text-right font-semibold border-r border-black pr-2">Total GST on Margin (Rule 32(5)):</td>
+                <td className="border-r border-black"></td>
+                <td className="p-1 text-right font-semibold border-r border-black">18%</td>
+                <td className="p-1 text-right font-bold">{totalTax.toFixed(2)}</td>
               </tr>
 
               {/* Discount */}
               {discountD > 0 && (
-                <tr>
-                  <td colSpan={7} className="p-1 text-right font-semibold pr-2">Promotional Discount:</td>
-                  <td></td>
-                  <td></td>
-                  <td className="p-1 text-right font-bold text-rose-700 font-mono">-{discountD.toFixed(2)}</td>
+                <tr className="border-b border-black">
+                  <td colSpan={7} className="p-1 text-right font-semibold border-r border-black pr-2">Promotional Discount:</td>
+                  <td className="border-r border-black"></td>
+                  <td className="border-r border-black"></td>
+                  <td className="p-1 text-right font-bold text-rose-700">-{discountD.toFixed(2)}</td>
                 </tr>
               )}
 
               {/* Grand Total */}
-              <tr className="bg-slate-100 font-bold">
-                <td colSpan={7} className="p-1 text-right font-black pr-2 text-[10px]">Grand Total (Billed Amount):</td>
-                <td className="p-1 text-center font-black">1</td>
-                <td></td>
+              <tr>
+                <td colSpan={7} className="p-1 text-right font-black border-r border-black pr-2 text-[10px]">Grand Total (Billed Amount):</td>
+                <td className="p-1 text-center font-black border-r border-black">1</td>
+                <td className="border-r border-black"></td>
                 <td className="p-1 text-right font-black text-[10px] font-mono">{finalAmount.toFixed(2)}</td>
               </tr>
             </tbody>
@@ -649,16 +504,16 @@ export function CompanyInvoiceSheet({
         </div>
 
         {/* ROW 6: AMOUNT IN WORDS */}
-        <div className="py-2 px-1 flex text-[9px] bg-slate-50/50 my-1">
+        <div className="border-b border-black p-1.5 flex text-[9px]">
           <span className="font-bold w-28">Amount in words:</span>
-          <span className="font-bold flex-1 capitalize">{numberToWords(finalAmount)}</span>
+          <span className="font-bold flex-1">{numberToWords(finalAmount)}</span>
         </div>
 
         {/* ROW 7: THREE-COLUMN SUMMARY ROW */}
-        <div className="flex py-2 px-1 gap-3">
+        <div className="border-b border-black flex">
           {/* Box 1: IMEI / SERIAL NO. */}
-          <div className="w-[24%] p-1.5 space-y-1 text-[8.5px] bg-slate-50/50">
-            <p className="font-bold uppercase tracking-wider text-[9px] pb-0.5">
+          <div className="w-[24%] p-1.5 border-r border-black space-y-1 text-[8.5px]">
+            <p className="font-bold uppercase tracking-wider text-[9px] border-b border-black pb-0.5">
               IMEI / SERIAL NO.
             </p>
             <div>
@@ -671,8 +526,8 @@ export function CompanyInvoiceSheet({
           </div>
 
           {/* Box 2: PAYMENT SUMMARY */}
-          <div className="w-[46%] p-1.5 text-[8.5px] bg-slate-50/50">
-            <div className="pb-0.5 mb-1 flex items-center justify-between">
+          <div className="w-[46%] p-1.5 border-r border-black text-[8.5px]">
+            <div className="border-b border-black pb-0.5 mb-1 flex items-center justify-between">
               <p className="font-bold uppercase tracking-wider text-[9px]">
                 PAYMENT SUMMARY
               </p>
@@ -685,44 +540,44 @@ export function CompanyInvoiceSheet({
             {isSplitPayment ? (
               <table className="w-full text-center border-collapse">
                 <thead>
-                  <tr className="font-bold bg-slate-100/70">
-                    <th className="p-0.5 text-left pl-1">Payment Mode</th>
-                    <th className="p-0.5">Payment Method</th>
-                    <th className="p-0.5">Transaction ID / UPI Ref</th>
+                  <tr className="border-b border-black font-bold bg-slate-50">
+                    <th className="p-0.5 border-r border-black text-left pl-1">Payment Mode</th>
+                    <th className="p-0.5 border-r border-black">Payment Method</th>
+                    <th className="p-0.5 border-r border-black">Transaction ID / UPI Ref</th>
                     <th className="p-0.5 text-right pr-1">Amount (INR)</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td className="p-0.5 font-bold text-left pl-1">
+                  <tr className="border-b border-black/40">
+                    <td className="p-0.5 border-r border-black font-bold text-left pl-1">
                       {part1Mode}
                     </td>
-                    <td className="p-0.5 font-medium">
+                    <td className="p-0.5 border-r border-black font-medium">
                       {part1Method}
                     </td>
-                    <td className="p-0.5 font-mono font-semibold text-[7.5px] max-w-[130px] break-all">
+                    <td className="p-0.5 border-r border-black font-mono font-semibold text-[7.5px] max-w-[130px] break-all">
                       {part1Txn}
                     </td>
                     <td className="p-0.5 text-right font-bold pr-1 font-mono">
                       {part1Amount.toFixed(2)}
                     </td>
                   </tr>
-                  <tr>
-                    <td className="p-0.5 font-bold text-left pl-1">
+                  <tr className="border-b border-black/40">
+                    <td className="p-0.5 border-r border-black font-bold text-left pl-1">
                       {part2Mode}
                     </td>
-                    <td className="p-0.5 font-medium">
+                    <td className="p-0.5 border-r border-black font-medium">
                       {part2Method}
                     </td>
-                    <td className="p-0.5 font-mono font-semibold text-[7.5px] max-w-[130px] break-all">
+                    <td className="p-0.5 border-r border-black font-mono font-semibold text-[7.5px] max-w-[130px] break-all">
                       {part2Txn}
                     </td>
                     <td className="p-0.5 text-right font-bold pr-1 font-mono">
                       {part2Amount.toFixed(2)}
                     </td>
                   </tr>
-                  <tr className="font-bold bg-slate-100/90">
-                    <td colSpan={3} className="p-0.5 text-right pr-1 font-bold">
+                  <tr className="font-bold bg-slate-100">
+                    <td colSpan={3} className="p-0.5 border-r border-black text-right pr-1 font-bold">
                       Total Received (INR):
                     </td>
                     <td className="p-0.5 text-right font-black pr-1 font-mono">
@@ -734,18 +589,18 @@ export function CompanyInvoiceSheet({
             ) : (
               <table className="w-full text-center border-collapse">
                 <thead>
-                  <tr className="font-bold">
-                    <th className="p-0.5">Payment Mode</th>
-                    <th className="p-0.5">Payment Method</th>
-                    <th className="p-0.5">Transaction ID</th>
+                  <tr className="border-b border-black font-bold">
+                    <th className="p-0.5 border-r border-black">Payment Mode</th>
+                    <th className="p-0.5 border-r border-black">Payment Method</th>
+                    <th className="p-0.5 border-r border-black">Transaction ID</th>
                     <th className="p-0.5 text-right">Amount (INR)</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="p-0.5 font-bold">{paymentMode}</td>
-                    <td className="p-0.5 font-medium">{paymentMethod}</td>
-                    <td className="p-0.5 font-mono text-[8px] truncate max-w-[120px]">
+                    <td className="p-0.5 border-r border-black font-bold">{paymentMode}</td>
+                    <td className="p-0.5 border-r border-black font-medium">{paymentMethod}</td>
+                    <td className="p-0.5 border-r border-black font-mono text-[8px] truncate max-w-[120px]">
                       {paymentMode === "Cash" ? "Store Cash Counter" : txnId}
                     </td>
                     <td className="p-0.5 text-right font-bold font-mono">{finalAmount.toFixed(2)}</td>
@@ -756,32 +611,32 @@ export function CompanyInvoiceSheet({
           </div>
 
           {/* Box 3: TAX SUMMARY (MARGIN GST RULE 32(5)) */}
-          <div className="w-[30%] p-1.5 text-[8.5px] bg-slate-50/50">
-            <p className="font-bold uppercase tracking-wider text-[9px] pb-0.5 mb-1">
+          <div className="w-[30%] p-1.5 text-[8.5px]">
+            <p className="font-bold uppercase tracking-wider text-[9px] border-b border-black pb-0.5 mb-1">
               TAX SUMMARY (RULE 32(5))
             </p>
             <table className="w-full text-center border-collapse">
               <thead>
-                <tr className="font-bold">
-                  <th className="p-0.5 text-left">Tax Category</th>
-                  <th className="p-0.5">Tax %</th>
+                <tr className="border-b border-black font-bold">
+                  <th className="p-0.5 border-r border-black text-left">Tax Category</th>
+                  <th className="p-0.5 border-r border-black">Tax %</th>
                   <th className="p-0.5 text-right">Tax Amount</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td className="p-0.5 text-left font-semibold">Margin SGST@9%</td>
-                  <td className="p-0.5">9</td>
+                <tr className="border-b border-black/40">
+                  <td className="p-0.5 border-r border-black text-left font-semibold">Margin SGST@9%</td>
+                  <td className="p-0.5 border-r border-black">9</td>
                   <td className="p-0.5 text-right font-mono">{marginSgst.toFixed(2)}</td>
                 </tr>
-                <tr>
-                  <td className="p-0.5 text-left font-semibold">Margin IGST@18%</td>
-                  <td className="p-0.5">18</td>
+                <tr className="border-b border-black/40">
+                  <td className="p-0.5 border-r border-black text-left font-semibold">Margin IGST@18%</td>
+                  <td className="p-0.5 border-r border-black">18</td>
                   <td className="p-0.5 text-right font-mono">{marginIgst.toFixed(2)}</td>
                 </tr>
                 <tr>
-                  <td className="p-0.5 text-left font-semibold">Margin CGST@9%</td>
-                  <td className="p-0.5">9</td>
+                  <td className="p-0.5 border-r border-black text-left font-semibold">Margin CGST@9%</td>
+                  <td className="p-0.5 border-r border-black">9</td>
                   <td className="p-0.5 text-right font-mono">{marginCgst.toFixed(2)}</td>
                 </tr>
               </tbody>
@@ -789,11 +644,11 @@ export function CompanyInvoiceSheet({
           </div>
         </div>
 
-        {/* ROW 8: TERMS & CONDITIONS + AUTHORISED SIGNATORY */}
-        <div className="flex py-2 px-1 gap-3">
+        {/* ROW 8: TERMS & CONDITIONS + AUTHORISED SIGNATORY (STRICTLY WITHOUT DIGITAL STAMP) */}
+        <div className="border-b border-black flex">
           {/* Left: Dynamic Legal Terms and GST Rule 32(5) Declaration */}
-          <div className="w-[72%] p-1 space-y-1 text-[7.5px] leading-tight">
-            <p className="font-bold text-[9px] uppercase tracking-wide pb-0.5 mb-1">
+          <div className="w-[72%] p-2 border-r border-black space-y-1 text-[7.5px] leading-tight">
+            <p className="font-bold text-[9px] uppercase tracking-wide border-b border-black/30 pb-0.5 mb-1">
               Terms &amp; Conditions (Warranty Policy &amp; Jurisdiction)
             </p>
             {effectiveTerms.map((term, tIdx) => (
@@ -803,32 +658,31 @@ export function CompanyInvoiceSheet({
             ))}
           </div>
 
-          {/* Right: Signature Area with Official Stamp */}
-          <div className="w-[28%] p-1 flex flex-col justify-between items-center text-center min-h-[90px]">
+          {/* Right: Signature Area (Without Stamp) */}
+          <div className="w-[28%] p-2 flex flex-col justify-between items-center text-center min-h-[90px]">
             <p className="font-bold text-[8.5px]">
               For {companyLegalName}
             </p>
             
-            <div className="my-1">
-              <CompanyStamp />
-            </div>
+            {/* Blank Space for Physical Signature / Manual Rubber Stamp */}
+            <div className="my-auto py-5" />
 
-            <p className="font-bold text-[9px] border-t border-black w-4/5 pt-1 text-black">
+            <p className="font-bold text-[9px] border-t border-black w-full pt-1">
               Authorised Signatory
             </p>
           </div>
         </div>
 
         {/* ROW 9: BARCODE & REGISTERED FOOTER BOX */}
-        <div className="flex items-center py-2 px-1 text-[8px]">
+        <div className="flex items-center p-2 text-[8px]">
           {/* Left Barcode & Invoice Identifier */}
-          <div className="w-[35%] flex flex-col items-center justify-center pr-3">
+          <div className="w-[38%] flex flex-col items-center justify-center border-r border-black pr-3">
             <BarcodeSVG value={invoiceNumber} />
             <span className="font-mono text-[7px] text-neutral-600 mt-0.5">INVOICE SERIAL BARCODE</span>
           </div>
 
           {/* Right Legal Corporate Declaration */}
-          <div className="w-[65%] pl-3 grid grid-cols-2 gap-2 text-[7.5px] leading-tight">
+          <div className="w-[62%] pl-3 grid grid-cols-2 gap-2 text-[7.5px] leading-tight">
             <div className="space-y-0.5">
               <p>
                 <strong>Registered Office:</strong> {companyRegisteredAddress}
@@ -837,7 +691,7 @@ export function CompanyInvoiceSheet({
                 <strong>Store Outlet:</strong> {storeName} — {storeAddress}
               </p>
             </div>
-            <div className="space-y-0.5 pl-2">
+            <div className="space-y-0.5 pl-2 border-l border-black/20">
               <p>
                 <strong>CIN:</strong> {companyCin}
               </p>
