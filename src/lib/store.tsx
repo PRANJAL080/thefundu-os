@@ -277,8 +277,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     repairs: "thefundu_repairs_v5",
     qcInspections: "thefundu_qc_v5",
     warehouses: "thefundu_stores_v6",
-    sales: "thefundu_sales_v20261120_clean",
-    salesBackup: "thefundu_sales_vault_v20261120_clean",
+    sales: "thefundu_sales_v20261120_v3",
+    salesBackup: "thefundu_sales_vault_v20261120_v3",
     purchases: "thefundu_purchases_v5",
     spareParts: "thefundu_spareparts_v5",
     buybacks: "thefundu_buybacks_v5",
@@ -336,6 +336,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
       // Active purge of all legacy / deprecated localStorage keys so deleted dummy bills never reappear
       const legacySalesKeys = [
+        "thefundu_sales_v20261120_clean",
+        "thefundu_sales_vault_v20261120_clean",
         "thefundu_sales_v6",
         "thefundu_sales_vault_backup",
         "thefundu_sales_backup",
@@ -360,6 +362,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
       // Strict validation: Only authentic user bills (ALTAF and MANISH SINGH)
       const isAuthenticSale = (s: any): boolean => {
         if (!s || typeof s !== "object") return false;
+        // Specifically block the incorrect/fake bill INVLKO012611-0001
+        if (
+          s.invoiceNumber === "INVLKO012611-0001" ||
+          s.id === "TFD-FSO-2611-0001" ||
+          (s.deviceId === "Fun-26001" && (s.customerName || "").toLowerCase().includes("manish"))
+        ) {
+          return false;
+        }
         const name = (s.customerName || "").toLowerCase().trim();
         const isDummy = [
           "retail customer",
@@ -1036,6 +1046,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     let recoveredCount = 0;
     const isAuthenticSale = (s: any): boolean => {
       if (!s || typeof s !== "object") return false;
+      if (
+        s.invoiceNumber === "INVLKO012611-0001" ||
+        s.id === "TFD-FSO-2611-0001" ||
+        (s.deviceId === "Fun-26001" && (s.customerName || "").toLowerCase().includes("manish"))
+      ) {
+        return false;
+      }
       const name = (s.customerName || "").toLowerCase().trim();
       const isDummy = [
         "retail customer",
