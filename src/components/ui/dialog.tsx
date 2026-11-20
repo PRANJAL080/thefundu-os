@@ -49,22 +49,22 @@ export function Dialog({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto print:p-0 print:m-0 print:static print:block print:overflow-visible">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity print:hidden"
         onClick={onClose}
       />
 
       {/* Modal Container */}
       <div
         className={cn(
-          "relative w-full rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200 dark:border-slate-800 z-10 my-8 overflow-hidden transition-all max-h-[90vh] flex flex-col",
+          "relative w-full rounded-2xl bg-white dark:bg-slate-900 shadow-2xl border border-slate-200 dark:border-slate-800 z-10 my-8 overflow-hidden transition-all max-h-[90vh] flex flex-col print:border-none print:shadow-none print:rounded-none print:m-0 print:p-0 print:max-h-none print:static print:block print:bg-white print:w-full print:max-w-none",
           maxWidthClasses[maxWidth]
         )}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-6 py-4.5 bg-slate-50/50 dark:bg-slate-900/50">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-6 py-4.5 bg-slate-50/50 dark:bg-slate-900/50 print:hidden">
           <div>
             {title && (
               <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
@@ -86,7 +86,7 @@ export function Dialog({
         </div>
 
         {/* Content */}
-        <div className="overflow-y-auto p-6 flex-1">{children}</div>
+        <div className="overflow-y-auto p-6 flex-1 print:p-0 print:m-0 print:overflow-visible">{children}</div>
       </div>
     </div>
   );

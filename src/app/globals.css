@@ -103,21 +103,30 @@
 @media print {
   @page {
     size: A4 portrait;
-    margin: 8mm;
+    margin: 5mm;
   }
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
   }
-  body {
+  html, body {
     background: #ffffff !important;
     color: #000000 !important;
     font-size: 10pt !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
   }
   aside,
   header,
   nav,
-  .print\:hidden {
+  button,
+  .print\:hidden,
+  [role="dialog"] > div:first-child,
+  .fixed.inset-0.bg-slate-900\/60 {
     display: none !important;
   }
   .print\:p-0 {
@@ -131,5 +140,12 @@
   }
   .print\:bg-white {
     background-color: #ffffff !important;
+  }
+  /* Remove any outer modal backdrop/border artifacts */
+  .fixed.inset-0 {
+    position: static !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 }
