@@ -1,0 +1,212 @@
+{
+  "company": {
+    "legalName": "Esterline Bonaparte Corporation Private Limited",
+    "brandName": "TheFundu",
+    "cin": "U95111UP2026PTC252407",
+    "gstin": "09AAJCE9800C1ZP",
+    "pan": "AAJCE9800C",
+    "registeredOffice": "ED-476, Sector-Q, Aliganj, Lucknow, Uttar Pradesh, India, 226024",
+    "storeOutlet": "Lucknow Store B-124 (LKO-01) — B-124 LGF SAHARA PLAZA, VIKAS KHAND, PATRAKARPURAM Gomti Nagar 226010, Lucknow",
+    "callAndWhatsApp": "6390616616",
+    "supportEmail": "support@thefundu.com"
+  },
+  "reportType": "GST Rule 32(5) Margin Scheme Monthly Tax Invoice Register",
+  "month": "2026-11",
+  "monthName": "November 2026",
+  "generatedAt": "2026-11-20T13:52:25.485Z",
+  "summary": {
+    "totalBills": 3,
+    "totalGrossRevenue": 69000,
+    "totalDiscount": 0,
+    "totalNetBilledAmount": 69000,
+    "totalPurchaseCost": 57832.54,
+    "totalProfitMargin": 11167.46,
+    "totalRule32MarginTax18": 446.94,
+    "paymentSummary": {
+      "Google Pay": {
+        "count": 2,
+        "amount": 58000
+      },
+      "UPI": {
+        "count": 1,
+        "amount": 11000
+      }
+    }
+  },
+  "bills": [
+    {
+      "invoiceNumber": "INVLKO012611-26083",
+      "orderNo": "TFD-FSO-2611-26083",
+      "channelOrderNo": "#FSO-LKO-01-26083 (FSO)",
+      "date": "2026-11-19",
+      "time": "06:55 pm",
+      "channel": "FSO",
+      "typeOfSale": "B2C",
+      "customer": {
+        "name": "MANISH SINGH",
+        "phone": "8299800996",
+        "email": "hkltha1235@gmail.com",
+        "aadhaar": "7385 5337 6952",
+        "localAddress": "S/o Munna Singh,E-3/413, Vineet Khand , Gomti Nagar, Lucknow U.P.-226010",
+        "permanentAddress": "S/o Munna Singh,E-3/413, Vineet Khand , Gomti Nagar, Lucknow U.P.-226010",
+        "gstin": "NA",
+        "placeOfSupply": "Uttar Pradesh (09)"
+      },
+      "handset": {
+        "deviceId": "Fun-26083",
+        "deviceModel": "Xiaomi 11 i Hyper Charge (128GB) Refurbished Stealth Black",
+        "imei": "867179050310196",
+        "serialNumber": "SN26083"
+      },
+      "pricingAndTax": {
+        "sellingPrice": 15000,
+        "purchaseCost": 14152.54,
+        "discount": 0,
+        "finalBilledAmount": 15000,
+        "taxableMargin": 847.4599999999991,
+        "taxScheme": "GST Rule 32(5) Margin Valuation Scheme (Valued strictly on Margin Profit)",
+        "gstRule32_5_Breakdown": {
+          "cgstRate": "9%",
+          "cgstAmount": 76.27,
+          "sgstRate": "9%",
+          "sgstAmount": 76.27,
+          "igstRate": "0%",
+          "igstAmount": 0,
+          "totalTaxOnMargin": 152.54
+        }
+      },
+      "payment": {
+        "method": "Google Pay",
+        "mode": "Google Pay",
+        "paymentTxnId": "TXN26001LKO982, K811T17950...",
+        "isSplitPayment": false,
+        "splitDetails": null,
+        "paymentStatus": "Completed"
+      },
+      "store": {
+        "storeName": "Lucknow Store B-124 (LKO-01)",
+        "storeCode": "LKO-01"
+      },
+      "warranty": {
+        "warrantyMonths": 6,
+        "warrantyExpiry": "2027-05-19"
+      }
+    },
+    {
+      "invoiceNumber": "INVLKO012611-26043",
+      "orderNo": "TFD-FSO-2611-0002",
+      "channelOrderNo": "#FSO-LKO-2611-002",
+      "date": "2026-11-16",
+      "time": "09:23 pm",
+      "channel": "FSO",
+      "typeOfSale": "B2C",
+      "customer": {
+        "name": "MANISH SINGH",
+        "phone": "8299800996",
+        "email": "hkltha1235@gmail.com",
+        "aadhaar": "7385 5337 6952",
+        "localAddress": "S/o Munna Singh,E-3/413, Vineet Khand , Gomti Nagar, Lucknow U.P.-226010",
+        "permanentAddress": "S/o Munna Singh,E-3/413, Vineet Khand , Gomti Nagar, Lucknow U.P.-226010",
+        "gstin": "NA",
+        "placeOfSupply": "Uttar Pradesh (09)"
+      },
+      "handset": {
+        "deviceId": "Fun-26043",
+        "deviceModel": "Apple iPhone Oppo K13 5g (128) Refurbished Dark grey",
+        "imei": "867203075513251",
+        "serialNumber": "SN26043"
+      },
+      "pricingAndTax": {
+        "sellingPrice": 11000,
+        "purchaseCost": 8580,
+        "discount": 0,
+        "finalBilledAmount": 11000,
+        "taxableMargin": 2420,
+        "taxScheme": "GST Rule 32(5) Margin Valuation Scheme (Valued strictly on Margin Profit)",
+        "gstRule32_5_Breakdown": {
+          "cgstRate": "9%",
+          "cgstAmount": 87.71,
+          "sgstRate": "9%",
+          "sgstAmount": 87.71,
+          "igstRate": "0%",
+          "igstAmount": 0,
+          "totalTaxOnMargin": 175.42
+        }
+      },
+      "payment": {
+        "method": "UPI",
+        "mode": "UPI",
+        "paymentTxnId": "K811T17948303256f49824145",
+        "isSplitPayment": false,
+        "splitDetails": null,
+        "paymentStatus": "Completed"
+      },
+      "store": {
+        "storeName": "Lucknow Store B-124 (LKO-01)",
+        "storeCode": "LKO-01"
+      },
+      "warranty": {
+        "warrantyMonths": 6,
+        "warrantyExpiry": "2027-05-16"
+      }
+    },
+    {
+      "invoiceNumber": "INVLKO012611-0002",
+      "orderNo": "TFD-FSO-2611-0002",
+      "channelOrderNo": "#FSO-LKO-2611-002",
+      "date": "2026-11-15",
+      "time": "11:35 am",
+      "channel": "FSO",
+      "typeOfSale": "B2C",
+      "customer": {
+        "name": "ALTAF",
+        "phone": "74608646362",
+        "email": "NA",
+        "aadhaar": "4481 3291 8192",
+        "localAddress": "S/o Mohd Raqeeb Ulla, Chinhat, News Colony,Gomti nagar, Lucknow, Uttar Pradesh, 226028",
+        "permanentAddress": "S/o Mohd Raqeeb Ulla, Chinhat, News Colony,Gomti nagar, Lucknow, Uttar Pradesh, 226028",
+        "gstin": "NA",
+        "placeOfSupply": "Uttar Pradesh (09)"
+      },
+      "handset": {
+        "deviceId": "Fun-26049",
+        "deviceModel": "Apple iPhone 14 pro (128GB) Refurbished White",
+        "imei": "356983557725459",
+        "serialNumber": "SN26049"
+      },
+      "pricingAndTax": {
+        "sellingPrice": 43000,
+        "purchaseCost": 35100,
+        "discount": 0,
+        "finalBilledAmount": 43000,
+        "taxableMargin": 7900,
+        "taxScheme": "GST Rule 32(5) Margin Valuation Scheme (Valued strictly on Margin Profit)",
+        "gstRule32_5_Breakdown": {
+          "cgstRate": "9%",
+          "cgstAmount": 59.49,
+          "sgstRate": "9%",
+          "sgstAmount": 59.49,
+          "igstRate": "0%",
+          "igstAmount": 0,
+          "totalTaxOnMargin": 118.98
+        }
+      },
+      "payment": {
+        "method": "Google Pay",
+        "mode": "Google Pay",
+        "paymentTxnId": "T2611141902345516542965",
+        "isSplitPayment": false,
+        "splitDetails": null,
+        "paymentStatus": "Completed"
+      },
+      "store": {
+        "storeName": "Lucknow Store B-124 (LKO-01)",
+        "storeCode": "LKO-01"
+      },
+      "warranty": {
+        "warrantyMonths": 6,
+        "warrantyExpiry": "2027-05-15"
+      }
+    }
+  ]
+}

@@ -9,6 +9,7 @@
  */
 
 import { Device, SalesOrder } from "./types";
+import { COMPANY_CONFIG } from "./company-config";
 
 export function exportGSTRule32AuditCSV(devices: Device[], filename = "TheFundu_GST_Rule_32_5_Margin_Report.csv") {
   // Column Headers for CA Audit
@@ -181,6 +182,293 @@ export function exportSavedBillsCSV(sales: SalesOrder[], filename = "TheFundu_Sa
   const link = document.createElement("a");
   link.setAttribute("href", url);
   link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
+export function getMonthLabel(yearMonth: string): string {
+  const parts = yearMonth.split("-");
+  if (parts.length >= 2) {
+    const year = parts[0];
+    const monthIdx = parseInt(parts[1], 10) - 1;
+    if (monthIdx >= 0 && monthIdx < 12) {
+      return `${MONTH_NAMES[monthIdx]} ${year}`;
+    }
+  }
+  return yearMonth;
+}
+
+export interface MonthlyBillExportItem {
+  invoiceNumber: string;
+  orderNo?: string;
+  date: string;
+  time?: string;
+  channel?: string;
+  typeOfSale?: string;
+  customer: {
+    name: string;
+    phone: string;
+    email: string;
+    aadhaar: string;
+    localAddress: string;
+    permanentAddress: string;
+    gstin: string;
+    placeOfSupply: string;
+  };
+  handset: {
+    deviceId: string;
+    deviceModel: string;
+    imei: string;
+    serialNumber: string;
+  };
+  pricingAndTax: {
+    sellingPrice: number;
+    purchaseCost: number;
+    discount: number;
+    finalBilledAmount: number;
+    taxableMargin: number;
+    taxScheme: string;
+    gstRule32_5_Breakdown: {
+      cgstRate: string;
+      cgstAmount: number;
+      sgstRate: string;
+      sgstAmount: number;
+      igstRate: string;
+      igstAmount: number;
+      totalTaxOnMargin: number;
+    };
+  };
+  payment: {
+    method: string;
+    mode: string;
+    paymentTxnId: string;
+    isSplitPayment: boolean;
+    splitDetails?: any;
+    paymentStatus: string;
+  };
+  store: {
+    storeName: string;
+    storeCode: string;
+  };
+  warranty: {
+    warrantyMonths: number;
+    warrantyExpiry?: string;
+  };
+}
+
+export interface MonthWiseBillsReport {
+  company: {
+    legalName: string;
+    cin: string;
+    gstin: string;
+    pan: string;
+    registeredAddress: string;
+    storeOutlet: string;
+  };
+  reportType: string;
+  month: string;
+  monthName: string;
+  exportedAt: string;
+  summary: {
+    totalBills: number;
+    totalGrossRevenue: number;
+    totalDiscount: number;
+    totalNetBilledAmount: number;
+    totalPurchaseCost: number;
+    totalProfitMargin: number;
+    totalRule32Tax18: number;
+    paymentSummary: Record<string, { count: number; amount: number }>;
+  };
+  bills: MonthlyBillExportItem[];
+}
+
+/**
+ * Exports Bills grouped per month into structured JSON files and triggers direct download to laptop.
+ */
+export function exportMonthWiseBillsJSON(
+  sales: SalesOrder[],
+  selectedMonth: string = "all"
+) {
+  if (!sales || sales.length === 0) {
+    alert("No bills available to export.");
+    return;
+  }
+
+  const mapSaleToItem = (s: SalesOrder): MonthlyBillExportItem => {
+    const sellPrice = Number(s.sellingPrice || s.finalAmount || 0);
+    const disc = Number(s.discount || 0);
+    const finalAmt = Number(s.finalAmount || (sellPrice - disc));
+    const buyPrice = Number(s.purchasePrice || 0);
+    const margin = Math.max(0, finalAmt - buyPrice);
+    const totalTax = Number(s.taxAmount || (margin > 0 ? Math.round((margin * 18 / 118) * 100) / 100 : 0));
+    const halfTax = Math.round((totalTax / 2) * 100) / 100;
+
+    return {
+      invoiceNumber: s.invoiceNumber || s.id,
+      orderNo: s.orderNo || s.id,
+      date: s.date,
+      time: s.time || "12:00 pm",
+      channel: s.channel || "FSO",
+      typeOfSale: s.typeOfSale || "B2C",
+      customer: {
+        name: s.customerName || "Walk-in Retail Customer",
+        phone: s.customerPhone || "N/A",
+        email: s.customerEmail || "N/A",
+        aadhaar: s.customerAadhaar || "N/A",
+        localAddress: s.customerLocalAddress || s.customerAddress || "Lucknow, Uttar Pradesh",
+        permanentAddress: s.customerPermanentAddress || s.customerAddress || "Lucknow, Uttar Pradesh",
+        gstin: s.customerGstin || "URP (Unregistered)",
+        placeOfSupply: s.placeOfSupply || "Uttar Pradesh (09)",
+      },
+      handset: {
+        deviceId: s.deviceId,
+        deviceModel: s.deviceModel,
+        imei: s.imei,
+        serialNumber: s.serialNumber || `SN${s.deviceId.replace(/\D/g, "")}`,
+      },
+      pricingAndTax: {
+        sellingPrice: sellPrice,
+        purchaseCost: buyPrice,
+        discount: disc,
+        finalBilledAmount: finalAmt,
+        taxableMargin: margin,
+        taxScheme: "GST Rule 32(5) Margin Valuation Scheme (Valued strictly on Margin Profit)",
+        gstRule32_5_Breakdown: {
+          cgstRate: "9%",
+          cgstAmount: halfTax,
+          sgstRate: "9%",
+          sgstAmount: halfTax,
+          igstRate: "0%",
+          igstAmount: 0,
+          totalTaxOnMargin: totalTax,
+        },
+      },
+      payment: {
+        method: s.paymentMethod || "UPI",
+        mode: (s as any).paymentMode || (s.paymentMethod?.includes("Split") ? "Split" : s.paymentMethod) || "UPI",
+        paymentTxnId: (s as any).paymentTxnId || "N/A",
+        isSplitPayment: Boolean(s.splitPayment || s.paymentMethod?.includes("Split")),
+        splitDetails: s.splitPayment || null,
+        paymentStatus: s.paymentStatus || "Completed",
+      },
+      store: {
+        storeName: s.storeName || "Lucknow Store B-124 (LKO-01)",
+        storeCode: s.storeCode || "LKO-01",
+      },
+      warranty: {
+        warrantyMonths: s.warrantyMonths || 6,
+        warrantyExpiry: s.warrantyExpiry || "2027-05-19",
+      },
+    };
+  };
+
+  const grouped: Record<string, SalesOrder[]> = {};
+  sales.forEach((s) => {
+    const m = (s.date || "").slice(0, 7) || "2026-11";
+    if (!grouped[m]) grouped[m] = [];
+    grouped[m].push(s);
+  });
+
+  const availableMonths = Object.keys(grouped).sort();
+
+  if (selectedMonth !== "all" && grouped[selectedMonth]) {
+    const monthSales = grouped[selectedMonth];
+    const items = monthSales.map(mapSaleToItem);
+    const totalGross = items.reduce((sum, i) => sum + i.pricingAndTax.sellingPrice, 0);
+    const totalDisc = items.reduce((sum, i) => sum + i.pricingAndTax.discount, 0);
+    const totalNet = items.reduce((sum, i) => sum + i.pricingAndTax.finalBilledAmount, 0);
+    const totalBuy = items.reduce((sum, i) => sum + i.pricingAndTax.purchaseCost, 0);
+    const totalMargin = items.reduce((sum, i) => sum + i.pricingAndTax.taxableMargin, 0);
+    const totalTax = items.reduce((sum, i) => sum + i.pricingAndTax.gstRule32_5_Breakdown.totalTaxOnMargin, 0);
+
+    const paymentSummary: Record<string, { count: number; amount: number }> = {};
+    items.forEach((i) => {
+      const p = i.payment.method || "Other";
+      if (!paymentSummary[p]) paymentSummary[p] = { count: 0, amount: 0 };
+      paymentSummary[p].count += 1;
+      paymentSummary[p].amount += i.pricingAndTax.finalBilledAmount;
+    });
+
+    const report: MonthWiseBillsReport = {
+      company: {
+        legalName: COMPANY_CONFIG.legalName,
+        cin: COMPANY_CONFIG.cin,
+        gstin: COMPANY_CONFIG.gstin,
+        pan: COMPANY_CONFIG.pan,
+        registeredAddress: COMPANY_CONFIG.registeredAddress,
+        storeOutlet: `${COMPANY_CONFIG.primaryStore.name} — ${COMPANY_CONFIG.primaryStore.address}`,
+      },
+      reportType: "GST Rule 32(5) Monthly Tax Invoice Register",
+      month: selectedMonth,
+      monthName: getMonthLabel(selectedMonth),
+      exportedAt: new Date().toISOString(),
+      summary: {
+        totalBills: items.length,
+        totalGrossRevenue: totalGross,
+        totalDiscount: totalDisc,
+        totalNetBilledAmount: totalNet,
+        totalPurchaseCost: totalBuy,
+        totalProfitMargin: totalMargin,
+        totalRule32Tax18: Math.round(totalTax * 100) / 100,
+        paymentSummary,
+      },
+      bills: items,
+    };
+
+    const fileName = `TheFundu_Bills_${selectedMonth}_(${getMonthLabel(selectedMonth).replace(/\s+/g, "_")}).json`;
+    downloadJSON(report, fileName);
+  } else {
+    const allMonthsData: Record<string, any> = {};
+    availableMonths.forEach((m) => {
+      const monthSales = grouped[m];
+      const items = monthSales.map(mapSaleToItem);
+      const totalNet = items.reduce((sum, i) => sum + i.pricingAndTax.finalBilledAmount, 0);
+      const totalTax = items.reduce((sum, i) => sum + i.pricingAndTax.gstRule32_5_Breakdown.totalTaxOnMargin, 0);
+
+      allMonthsData[m] = {
+        month: m,
+        monthName: getMonthLabel(m),
+        totalBills: items.length,
+        totalRevenue: totalNet,
+        totalMarginTax: Math.round(totalTax * 100) / 100,
+        bills: items,
+      };
+    });
+
+    const masterReport = {
+      company: {
+        legalName: COMPANY_CONFIG.legalName,
+        cin: COMPANY_CONFIG.cin,
+        gstin: COMPANY_CONFIG.gstin,
+        pan: COMPANY_CONFIG.pan,
+        registeredAddress: COMPANY_CONFIG.registeredAddress,
+      },
+      reportType: "TheFundu Multi-Month Consolidated Bills Register",
+      exportedAt: new Date().toISOString(),
+      totalMonthsCount: availableMonths.length,
+      availableMonths,
+      totalBillsAllMonths: sales.length,
+      months: allMonthsData,
+    };
+
+    downloadJSON(masterReport, "TheFundu_Bills_All_Months_Consolidated.json");
+  }
+}
+
+function downloadJSON(data: any, fileName: string) {
+  const jsonStr = JSON.stringify(data, null, 2);
+  const blob = new Blob([jsonStr], { type: "application/json;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", fileName);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

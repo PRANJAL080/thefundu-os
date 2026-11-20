@@ -49,7 +49,7 @@ import { CompanyInvoiceSheet } from "@/components/invoice/CompanyInvoiceSheet";
 import { InvoiceModal } from "@/components/invoice/InvoiceModal";
 import { InvoiceSettingsModal } from "@/components/invoice/InvoiceSettingsModal";
 import { formatINR } from "@/lib/utils";
-import { exportGSTRule32AuditCSV, exportSavedBillsCSV } from "@/lib/exportGSTRule32";
+import { exportGSTRule32AuditCSV, exportSavedBillsCSV, exportMonthWiseBillsJSON, getMonthLabel } from "@/lib/exportGSTRule32";
 import { downloadInvoicePDF } from "@/lib/pdfDownloader";
 
 export default function InvoiceGeneratorPage() {
@@ -80,6 +80,17 @@ export default function InvoiceGeneratorPage() {
   const [selectedHistoryOrder, setSelectedHistoryOrder] = useState<SalesOrder | null>(null);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [copiedImei, setCopiedImei] = useState<string | null>(null);
+
+  // Month-wise JSON export state
+  const availableBillMonths = useMemo(() => {
+    const set = new Set<string>();
+    sales.forEach((s) => {
+      const m = (s.date || "").slice(0, 7);
+      if (m && m.length === 7) set.add(m);
+    });
+    return Array.from(set).sort().reverse();
+  }, [sales]);
+  const [selectedExportMonth, setSelectedExportMonth] = useState<string>("all");
 
   // Auto-switch to history tab or auto-select handset from URL parameters
   useEffect(() => {
@@ -762,6 +773,22 @@ https://thefundu.com/verify/${serialNo}
           >
             <Download className="h-3.5 w-3.5 text-emerald-600" />
             <span>Export CA Margin Audit</span>
+          </Button>
+
+          {/* Quick Month-wise Bills JSON Export */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              const currentMonth = availableBillMonths[0] || "2026-11";
+              exportMonthWiseBillsJSON(sales, currentMonth);
+              showToast(`Downloaded ${getMonthLabel(currentMonth)} Bills JSON file to laptop!`, "success");
+            }}
+            className="gap-1.5 border-indigo-300 text-indigo-700 bg-indigo-50/60 hover:bg-indigo-100 dark:border-indigo-800 dark:text-indigo-300 dark:bg-indigo-950/40"
+            title="Download this month's bills as a structured JSON file directly to laptop"
+          >
+            <Download className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+            <span>Download Month JSON</span>
           </Button>
 
           {/* Download Bill (PDF) Button */}
@@ -2133,8 +2160,43 @@ https://thefundu.com/verify/${serialNo}
                     title="Export all saved tax invoices with IMEI, Fun Code, Aadhaar, Addresses, and GST Rule 32(5) breakdown"
                   >
                     <Download className="h-3.5 w-3.5" />
-                    <span>Export Bills (CSV / Excel)</span>
+                    <span>Export CSV</span>
                   </Button>
+
+                  {/* Per-Month Bills JSON Downloader */}
+                  <div className="flex items-center gap-1.5 bg-indigo-50/70 dark:bg-indigo-950/40 p-1 rounded-lg border border-indigo-200 dark:border-indigo-800 shrink-0">
+                    <select
+                      value={selectedExportMonth}
+                      onChange={(e) => setSelectedExportMonth(e.target.value)}
+                      className="h-8 px-2 text-xs rounded border border-indigo-200 dark:border-indigo-700 bg-white dark:bg-slate-900 text-indigo-950 dark:text-indigo-200 font-semibold focus:outline-hidden"
+                      title="Select month to download bills JSON file"
+                    >
+                      <option value="all">All Months JSON ({sales.length} Bills)</option>
+                      {availableBillMonths.map((m) => {
+                        const count = sales.filter((s) => (s.date || "").startsWith(m)).length;
+                        return (
+                          <option key={m} value={m}>
+                            {getMonthLabel(m)} ({count} bills)
+                          </option>
+                        );
+                      })}
+                    </select>
+
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => {
+                        exportMonthWiseBillsJSON(sales, selectedExportMonth);
+                        const label = selectedExportMonth === "all" ? "All Months" : getMonthLabel(selectedExportMonth);
+                        showToast(`Downloaded ${label} Bills JSON file directly to laptop!`, "success");
+                      }}
+                      className="h-8 text-xs gap-1.5 font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-2xs"
+                      title="Download clean structured JSON file of bills for this month"
+                    >
+                      <Download className="h-3.5 w-3.5" />
+                      <span>Download Month JSON</span>
+                    </Button>
+                  </div>
                 </div>
               </div>
             </CardContent>
