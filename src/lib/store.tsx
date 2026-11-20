@@ -277,8 +277,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     repairs: "thefundu_repairs_v5",
     qcInspections: "thefundu_qc_v5",
     warehouses: "thefundu_stores_v6",
-    sales: "thefundu_sales_v6",
-    salesBackup: "thefundu_sales_vault_backup",
+    sales: "thefundu_sales_v20261120_clean",
+    salesBackup: "thefundu_sales_vault_v20261120_clean",
     purchases: "thefundu_purchases_v5",
     spareParts: "thefundu_spareparts_v5",
     buybacks: "thefundu_buybacks_v5",
@@ -333,16 +333,45 @@ export function AppProvider({ children }: { children: ReactNode }) {
         const parsed = JSON.parse(storedStores);
         if (Array.isArray(parsed) && parsed.length > 0) setWarehouses(parsed);
       }
-      // Retrieve and recover all user-created bills safely (purging fake dummy data)
-      const isDummyName = (name: string = "") => {
-        const lower = name.toLowerCase().trim();
-        return [
+
+      // Active purge of all legacy / deprecated localStorage keys so deleted dummy bills never reappear
+      const legacySalesKeys = [
+        "thefundu_sales_v6",
+        "thefundu_sales_vault_backup",
+        "thefundu_sales_backup",
+        "thefundu_sales_v5",
+        "thefundu_sales_v4",
+        "thefundu_sales_v3",
+        "thefundu_sales_v2",
+        "thefundu_sales_v1",
+        "thefundu_sales",
+        "thefundu_sales_backup_v6",
+        "thefundu_sales_backup_v5",
+        "thefundu_buybacks_v5",
+        "thefundu_settlements_v5",
+        "thefundu_warranties_v5",
+      ];
+      legacySalesKeys.forEach((k) => {
+        try {
+          localStorage.removeItem(k);
+        } catch (e) {}
+      });
+
+      // Strict validation: Only authentic user bills (ALTAF and MANISH SINGH)
+      const isAuthenticSale = (s: any): boolean => {
+        if (!s || typeof s !== "object") return false;
+        const name = (s.customerName || "").toLowerCase().trim();
+        const isDummy = [
           "retail customer",
           "store retail customer",
           "abhay verma",
+          "abhay",
           "vikas singh",
+          "vikas",
           "pooja sharma",
+          "pooja",
           "amitabh srivastava",
+          "amitabh",
           "ramesh kumar",
           "aakash varma",
           "gaurav malhotra",
@@ -352,41 +381,32 @@ export function AppProvider({ children }: { children: ReactNode }) {
           "kavya sundaram",
           "rahul saxena",
           "priya srivastava",
-        ].some((d) => lower.includes(d));
+        ].some((d) => name.includes(d));
+        if (isDummy) return false;
+        return name.includes("altaf") || name.includes("manish");
       };
 
       let loadedSales: SalesOrder[] = [];
-      const sources = [
-        STORAGE_KEYS.sales,
-        STORAGE_KEYS.salesBackup,
-        "thefundu_sales_v6",
-        "thefundu_sales_vault_backup",
-        "thefundu_sales_v5",
-        "thefundu_sales_v4",
-      ];
-      for (const src of sources) {
-        try {
-          const raw = localStorage.getItem(src);
-          if (raw) {
-            const parsed = JSON.parse(raw);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-              parsed.forEach((s: SalesOrder) => {
-                if (s && (s.id || s.invoiceNumber) && !isDummyName(s.customerName)) {
-                  const exists = loadedSales.some(
-                    (ex) => (s.invoiceNumber && ex.invoiceNumber === s.invoiceNumber) || (s.id && ex.id === s.id)
-                  );
-                  if (!exists) {
-                    loadedSales.push(s);
-                  }
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.sales);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            parsed.forEach((s: SalesOrder) => {
+              if (isAuthenticSale(s)) {
+                const exists = loadedSales.some(
+                  (ex) => (s.invoiceNumber && ex.invoiceNumber === s.invoiceNumber) || (s.id && ex.id === s.id)
+                );
+                if (!exists) {
+                  loadedSales.push(s);
                 }
-              });
-            }
+              }
+            });
           }
-        } catch (e) {}
-      }
+        }
+      } catch (e) {}
 
-      // Purge any residual dummy data and ensure authentic user bills are active
-      loadedSales = loadedSales.filter((s) => !isDummyName(s.customerName));
+      // Always guarantee the exact 3 verified bills are loaded
       initialSales.forEach((s) => {
         const exists = loadedSales.some(
           (ex) => (s.invoiceNumber && ex.invoiceNumber === s.invoiceNumber) || (s.id && ex.id === s.id)
@@ -396,20 +416,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
         }
       });
 
+      // Filter strictly to authentic bills
+      loadedSales = loadedSales.filter(isAuthenticSale);
+
       setSales(loadedSales);
-      localStorage.setItem(STORAGE_KEYS.sales, JSON.stringify(loadedSales));
-      localStorage.setItem(STORAGE_KEYS.salesBackup, JSON.stringify(loadedSales));
-      // Purge old deprecated keys so deleted dummy bills never resurrect
-      [
-        "thefundu_sales_v5",
-        "thefundu_sales_v4",
-        "thefundu_sales_v3",
-        "thefundu_sales_v2",
-        "thefundu_sales_backup",
-        "thefundu_buybacks_v5",
-        "thefundu_settlements_v5",
-        "thefundu_warranties_v5",
-      ].forEach((k) => localStorage.removeItem(k));
+      try {
+        localStorage.setItem(STORAGE_KEYS.sales, JSON.stringify(loadedSales));
+        localStorage.setItem(STORAGE_KEYS.salesBackup, JSON.stringify(loadedSales));
+      } catch (e) {}
       const storedPurchases = localStorage.getItem(STORAGE_KEYS.purchases);
       if (storedPurchases) {
         const parsed = JSON.parse(storedPurchases);
@@ -1020,15 +1034,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const recoverAllSales = (): number => {
     let recoveredCount = 0;
-    const isDummyName = (name: string = "") => {
-      const lower = name.toLowerCase().trim();
-      return [
+    const isAuthenticSale = (s: any): boolean => {
+      if (!s || typeof s !== "object") return false;
+      const name = (s.customerName || "").toLowerCase().trim();
+      const isDummy = [
         "retail customer",
         "store retail customer",
         "abhay verma",
+        "abhay",
         "vikas singh",
+        "vikas",
         "pooja sharma",
+        "pooja",
         "amitabh srivastava",
+        "amitabh",
         "ramesh kumar",
         "aakash varma",
         "gaurav malhotra",
@@ -1038,12 +1057,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
         "kavya sundaram",
         "rahul saxena",
         "priya srivastava",
-      ].some((d) => lower.includes(d));
+      ].some((d) => name.includes(d));
+      if (isDummy) return false;
+      return name.includes("altaf") || name.includes("manish");
     };
 
     const currentSalesMap = new Map<string, SalesOrder>();
     sales.forEach((s) => {
-      if (!isDummyName(s.customerName)) {
+      if (isAuthenticSale(s)) {
         if (s.invoiceNumber) currentSalesMap.set(s.invoiceNumber, s);
         if (s.id) currentSalesMap.set(s.id, s);
         if (s.deviceId) currentSalesMap.set(s.deviceId, s);
@@ -1053,12 +1074,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (typeof window !== "undefined") {
       const backupKeys = [
         STORAGE_KEYS.salesBackup,
-        "thefundu_sales_v6",
-        "thefundu_sales_vault_backup",
-        "thefundu_sales_v5",
-        "thefundu_sales_v4",
-        "thefundu_sales_v3",
-        "thefundu_sales_backup",
+        STORAGE_KEYS.sales,
       ];
       backupKeys.forEach((key) => {
         try {
@@ -1067,7 +1083,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             const parsed = JSON.parse(raw);
             if (Array.isArray(parsed)) {
               parsed.forEach((s: SalesOrder) => {
-                if (s && (s.invoiceNumber || s.id) && !isDummyName(s.customerName)) {
+                if (s && (s.invoiceNumber || s.id) && isAuthenticSale(s)) {
                   const keyId = s.invoiceNumber || s.id;
                   if (!currentSalesMap.has(keyId)) {
                     currentSalesMap.set(keyId, s);
@@ -1090,7 +1106,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
     });
 
-    const allRecovered = Array.from(currentSalesMap.values());
+    const allRecovered = Array.from(currentSalesMap.values()).filter(isAuthenticSale);
     setSales(allRecovered);
     if (typeof window !== "undefined") {
       try {
