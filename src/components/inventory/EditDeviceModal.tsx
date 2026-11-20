@@ -115,8 +115,8 @@ export function EditDeviceModal({ device, isOpen, onClose }: EditDeviceModalProp
       setStatus(device.status || "In Stock");
       setWarehouse(device.warehouse || (warehouses[0]?.name ?? "Lucknow Store (LKO-01)"));
 
-      setPurchasePrice(device.costs?.purchasePrice || 0);
-      setSellingPrice(device.costs?.sellingPrice || 0);
+      setPurchasePrice(device.costs?.purchasePrice ?? device.purchasePrice ?? 0);
+      setSellingPrice(device.costs?.sellingPrice ?? device.sellingPrice ?? 0);
       setRepairCost(device.costs?.repairCost || 0);
       setTestingCost(device.costs?.testingCost || 0);
       setPackagingCost(device.costs?.packagingCost || 0);

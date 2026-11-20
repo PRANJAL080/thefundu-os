@@ -262,14 +262,14 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26000",
     "brand": "Apple",
-    "model": "iPhone 12 mini",
-    "storage": "64GB",
+    "model": "iPhone 12 mini (blue)",
+    "storage": "64 gb",
     "colour": "blue",
     "imei1": "355997875777052",
     "imei2": "355997875825208",
     "serialNumber": "SN26000",
     "sku": "TFD-26000-APP",
-    "batteryHealth": 95,
+    "batteryHealth": 90,
     "grade": "A+",
     "status": "Sold",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -283,8 +283,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 14790,
       "sellingPrice": 18000,
       "projectedProfit": 3210,
-      "profitMarginPercent": 21.7
+      "profitMarginPercent": 17.8
     },
+    "sellingPrice": 18000,
+    "purchasePrice": 14040,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -304,7 +306,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26000. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26000."
       }
     ],
     "repairHistory": []
@@ -312,14 +314,14 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26001",
     "brand": "Apple",
-    "model": "iPhone 15 pro max",
-    "storage": "256GB",
+    "model": "iPhone 15 pro max (blue)",
+    "storage": "256 gb",
     "colour": "blue",
     "imei1": "355319540975419",
     "imei2": "355319540921025",
     "serialNumber": "SN26001",
     "sku": "TFD-26001-APP",
-    "batteryHealth": 96,
+    "batteryHealth": 91,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -333,13 +335,15 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 55350,
       "sellingPrice": 70000,
       "projectedProfit": 14650,
-      "profitMarginPercent": 26.5
+      "profitMarginPercent": 20.9
     },
+    "sellingPrice": 70000,
+    "purchasePrice": 54600,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
       "chipset": "Apple Bionic / A-Series",
@@ -354,22 +358,21 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26001. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26001."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26002",
-    "brand": "Apple",
-    "model": "14 pro max",
-    "storage": "256GB",
+    "brand": "Other",
+    "model": "14 pro max (blue)",
+    "storage": "256 gb",
     "colour": "blue",
     "imei1": "354064853721668",
     "imei2": "354064852239146",
     "serialNumber": "SN26002",
-    "sku": "TFD-26002-APP",
-    "batteryHealth": 97,
+    "sku": "TFD-26002-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -383,20 +386,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 43650,
       "sellingPrice": 55000,
       "projectedProfit": 11350,
-      "profitMarginPercent": 26
+      "profitMarginPercent": 20.6
     },
+    "sellingPrice": 55000,
+    "purchasePrice": 42900,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Apple Bionic / A-Series",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "iOS 18"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -404,7 +409,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26002. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26002."
       }
     ],
     "repairHistory": []
@@ -413,13 +418,12 @@ export const initialDevices: Device[] = [
     "id": "Fun-26003",
     "brand": "Apple",
     "model": "iPhone 16 PINK",
-    "storage": "128GB",
-    "colour": "Default Edition",
+    "storage": "128 gb",
+    "colour": "Pink",
     "imei1": "352958414012677",
-    "imei2": "",
     "serialNumber": "SN26003",
     "sku": "TFD-26003-APP",
-    "batteryHealth": 98,
+    "batteryHealth": 93,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -433,13 +437,15 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 47550,
       "sellingPrice": 60000,
       "projectedProfit": 12450,
-      "profitMarginPercent": 26.2
+      "profitMarginPercent": 20.8
     },
+    "sellingPrice": 60000,
+    "purchasePrice": 46800,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
       "chipset": "Apple Bionic / A-Series",
@@ -454,7 +460,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26003. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26003."
       }
     ],
     "repairHistory": []
@@ -462,14 +468,13 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26004",
     "brand": "Apple",
-    "model": "iPHONE 15 PRO MAX",
-    "storage": "256GB",
+    "model": "iPHONE 15 PRO MAX (WHITE)",
+    "storage": "256 GB",
     "colour": "WHITE",
     "imei1": "356642157403535",
-    "imei2": "",
     "serialNumber": "SN26004",
     "sku": "TFD-26004-APP",
-    "batteryHealth": 88,
+    "batteryHealth": 94,
     "grade": "A+",
     "status": "Sold",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -483,8 +488,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 57690,
       "sellingPrice": 73000,
       "projectedProfit": 15310,
-      "profitMarginPercent": 26.5
+      "profitMarginPercent": 21
     },
+    "sellingPrice": 73000,
+    "purchasePrice": 56940,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -504,22 +511,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26004. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26004."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26005",
-    "brand": "Apple",
-    "model": "14 pro max",
-    "storage": "1TB",
+    "brand": "Other",
+    "model": "14 pro max (purple)",
+    "storage": "1tb",
     "colour": "purple",
     "imei1": "357879430485082",
-    "imei2": "",
     "serialNumber": "SN26005",
-    "sku": "TFD-26005-APP",
-    "batteryHealth": 89,
+    "sku": "TFD-26005-OTH",
     "grade": "A+",
     "status": "Sold",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -533,20 +538,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 43650,
       "sellingPrice": 55000,
       "projectedProfit": 11350,
-      "profitMarginPercent": 26
+      "profitMarginPercent": 20.6
     },
+    "sellingPrice": 55000,
+    "purchasePrice": 42900,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Apple Bionic / A-Series",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "iOS 18"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -554,22 +561,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26005. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26005."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26006",
-    "brand": "Apple",
-    "model": "15 Pro",
-    "storage": "256GB",
+    "brand": "Other",
+    "model": "15 Pro (white)",
+    "storage": "256 gb",
     "colour": "white",
     "imei1": "357597632009589",
-    "imei2": "",
     "serialNumber": "SN26006",
-    "sku": "TFD-26006-APP",
-    "batteryHealth": 90,
+    "sku": "TFD-26006-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -583,20 +588,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 53790,
       "sellingPrice": 68000,
       "projectedProfit": 14210,
-      "profitMarginPercent": 26.4
+      "profitMarginPercent": 20.9
     },
+    "sellingPrice": 68000,
+    "purchasePrice": 53040,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Apple Bionic / A-Series",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "iOS 18"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -604,22 +611,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26006. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26006."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26007",
-    "brand": "Apple",
-    "model": "14 pro",
-    "storage": "256GB",
+    "brand": "Other",
+    "model": "14 pro (purple)",
+    "storage": "256 gb",
     "colour": "purple",
     "imei1": "353943233721616",
-    "imei2": "",
     "serialNumber": "SN26007",
-    "sku": "TFD-26007-APP",
-    "batteryHealth": 91,
+    "sku": "TFD-26007-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -633,20 +638,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 43650,
       "sellingPrice": 55000,
       "projectedProfit": 11350,
-      "profitMarginPercent": 26
+      "profitMarginPercent": 20.6
     },
+    "sellingPrice": 55000,
+    "purchasePrice": 42900,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Apple Bionic / A-Series",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "iOS 18"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -654,22 +661,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26007. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26007."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26008",
-    "brand": "Apple",
-    "model": "15 pro",
-    "storage": "256GB",
+    "brand": "Other",
+    "model": "15 pro (grey)",
+    "storage": "256 GB",
     "colour": "grey",
     "imei1": "356444800044612",
-    "imei2": "",
     "serialNumber": "SN26008",
-    "sku": "TFD-26008-APP",
-    "batteryHealth": 92,
+    "sku": "TFD-26008-OTH",
     "grade": "A+",
     "status": "Sold",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -683,20 +688,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 55350,
       "sellingPrice": 70000,
       "projectedProfit": 14650,
-      "profitMarginPercent": 26.5
+      "profitMarginPercent": 20.9
     },
+    "sellingPrice": 70000,
+    "purchasePrice": 54600,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Apple Bionic / A-Series",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "iOS 18"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -704,22 +711,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26008. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26008."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26009",
-    "brand": "Apple",
-    "model": "13",
-    "storage": "128GB",
+    "brand": "Other",
+    "model": "13 (blue)",
+    "storage": "128 gb",
     "colour": "blue",
-    "imei1": "",
-    "imei2": "",
+    "imei1": "358901260026009",
     "serialNumber": "SN26009",
-    "sku": "TFD-26009-APP",
-    "batteryHealth": 93,
+    "sku": "TFD-26009-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -733,20 +738,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 25710,
       "sellingPrice": 32000,
       "projectedProfit": 6290,
-      "profitMarginPercent": 24.5
+      "profitMarginPercent": 19.7
     },
+    "sellingPrice": 32000,
+    "purchasePrice": 24960,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Apple Bionic / A-Series",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "iOS 18"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -754,22 +761,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26009. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26009."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26010",
-    "brand": "Apple",
-    "model": "16 pro",
-    "storage": "256GB",
+    "brand": "Other",
+    "model": "16 pro ( grey)",
+    "storage": "256 gb",
     "colour": "grey",
     "imei1": "354935415832459",
-    "imei2": "",
     "serialNumber": "SN26010",
-    "sku": "TFD-26010-APP",
-    "batteryHealth": 94,
+    "sku": "TFD-26010-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -783,20 +788,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 61590,
       "sellingPrice": 78000,
       "projectedProfit": 16410,
-      "profitMarginPercent": 26.6
+      "profitMarginPercent": 21
     },
+    "sellingPrice": 78000,
+    "purchasePrice": 60840,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Apple Bionic / A-Series",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "iOS 18"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -804,22 +811,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26010. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26010."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26011",
-    "brand": "Apple",
-    "model": "12 pro",
-    "storage": "128GB",
+    "brand": "Other",
+    "model": "12 pro (baby pink)",
+    "storage": "128 gb",
     "colour": "baby pink",
     "imei1": "356696727120920",
-    "imei2": "",
     "serialNumber": "SN26011",
-    "sku": "TFD-26011-APP",
-    "batteryHealth": 95,
+    "sku": "TFD-26011-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -833,20 +838,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 24150,
       "sellingPrice": 30000,
       "projectedProfit": 5850,
-      "profitMarginPercent": 24.2
+      "profitMarginPercent": 19.5
     },
+    "sellingPrice": 30000,
+    "purchasePrice": 23400,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Apple Bionic / A-Series",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "iOS 18"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -854,22 +861,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26011. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26011."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26012",
-    "brand": "Apple",
-    "model": "16",
-    "storage": "128GB",
+    "brand": "Other",
+    "model": "16 (green)",
+    "storage": "128 gb",
     "colour": "green",
     "imei1": "357043230995515",
-    "imei2": "",
     "serialNumber": "SN26012",
-    "sku": "TFD-26012-APP",
-    "batteryHealth": 96,
+    "sku": "TFD-26012-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -883,20 +888,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 47550,
       "sellingPrice": 60000,
       "projectedProfit": 12450,
-      "profitMarginPercent": 26.2
+      "profitMarginPercent": 20.8
     },
+    "sellingPrice": 60000,
+    "purchasePrice": 46800,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Apple Bionic / A-Series",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "iOS 18"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -904,22 +911,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26012. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26012."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26013",
-    "brand": "Apple",
-    "model": "16 pro",
-    "storage": "128GB",
+    "brand": "Other",
+    "model": "16 pro (off white)",
+    "storage": "128 gb",
     "colour": "off white",
     "imei1": "350717767996825",
-    "imei2": "",
     "serialNumber": "SN26013",
-    "sku": "TFD-26013-APP",
-    "batteryHealth": 97,
+    "sku": "TFD-26013-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -933,20 +938,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 59250,
       "sellingPrice": 75000,
       "projectedProfit": 15750,
-      "profitMarginPercent": 26.6
+      "profitMarginPercent": 21
     },
+    "sellingPrice": 75000,
+    "purchasePrice": 58500,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Apple Bionic / A-Series",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "iOS 18"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -954,22 +961,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26013. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26013."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26014",
-    "brand": "Apple",
-    "model": "13 pro max",
-    "storage": "128GB",
+    "brand": "Other",
+    "model": "13 pro max (white)",
+    "storage": "128 gb",
     "colour": "white",
     "imei1": "350879909438510",
-    "imei2": "",
     "serialNumber": "SN26014",
-    "sku": "TFD-26014-APP",
-    "batteryHealth": 98,
+    "sku": "TFD-26014-OTH",
     "grade": "A+",
     "status": "Sold",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -983,20 +988,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 31950,
       "sellingPrice": 40000,
       "projectedProfit": 8050,
-      "profitMarginPercent": 25.2
+      "profitMarginPercent": 20.1
     },
+    "sellingPrice": 40000,
+    "purchasePrice": 31200,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Apple Bionic / A-Series",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "iOS 18"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1004,22 +1011,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26014. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26014."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26015",
-    "brand": "Apple",
-    "model": "15",
-    "storage": "128GB",
+    "brand": "Other",
+    "model": "15 (black)",
+    "storage": "128 gb",
     "colour": "black",
     "imei1": "355820716179553",
-    "imei2": "",
     "serialNumber": "SN26015",
-    "sku": "TFD-26015-APP",
-    "batteryHealth": 88,
+    "sku": "TFD-26015-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1033,20 +1038,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 39750,
       "sellingPrice": 50000,
       "projectedProfit": 10250,
-      "profitMarginPercent": 25.8
+      "profitMarginPercent": 20.5
     },
+    "sellingPrice": 50000,
+    "purchasePrice": 39000,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Apple Bionic / A-Series",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "iOS 18"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1054,22 +1061,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26015. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26015."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26016",
-    "brand": "Apple",
-    "model": "17 pro",
-    "storage": "256GB",
+    "brand": "Other",
+    "model": "17 pro (orange)",
+    "storage": "256 gb",
     "colour": "orange",
     "imei1": "356661402930183",
-    "imei2": "",
     "serialNumber": "SN26016",
-    "sku": "TFD-26016-APP",
-    "batteryHealth": 89,
+    "sku": "TFD-26016-OTH",
     "grade": "A+",
     "status": "Sold",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1083,20 +1088,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 86550,
       "sellingPrice": 110000,
       "projectedProfit": 23450,
-      "profitMarginPercent": 27.1
+      "profitMarginPercent": 21.3
     },
+    "sellingPrice": 110000,
+    "purchasePrice": 85800,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Apple Bionic / A-Series",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "iOS 18"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1104,23 +1111,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26016. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26016."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26017",
-    "brand": "Apple",
-    "model": "15 pro",
-    "storage": "128GB",
-    "ram": "8GB RAM",
+    "brand": "Other",
+    "model": "15 pro ( grey)",
+    "storage": "128 gb /8gb",
     "colour": "grey",
     "imei1": "353459391469559",
-    "imei2": "",
     "serialNumber": "SN26017",
-    "sku": "TFD-26017-APP",
-    "batteryHealth": 90,
+    "sku": "TFD-26017-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1134,20 +1138,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 51450,
       "sellingPrice": 65000,
       "projectedProfit": 13550,
-      "profitMarginPercent": 26.3
+      "profitMarginPercent": 20.8
     },
+    "sellingPrice": 65000,
+    "purchasePrice": 50700,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Apple Bionic / A-Series",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "iOS 18"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1155,22 +1161,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26017. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26017."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26018",
-    "brand": "Apple",
-    "model": "14+",
-    "storage": "128GB",
+    "brand": "Other",
+    "model": "14+ (dark blue)",
+    "storage": "128 gb",
     "colour": "dark blue",
     "imei1": "353377521202302",
-    "imei2": "",
     "serialNumber": "SN26018",
-    "sku": "TFD-26018-APP",
-    "batteryHealth": 91,
+    "sku": "TFD-26018-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1184,20 +1188,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 30390,
       "sellingPrice": 38000,
       "projectedProfit": 7610,
-      "profitMarginPercent": 25
+      "profitMarginPercent": 20
     },
+    "sellingPrice": 38000,
+    "purchasePrice": 29640,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Apple Bionic / A-Series",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "iOS 18"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1205,7 +1211,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26018. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26018."
       }
     ],
     "repairHistory": []
@@ -1213,15 +1219,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26019",
     "brand": "Samsung",
-    "model": "samsung galaxy 24 ultra",
-    "storage": "256GB",
-    "ram": "12 RAM",
+    "model": "samsung galaxy 24 ultra (grey)",
+    "storage": "256 /12",
     "colour": "grey",
     "imei1": "352722661210255",
-    "imei2": "",
     "serialNumber": "SN26019",
     "sku": "TFD-26019-SAM",
-    "batteryHealth": 92,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1235,20 +1238,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 52230,
       "sellingPrice": 66000,
       "projectedProfit": 13770,
-      "profitMarginPercent": 26.4
+      "profitMarginPercent": 20.9
     },
+    "sellingPrice": 66000,
+    "purchasePrice": 51480,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1584006682522-dc17d6c0d9ac?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1256,7 +1261,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26019. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26019."
       }
     ],
     "repairHistory": []
@@ -1264,15 +1269,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26020",
     "brand": "Samsung",
-    "model": "samsung galaxy s23 fe",
-    "storage": "128GB",
-    "ram": "8 RAM",
+    "model": "samsung galaxy s23 fe ( green)",
+    "storage": "128/8",
     "colour": "green",
     "imei1": "351005194138941",
-    "imei2": "",
     "serialNumber": "SN26020",
     "sku": "TFD-26020-SAM",
-    "batteryHealth": 93,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1286,20 +1288,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 24150,
       "sellingPrice": 30000,
       "projectedProfit": 5850,
-      "profitMarginPercent": 24.2
+      "profitMarginPercent": 19.5
     },
+    "sellingPrice": 30000,
+    "purchasePrice": 23400,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1307,7 +1311,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26020. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26020."
       }
     ],
     "repairHistory": []
@@ -1315,14 +1319,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26021",
     "brand": "Samsung",
-    "model": "samsung galaxy s10e",
-    "storage": "128GB",
+    "model": "samsung galaxy s10e (grey)",
+    "storage": "128 gb",
     "colour": "grey",
     "imei1": "352808100961234",
-    "imei2": "",
     "serialNumber": "SN26021",
     "sku": "TFD-26021-SAM",
-    "batteryHealth": 94,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1336,20 +1338,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 11670,
       "sellingPrice": 14000,
       "projectedProfit": 2330,
-      "profitMarginPercent": 20
+      "profitMarginPercent": 16.6
     },
+    "sellingPrice": 14000,
+    "purchasePrice": 10920,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1584006682522-dc17d6c0d9ac?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1357,7 +1361,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26021. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26021."
       }
     ],
     "repairHistory": []
@@ -1365,15 +1369,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26022",
     "brand": "Samsung",
-    "model": "samsung galaxy s24 ultra",
-    "storage": "512GB",
-    "ram": "12 RAM",
+    "model": "samsung galaxy s24 ultra (golden)",
+    "storage": "512 gb /12",
     "colour": "golden",
     "imei1": "353578850761279",
-    "imei2": "",
     "serialNumber": "SN26022",
     "sku": "TFD-26022-SAM",
-    "batteryHealth": 95,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1387,20 +1388,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 55350,
       "sellingPrice": 70000,
       "projectedProfit": 14650,
-      "profitMarginPercent": 26.5
+      "profitMarginPercent": 20.9
     },
+    "sellingPrice": 70000,
+    "purchasePrice": 54600,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1408,7 +1411,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26022. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26022."
       }
     ],
     "repairHistory": []
@@ -1416,15 +1419,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26023",
     "brand": "Samsung",
-    "model": "samsung galaxy s23 ultra",
-    "storage": "512GB",
-    "ram": "12 RAM",
+    "model": "samsung galaxy s23 ultra (black)",
+    "storage": "512/12",
     "colour": "black",
     "imei1": "353992851703133",
-    "imei2": "",
     "serialNumber": "SN26023",
     "sku": "TFD-26023-SAM",
-    "batteryHealth": 96,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1438,20 +1438,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 41310,
       "sellingPrice": 52000,
       "projectedProfit": 10690,
-      "profitMarginPercent": 25.9
+      "profitMarginPercent": 20.6
     },
+    "sellingPrice": 52000,
+    "purchasePrice": 40560,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1584006682522-dc17d6c0d9ac?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1459,7 +1461,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26023. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26023."
       }
     ],
     "repairHistory": []
@@ -1467,15 +1469,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26024",
     "brand": "Samsung",
-    "model": "samsung galaxy a56 5g",
-    "storage": "256GB",
-    "ram": "12 RAM",
+    "model": "samsung galaxy a56 5g (light green/sea green)",
+    "storage": "256/12",
     "colour": "light green/sea green",
     "imei1": "356300332281603",
-    "imei2": "",
     "serialNumber": "SN26024",
     "sku": "TFD-26024-SAM",
-    "batteryHealth": 97,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1489,20 +1488,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 28050,
       "sellingPrice": 35000,
       "projectedProfit": 6950,
-      "profitMarginPercent": 24.8
+      "profitMarginPercent": 19.9
     },
+    "sellingPrice": 35000,
+    "purchasePrice": 27300,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1510,7 +1511,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26024. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26024."
       }
     ],
     "repairHistory": []
@@ -1518,15 +1519,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26025",
     "brand": "Samsung",
-    "model": "samsung galaxy s23 ultra",
-    "storage": "256GB",
-    "ram": "12 RAM",
+    "model": "samsung galaxy s23 ultra (black)",
+    "storage": "256/12",
     "colour": "black",
     "imei1": "353835882416094",
-    "imei2": "",
     "serialNumber": "SN26025",
     "sku": "TFD-26025-SAM",
-    "batteryHealth": 98,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1540,20 +1538,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 38190,
       "sellingPrice": 48000,
       "projectedProfit": 9810,
-      "profitMarginPercent": 25.7
+      "profitMarginPercent": 20.4
     },
+    "sellingPrice": 48000,
+    "purchasePrice": 37440,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1584006682522-dc17d6c0d9ac?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1561,7 +1561,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26025. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26025."
       }
     ],
     "repairHistory": []
@@ -1569,15 +1569,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26026",
     "brand": "Samsung",
-    "model": "samsung galaxy a07",
-    "storage": "64GB",
-    "ram": "4 RAM",
+    "model": "samsung galaxy a07 (silver purple)",
+    "storage": "64/4",
     "colour": "silver purple",
     "imei1": "353835882416094",
-    "imei2": "",
     "serialNumber": "SN26026",
     "sku": "TFD-26026-SAM",
-    "batteryHealth": 88,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1591,20 +1588,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 9330,
       "sellingPrice": 11000,
       "projectedProfit": 1670,
-      "profitMarginPercent": 17.9
+      "profitMarginPercent": 15.2
     },
+    "sellingPrice": 11000,
+    "purchasePrice": 8580,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1612,7 +1611,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26026. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26026."
       }
     ],
     "repairHistory": []
@@ -1620,15 +1619,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26027",
     "brand": "Samsung",
-    "model": "samsung galaxy z fold 5",
-    "storage": "512GB",
-    "ram": "12 RAM",
+    "model": "samsung galaxy z fold 5 (off white)",
+    "storage": "512/12",
     "colour": "off white",
     "imei1": "352271450924668",
-    "imei2": "",
     "serialNumber": "SN26027",
     "sku": "TFD-26027-SAM",
-    "batteryHealth": 89,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1642,20 +1638,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 45990,
       "sellingPrice": 58000,
       "projectedProfit": 12010,
-      "profitMarginPercent": 26.1
+      "profitMarginPercent": 20.7
     },
+    "sellingPrice": 58000,
+    "purchasePrice": 45240,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1584006682522-dc17d6c0d9ac?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1663,7 +1661,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26027. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26027."
       }
     ],
     "repairHistory": []
@@ -1671,15 +1669,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26028",
     "brand": "Samsung",
-    "model": "samsung galaxy z fold 6",
-    "storage": "256GB",
-    "ram": "12 RAM",
+    "model": "samsung galaxy z fold 6 (pink)",
+    "storage": "256/12",
     "colour": "pink",
     "imei1": "351379490556548",
-    "imei2": "",
     "serialNumber": "SN26028",
     "sku": "TFD-26028-SAM",
-    "batteryHealth": 90,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1693,20 +1688,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 55350,
       "sellingPrice": 70000,
       "projectedProfit": 14650,
-      "profitMarginPercent": 26.5
+      "profitMarginPercent": 20.9
     },
+    "sellingPrice": 70000,
+    "purchasePrice": 54600,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1714,7 +1711,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26028. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26028."
       }
     ],
     "repairHistory": []
@@ -1722,15 +1719,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26029",
     "brand": "Samsung",
-    "model": "Samsung Galaxy 23 fe",
-    "storage": "128GB",
-    "ram": "8 RAM",
+    "model": "Samsung Galaxy 23 fe (orange)",
+    "storage": "128/8",
     "colour": "orange",
     "imei1": "351005191215247",
-    "imei2": "",
     "serialNumber": "SN26029",
     "sku": "TFD-26029-SAM",
-    "batteryHealth": 91,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1744,20 +1738,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 24930,
       "sellingPrice": 31000,
       "projectedProfit": 6070,
-      "profitMarginPercent": 24.3
+      "profitMarginPercent": 19.6
     },
+    "sellingPrice": 31000,
+    "purchasePrice": 24180,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1584006682522-dc17d6c0d9ac?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1765,23 +1761,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26029. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26029."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26030",
-    "brand": "OnePlus",
-    "model": "Oneplus  nord 5",
-    "storage": "256GB",
-    "ram": "8 RAM",
+    "brand": "Other",
+    "model": "Oneplus  nord 5 (blue) 10 days old",
+    "storage": "256/8",
     "colour": "blue",
     "imei1": "863995079682917",
-    "imei2": "",
     "serialNumber": "SN26030",
-    "sku": "TFD-26030-ONE",
-    "batteryHealth": 92,
+    "sku": "TFD-26030-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1795,8 +1788,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 29610,
       "sellingPrice": 37000,
       "projectedProfit": 7390,
-      "profitMarginPercent": 25
+      "profitMarginPercent": 20
     },
+    "sellingPrice": 37000,
+    "purchasePrice": 28860,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -1804,11 +1799,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1816,22 +1811,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26030. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26030."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26031",
-    "brand": "OnePlus",
-    "model": "Oneplus  8",
-    "storage": "128GB",
+    "brand": "Other",
+    "model": "Oneplus  8 (blue)",
+    "storage": "128",
     "colour": "blue",
     "imei1": "869796042087034",
-    "imei2": "",
     "serialNumber": "SN26031",
-    "sku": "TFD-26031-ONE",
-    "batteryHealth": 93,
+    "sku": "TFD-26031-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1845,8 +1838,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 14790,
       "sellingPrice": 18000,
       "projectedProfit": 3210,
-      "profitMarginPercent": 21.7
+      "profitMarginPercent": 17.8
     },
+    "sellingPrice": 18000,
+    "purchasePrice": 14040,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -1854,11 +1849,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1866,22 +1861,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26031. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26031."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26032",
-    "brand": "OnePlus",
-    "model": "Oneplus 10 pro 5g",
-    "storage": "256GB",
+    "brand": "Other",
+    "model": "Oneplus 10 pro 5g (black)",
+    "storage": "256",
     "colour": "black",
     "imei1": "868368053231199",
-    "imei2": "",
     "serialNumber": "SN26032",
-    "sku": "TFD-26032-ONE",
-    "batteryHealth": 94,
+    "sku": "TFD-26032-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1895,8 +1888,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 22590,
       "sellingPrice": 28000,
       "projectedProfit": 5410,
-      "profitMarginPercent": 23.9
+      "profitMarginPercent": 19.3
     },
+    "sellingPrice": 28000,
+    "purchasePrice": 21840,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -1904,11 +1899,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1916,23 +1911,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26032. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26032."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26033",
-    "brand": "Motorola",
-    "model": "Motorola g8 5g",
-    "storage": "128GB",
-    "ram": "8 RAM",
+    "brand": "Other",
+    "model": "Motorola g8 5g (green)",
+    "storage": "128/8",
     "colour": "green",
     "imei1": "352532337308015",
-    "imei2": "",
     "serialNumber": "SN26033",
-    "sku": "TFD-26033-MOT",
-    "batteryHealth": 95,
+    "sku": "TFD-26033-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1946,8 +1938,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 14010,
       "sellingPrice": 17000,
       "projectedProfit": 2990,
-      "profitMarginPercent": 21.3
+      "profitMarginPercent": 17.6
     },
+    "sellingPrice": 17000,
+    "purchasePrice": 13260,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -1955,11 +1949,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -1967,22 +1961,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26033. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26033."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26034",
-    "brand": "Motorola",
-    "model": "Motorola  g62 5g",
-    "storage": "128GB",
+    "brand": "Other",
+    "model": "Motorola  g62 5g (blue)",
+    "storage": "128 gb",
     "colour": "blue",
     "imei1": "357807166012077",
-    "imei2": "",
     "serialNumber": "SN26034",
-    "sku": "TFD-26034-MOT",
-    "batteryHealth": 96,
+    "sku": "TFD-26034-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -1996,8 +1988,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 9330,
       "sellingPrice": 11000,
       "projectedProfit": 1670,
-      "profitMarginPercent": 17.9
+      "profitMarginPercent": 15.2
     },
+    "sellingPrice": 11000,
+    "purchasePrice": 8580,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -2005,11 +1999,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -2017,7 +2011,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26034. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26034."
       }
     ],
     "repairHistory": []
@@ -2025,15 +2019,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26035",
     "brand": "Realme",
-    "model": "Realme C83 5G",
-    "storage": "128GB",
-    "ram": "6 RAM",
+    "model": "Realme C83 5G (black)",
+    "storage": "128/6",
     "colour": "black",
     "imei1": "866276083086859",
-    "imei2": "",
     "serialNumber": "SN26035",
     "sku": "TFD-26035-REA",
-    "batteryHealth": 97,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -2047,8 +2038,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 13230,
       "sellingPrice": 16000,
       "projectedProfit": 2770,
-      "profitMarginPercent": 20.9
+      "profitMarginPercent": 17.3
     },
+    "sellingPrice": 16000,
+    "purchasePrice": 12480,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -2056,11 +2049,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -2068,7 +2061,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26035. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26035."
       }
     ],
     "repairHistory": []
@@ -2076,15 +2069,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26036",
     "brand": "Realme",
-    "model": "Realme 12 pro 5G",
-    "storage": "256GB",
-    "ram": "8 RAM",
+    "model": "Realme 12 pro 5G (dark blue)",
+    "storage": "256/8",
     "colour": "dark blue",
     "imei1": "861888066729878",
-    "imei2": "",
     "serialNumber": "SN26036",
     "sku": "TFD-26036-REA",
-    "batteryHealth": 98,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -2098,8 +2088,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 14010,
       "sellingPrice": 17000,
       "projectedProfit": 2990,
-      "profitMarginPercent": 21.3
+      "profitMarginPercent": 17.6
     },
+    "sellingPrice": 17000,
+    "purchasePrice": 13260,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -2107,11 +2099,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -2119,22 +2111,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26036. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26036."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26037",
-    "brand": "Motorola",
-    "model": "Motorola Edge 40",
-    "storage": "256GB",
+    "brand": "Other",
+    "model": "Motorola Edge 40 (black)",
+    "storage": "256",
     "colour": "black",
     "imei1": "357611735734470",
-    "imei2": "",
     "serialNumber": "SN26037",
-    "sku": "TFD-26037-MOT",
-    "batteryHealth": 88,
+    "sku": "TFD-26037-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -2148,8 +2138,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 14010,
       "sellingPrice": 17000,
       "projectedProfit": 2990,
-      "profitMarginPercent": 21.3
+      "profitMarginPercent": 17.6
     },
+    "sellingPrice": 17000,
+    "purchasePrice": 13260,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -2157,11 +2149,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -2169,7 +2161,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26037. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26037."
       }
     ],
     "repairHistory": []
@@ -2177,14 +2169,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26038",
     "brand": "Poco",
-    "model": "poco x4 pro 5g",
-    "storage": "128GB",
+    "model": "poco x4 pro 5g (blue)",
+    "storage": "128 gb",
     "colour": "blue",
     "imei1": "862531055496351",
-    "imei2": "",
     "serialNumber": "SN26038",
     "sku": "TFD-26038-POC",
-    "batteryHealth": 89,
     "grade": "A+",
     "status": "Sold",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -2198,8 +2188,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 12450,
       "sellingPrice": 15000,
       "projectedProfit": 2550,
-      "profitMarginPercent": 20.5
+      "profitMarginPercent": 17
     },
+    "sellingPrice": 15000,
+    "purchasePrice": 11700,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -2207,11 +2199,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -2219,22 +2211,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26038. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26038."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26039",
-    "brand": "Google",
-    "model": "Google Pixel 9A",
-    "storage": "256GB",
+    "brand": "Other",
+    "model": "Google Pixel 9A (purple)",
+    "storage": "256 gb",
     "colour": "purple",
     "imei1": "359892181623429",
-    "imei2": "",
     "serialNumber": "SN26039",
-    "sku": "TFD-26039-GOO",
-    "batteryHealth": 90,
+    "sku": "TFD-26039-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -2248,8 +2238,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 29610,
       "sellingPrice": 37000,
       "projectedProfit": 7390,
-      "profitMarginPercent": 25
+      "profitMarginPercent": 20
     },
+    "sellingPrice": 37000,
+    "purchasePrice": 28860,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -2257,11 +2249,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -2269,22 +2261,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26039. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26039."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26040",
-    "brand": "Google",
+    "brand": "Other",
     "model": "Google   Pixel 8",
-    "storage": "128GB",
-    "colour": "Default Edition",
+    "storage": "128 gb",
+    "colour": "Standard",
     "imei1": "357481895108463",
-    "imei2": "",
     "serialNumber": "SN26040",
-    "sku": "TFD-26040-GOO",
-    "batteryHealth": 91,
+    "sku": "TFD-26040-OTH",
     "grade": "A+",
     "status": "Sold",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -2298,8 +2288,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 20250,
       "sellingPrice": 25000,
       "projectedProfit": 4750,
-      "profitMarginPercent": 23.5
+      "profitMarginPercent": 19
     },
+    "sellingPrice": 25000,
+    "purchasePrice": 19500,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -2307,11 +2299,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -2319,7 +2311,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26040. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26040."
       }
     ],
     "repairHistory": []
@@ -2327,14 +2319,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26041",
     "brand": "Xiaomi",
-    "model": "Redmi 11 prime 5g",
-    "storage": "128GB",
+    "model": "Redmi 11 prime 5g (black)",
+    "storage": "128 gb",
     "colour": "black",
     "imei1": "860825059738715",
-    "imei2": "",
     "serialNumber": "SN26041",
     "sku": "TFD-26041-XIA",
-    "batteryHealth": 92,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -2348,20 +2338,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 9330,
       "sellingPrice": 11000,
       "projectedProfit": 1670,
-      "profitMarginPercent": 17.9
+      "profitMarginPercent": 15.2
     },
+    "sellingPrice": 11000,
+    "purchasePrice": 8580,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -2369,7 +2361,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26041. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26041."
       }
     ],
     "repairHistory": []
@@ -2377,14 +2369,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26042",
     "brand": "Vivo",
-    "model": "Vivo v70 fe",
-    "storage": "256GB",
+    "model": "Vivo v70 fe (blue)",
+    "storage": "256",
     "colour": "blue",
     "imei1": "861130083750250",
-    "imei2": "",
     "serialNumber": "SN26042",
     "sku": "TFD-26042-VIV",
-    "batteryHealth": 93,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -2398,8 +2388,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 37410,
       "sellingPrice": 47000,
       "projectedProfit": 9590,
-      "profitMarginPercent": 25.6
+      "profitMarginPercent": 20.4
     },
+    "sellingPrice": 47000,
+    "purchasePrice": 36660,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -2407,11 +2399,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -2419,7 +2411,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26042. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26042."
       }
     ],
     "repairHistory": []
@@ -2427,14 +2419,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26043",
     "brand": "Oppo",
-    "model": "Oppo K13 5g",
-    "storage": "128GB",
+    "model": "Oppo K13 5g (dark grey)",
+    "storage": "128",
     "colour": "dark grey",
     "imei1": "867203075513251",
-    "imei2": "",
     "serialNumber": "SN26043",
     "sku": "TFD-26043-OPP",
-    "batteryHealth": 94,
     "grade": "A+",
     "status": "Sold",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -2448,8 +2438,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 9330,
       "sellingPrice": 11000,
       "projectedProfit": 1670,
-      "profitMarginPercent": 17.9
+      "profitMarginPercent": 15.2
     },
+    "sellingPrice": 11000,
+    "purchasePrice": 8580,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -2457,11 +2449,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -2469,7 +2461,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26043. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26043."
       }
     ],
     "repairHistory": []
@@ -2477,14 +2469,13 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26044",
     "brand": "Apple",
-    "model": "iphone 15",
-    "storage": "256GB",
+    "model": "iphone 15 (white)",
+    "storage": "256gb",
     "colour": "white",
     "imei1": "352691622226447",
-    "imei2": "",
     "serialNumber": "SN26044",
     "sku": "TFD-26044-APP",
-    "batteryHealth": 95,
+    "batteryHealth": 89,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -2498,8 +2489,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 42090,
       "sellingPrice": 53000,
       "projectedProfit": 10910,
-      "profitMarginPercent": 25.9
+      "profitMarginPercent": 20.6
     },
+    "sellingPrice": 53000,
+    "purchasePrice": 41340,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -2519,7 +2512,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26044. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26044."
       }
     ],
     "repairHistory": []
@@ -2527,14 +2520,13 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26045",
     "brand": "Apple",
-    "model": "iphone 15",
-    "storage": "128GB",
+    "model": "iphone 15 (white)",
+    "storage": "128gb",
     "colour": "white",
     "imei1": "359757422350951",
-    "imei2": "",
     "serialNumber": "SN26045",
     "sku": "TFD-26045-APP",
-    "batteryHealth": 96,
+    "batteryHealth": 90,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -2548,13 +2540,15 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 35850,
       "sellingPrice": 45000,
       "projectedProfit": 9150,
-      "profitMarginPercent": 25.5
+      "profitMarginPercent": 20.3
     },
+    "sellingPrice": 45000,
+    "purchasePrice": 35100,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
       "chipset": "Apple Bionic / A-Series",
@@ -2569,7 +2563,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26045. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26045."
       }
     ],
     "repairHistory": []
@@ -2577,14 +2571,13 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26046",
     "brand": "Apple",
-    "model": "iphone15 pro",
-    "storage": "128GB",
+    "model": "iphone15 pro (grey)",
+    "storage": "128 gb",
     "colour": "grey",
     "imei1": "355002400218829",
-    "imei2": "",
     "serialNumber": "SN26046",
     "sku": "TFD-26046-APP",
-    "batteryHealth": 97,
+    "batteryHealth": 91,
     "grade": "A+",
     "status": "Sold",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -2598,13 +2591,15 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 49890,
       "sellingPrice": 63000,
       "projectedProfit": 13110,
-      "profitMarginPercent": 26.3
+      "profitMarginPercent": 20.8
     },
+    "sellingPrice": 63000,
+    "purchasePrice": 49140,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
       "chipset": "Apple Bionic / A-Series",
@@ -2619,7 +2614,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26046. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26046."
       }
     ],
     "repairHistory": []
@@ -2627,15 +2622,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26047",
     "brand": "Vivo",
-    "model": "vivo V50e",
-    "storage": "256GB",
-    "ram": "8 RAM",
+    "model": "vivo V50e (purple)",
+    "storage": "256 /8",
     "colour": "purple",
     "imei1": "865186079119377",
-    "imei2": "",
     "serialNumber": "SN26047",
     "sku": "TFD-26047-VIV",
-    "batteryHealth": 98,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -2649,8 +2641,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 21030,
       "sellingPrice": 26000,
       "projectedProfit": 4970,
-      "profitMarginPercent": 23.6
+      "profitMarginPercent": 19.1
     },
+    "sellingPrice": 26000,
+    "purchasePrice": 20280,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -2658,11 +2652,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -2670,23 +2664,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26047. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26047."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26048",
-    "brand": "Motorola",
-    "model": "Moto G54 5g",
-    "storage": "128GB",
-    "ram": "8 RAM",
+    "brand": "Other",
+    "model": "Moto G54 5g(black)",
+    "storage": "128/8",
     "colour": "black",
     "imei1": "350835850946471",
-    "imei2": "",
     "serialNumber": "SN26048",
-    "sku": "TFD-26048-MOT",
-    "batteryHealth": 88,
+    "sku": "TFD-26048-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -2700,8 +2691,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 9330,
       "sellingPrice": 11000,
       "projectedProfit": 1670,
-      "profitMarginPercent": 17.9
+      "profitMarginPercent": 15.2
     },
+    "sellingPrice": 11000,
+    "purchasePrice": 8580,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -2709,11 +2702,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -2721,7 +2714,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26048. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26048."
       }
     ],
     "repairHistory": []
@@ -2729,14 +2722,13 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26049",
     "brand": "Apple",
-    "model": "iphone 14 pro",
-    "storage": "128GB",
+    "model": "iphone 14 pro (white)",
+    "storage": "128gb",
     "colour": "white",
     "imei1": "356903557725459",
-    "imei2": "",
     "serialNumber": "SN26049",
     "sku": "TFD-26049-APP",
-    "batteryHealth": 89,
+    "batteryHealth": 94,
     "grade": "A+",
     "status": "Sold",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -2750,13 +2742,15 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 35850,
       "sellingPrice": 45000,
       "projectedProfit": 9150,
-      "profitMarginPercent": 25.5
+      "profitMarginPercent": 20.3
     },
+    "sellingPrice": 45000,
+    "purchasePrice": 35100,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
       "chipset": "Apple Bionic / A-Series",
@@ -2771,7 +2765,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26049. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26049."
       }
     ],
     "repairHistory": []
@@ -2779,14 +2773,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26050",
     "brand": "Samsung",
-    "model": "Samsung S23 Ultra",
-    "storage": "256GB",
+    "model": "Samsung S23 Ultra ( olive green )",
+    "storage": "256 gb",
     "colour": "olive green",
     "imei1": "353835883434245",
-    "imei2": "",
     "serialNumber": "SN26050",
     "sku": "TFD-26050-SAM",
-    "batteryHealth": 90,
     "grade": "A+",
     "status": "Sold",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -2800,20 +2792,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 42090,
       "sellingPrice": 53000,
       "projectedProfit": 10910,
-      "profitMarginPercent": 25.9
+      "profitMarginPercent": 20.6
     },
+    "sellingPrice": 53000,
+    "purchasePrice": 41340,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -2821,7 +2815,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26050. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26050."
       }
     ],
     "repairHistory": []
@@ -2829,14 +2823,13 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26051",
     "brand": "Apple",
-    "model": "iphone 15 plus",
-    "storage": "128GB",
+    "model": "iphone 15 plus (white)",
+    "storage": "128 gb",
     "colour": "white",
     "imei1": "350110763563296",
-    "imei2": "",
     "serialNumber": "SN26051",
     "sku": "TFD-26051-APP",
-    "batteryHealth": 91,
+    "batteryHealth": 96,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -2850,13 +2843,15 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 43650,
       "sellingPrice": 55000,
       "projectedProfit": 11350,
-      "profitMarginPercent": 26
+      "profitMarginPercent": 20.6
     },
+    "sellingPrice": 55000,
+    "purchasePrice": 42900,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
       "chipset": "Apple Bionic / A-Series",
@@ -2871,7 +2866,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26051. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26051."
       }
     ],
     "repairHistory": []
@@ -2879,14 +2874,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26052",
     "brand": "Oppo",
-    "model": "Oppo A5X 5g",
-    "storage": "128GB",
+    "model": "Oppo A5X 5g (Dark grey)",
+    "storage": "128gb",
     "colour": "Dark grey",
     "imei1": "867276071326696",
-    "imei2": "",
     "serialNumber": "SN26052",
     "sku": "TFD-26052-OPP",
-    "batteryHealth": 92,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -2900,8 +2893,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 11280,
       "sellingPrice": 13500,
       "projectedProfit": 2220,
-      "profitMarginPercent": 19.7
+      "profitMarginPercent": 16.4
     },
+    "sellingPrice": 13500,
+    "purchasePrice": 10530,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -2909,11 +2904,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -2921,7 +2916,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26052. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26052."
       }
     ],
     "repairHistory": []
@@ -2929,15 +2924,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26053",
     "brand": "Vivo",
-    "model": "Vivo t5 pro 5g",
-    "storage": "256GB",
-    "ram": "8+8 RAM",
+    "model": "Vivo t5 pro 5g (light blue)",
+    "storage": "256gb/8+8",
     "colour": "light blue",
     "imei1": "860235087243219",
-    "imei2": "",
     "serialNumber": "SN26053",
     "sku": "TFD-26053-VIV",
-    "batteryHealth": 93,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -2951,8 +2943,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 29610,
       "sellingPrice": 37000,
       "projectedProfit": 7390,
-      "profitMarginPercent": 25
+      "profitMarginPercent": 20
     },
+    "sellingPrice": 37000,
+    "purchasePrice": 28860,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -2960,11 +2954,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -2972,7 +2966,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26053. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26053."
       }
     ],
     "repairHistory": []
@@ -2980,15 +2974,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26054",
     "brand": "Realme",
-    "model": "Realme Narzo 50 pro 5g",
-    "storage": "128GB",
-    "ram": "6 RAM",
+    "model": "Realme Narzo 50 pro 5g (blue)",
+    "storage": "128/6",
     "colour": "blue",
     "imei1": "861084050921719",
-    "imei2": "",
     "serialNumber": "SN26054",
     "sku": "TFD-26054-REA",
-    "batteryHealth": 94,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3002,8 +2993,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 12450,
       "sellingPrice": 15000,
       "projectedProfit": 2550,
-      "profitMarginPercent": 20.5
+      "profitMarginPercent": 17
     },
+    "sellingPrice": 15000,
+    "purchasePrice": 11700,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -3011,11 +3004,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -3023,7 +3016,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26054. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26054."
       }
     ],
     "repairHistory": []
@@ -3031,14 +3024,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26055",
     "brand": "Poco",
-    "model": "Poco M4 5g",
-    "storage": "64GB",
+    "model": "Poco M4 5g (black)",
+    "storage": "64",
     "colour": "black",
     "imei1": "869198055527792",
-    "imei2": "",
     "serialNumber": "SN26055",
     "sku": "TFD-26055-POC",
-    "batteryHealth": 95,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3052,8 +3043,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 9330,
       "sellingPrice": 11000,
       "projectedProfit": 1670,
-      "profitMarginPercent": 17.9
+      "profitMarginPercent": 15.2
     },
+    "sellingPrice": 11000,
+    "purchasePrice": 8580,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -3061,11 +3054,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -3073,7 +3066,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26055. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26055."
       }
     ],
     "repairHistory": []
@@ -3081,15 +3074,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26056",
     "brand": "Realme",
-    "model": "Realme P3x 5g",
-    "storage": "128GB",
-    "ram": "8 RAM",
+    "model": "Realme P3x 5g (Peach color)",
+    "storage": "128/8",
     "colour": "Peach color",
     "imei1": "865758073065754",
-    "imei2": "",
     "serialNumber": "SN26056",
     "sku": "TFD-26056-REA",
-    "batteryHealth": 96,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3103,8 +3093,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 11280,
       "sellingPrice": 13500,
       "projectedProfit": 2220,
-      "profitMarginPercent": 19.7
+      "profitMarginPercent": 16.4
     },
+    "sellingPrice": 13500,
+    "purchasePrice": 10530,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -3112,11 +3104,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -3124,7 +3116,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26056. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26056."
       }
     ],
     "repairHistory": []
@@ -3132,14 +3124,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26057",
     "brand": "Samsung",
-    "model": "Samsung galaxy F14 5g",
-    "storage": "128GB",
+    "model": "Samsung galaxy F14 5g (purple)",
+    "storage": "128gb",
     "colour": "purple",
     "imei1": "350145990929795",
-    "imei2": "",
     "serialNumber": "SN26057",
     "sku": "TFD-26057-SAM",
-    "batteryHealth": 97,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3153,20 +3143,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 10110,
       "sellingPrice": 12000,
       "projectedProfit": 1890,
-      "profitMarginPercent": 18.7
+      "profitMarginPercent": 15.8
     },
+    "sellingPrice": 12000,
+    "purchasePrice": 9360,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1584006682522-dc17d6c0d9ac?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -3174,7 +3166,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26057. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26057."
       }
     ],
     "repairHistory": []
@@ -3182,15 +3174,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26058",
     "brand": "Samsung",
-    "model": "Samsung  S24 FE",
-    "storage": "128GB",
-    "ram": "8 RAM",
+    "model": "Samsung  S24 FE (dark grey)",
+    "storage": "128/8",
     "colour": "dark grey",
     "imei1": "350487770140585",
-    "imei2": "",
     "serialNumber": "SN26058",
     "sku": "TFD-26058-SAM",
-    "batteryHealth": 98,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3204,20 +3193,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 25710,
       "sellingPrice": 32000,
       "projectedProfit": 6290,
-      "profitMarginPercent": 24.5
+      "profitMarginPercent": 19.7
     },
+    "sellingPrice": 32000,
+    "purchasePrice": 24960,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -3225,7 +3216,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26058. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26058."
       }
     ],
     "repairHistory": []
@@ -3233,15 +3224,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26059",
     "brand": "Samsung",
-    "model": "Samsung galaxy a07 5g",
-    "storage": "128GB",
-    "ram": "4 RAM",
+    "model": "Samsung galaxy a07 5g (purple)",
+    "storage": "128/4",
     "colour": "purple",
     "imei1": "359695533663039",
-    "imei2": "",
     "serialNumber": "SN26059",
     "sku": "TFD-26059-SAM",
-    "batteryHealth": 88,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3255,20 +3243,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 11280,
       "sellingPrice": 13500,
       "projectedProfit": 2220,
-      "profitMarginPercent": 19.7
+      "profitMarginPercent": 16.4
     },
+    "sellingPrice": 13500,
+    "purchasePrice": 10530,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1584006682522-dc17d6c0d9ac?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -3276,7 +3266,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26059. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26059."
       }
     ],
     "repairHistory": []
@@ -3284,15 +3274,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26060",
     "brand": "Vivo",
-    "model": "vivo 14 funtouch 0S",
-    "storage": "128GB",
-    "ram": "8 RAM",
+    "model": "vivo 14 funtouch 0S (blue)",
+    "storage": "128/8",
     "colour": "blue",
     "imei1": "868526067064191",
-    "imei2": "",
     "serialNumber": "SN26060",
     "sku": "TFD-26060-VIV",
-    "batteryHealth": 89,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3306,8 +3293,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 12450,
       "sellingPrice": 15000,
       "projectedProfit": 2550,
-      "profitMarginPercent": 20.5
+      "profitMarginPercent": 17
     },
+    "sellingPrice": 15000,
+    "purchasePrice": 11700,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -3315,11 +3304,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -3327,7 +3316,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26060. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26060."
       }
     ],
     "repairHistory": []
@@ -3335,15 +3324,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26061",
     "brand": "Xiaomi",
-    "model": "Xiaomi Redmi note 14 5g",
-    "storage": "128GB",
-    "ram": "6 RAM",
+    "model": "Xiaomi Redmi note 14 5g (white)",
+    "storage": "128/6",
     "colour": "white",
     "imei1": "869958077174083",
-    "imei2": "",
     "serialNumber": "SN26061",
     "sku": "TFD-26061-XIA",
-    "batteryHealth": 90,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3357,20 +3343,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 14400,
       "sellingPrice": 17500,
       "projectedProfit": 3100,
-      "profitMarginPercent": 21.5
+      "profitMarginPercent": 17.7
     },
+    "sellingPrice": 17500,
+    "purchasePrice": 13650,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -3378,7 +3366,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26061. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26061."
       }
     ],
     "repairHistory": []
@@ -3387,13 +3375,11 @@ export const initialDevices: Device[] = [
     "id": "Fun-26062",
     "brand": "Samsung",
     "model": "Samsung Ultra 26 Waranty April 2027",
-    "storage": "258GB",
-    "colour": "Default Edition",
+    "storage": "258",
+    "colour": "Standard",
     "imei1": "358780490491292",
-    "imei2": "",
     "serialNumber": "SN26062",
     "sku": "TFD-26062-SAM",
-    "batteryHealth": 91,
     "grade": "A+",
     "status": "Sold",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3407,20 +3393,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 82650,
       "sellingPrice": 105000,
       "projectedProfit": 22350,
-      "profitMarginPercent": 27
+      "profitMarginPercent": 21.3
     },
+    "sellingPrice": 105000,
+    "purchasePrice": 81900,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -3428,7 +3416,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26062. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26062."
       }
     ],
     "repairHistory": []
@@ -3437,13 +3425,12 @@ export const initialDevices: Device[] = [
     "id": "Fun-26063",
     "brand": "Apple",
     "model": "IPhone 11ProMax",
-    "storage": "64GB",
-    "colour": "Default Edition",
+    "storage": "64",
+    "colour": "Standard",
     "imei1": "353920104147170",
-    "imei2": "",
     "serialNumber": "SN26063",
     "sku": "TFD-26063-APP",
-    "batteryHealth": 92,
+    "batteryHealth": 93,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3457,13 +3444,15 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 18690,
       "sellingPrice": 23000,
       "projectedProfit": 4310,
-      "profitMarginPercent": 23.1
+      "profitMarginPercent": 18.7
     },
+    "sellingPrice": 23000,
+    "purchasePrice": 17940,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
       "chipset": "Apple Bionic / A-Series",
@@ -3478,7 +3467,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26063. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26063."
       }
     ],
     "repairHistory": []
@@ -3486,14 +3475,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26065",
     "brand": "Apple",
-    "model": "Ipad",
-    "storage": "128GB",
+    "model": "Ipad (A16) (GREY)",
+    "storage": "128gb",
     "colour": "A16",
     "imei1": "J61VHK00C7",
-    "imei2": "",
     "serialNumber": "SN26065",
     "sku": "TFD-26065-APP",
-    "batteryHealth": 94,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3507,13 +3494,15 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 30390,
       "sellingPrice": 38000,
       "projectedProfit": 7610,
-      "profitMarginPercent": 25
+      "profitMarginPercent": 20
     },
+    "sellingPrice": 38000,
+    "purchasePrice": 29640,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
       "chipset": "Apple Bionic / A-Series",
@@ -3528,7 +3517,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26065. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26065."
       }
     ],
     "repairHistory": []
@@ -3536,14 +3525,13 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26067",
     "brand": "Apple",
-    "model": "Iphone 17",
-    "storage": "256GB",
+    "model": "Iphone 17 (purple)",
+    "storage": "256 gb",
     "colour": "purple",
     "imei1": "355212480060708",
-    "imei2": "",
     "serialNumber": "SN26067",
     "sku": "TFD-26067-APP",
-    "batteryHealth": 96,
+    "batteryHealth": 97,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3557,13 +3545,15 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 72510,
       "sellingPrice": 92000,
       "projectedProfit": 19490,
-      "profitMarginPercent": 26.9
+      "profitMarginPercent": 21.2
     },
+    "sellingPrice": 92000,
+    "purchasePrice": 71760,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
       "chipset": "Apple Bionic / A-Series",
@@ -3578,7 +3568,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26067. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26067."
       }
     ],
     "repairHistory": []
@@ -3586,14 +3576,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26068",
     "brand": "Samsung",
-    "model": "Samsung Galaxy S9+",
-    "storage": "256GB",
+    "model": "Samsung Galaxy S9+ (black)",
+    "storage": "256 gb",
     "colour": "black",
     "imei1": "355345090201542",
-    "imei2": "",
     "serialNumber": "SN26068",
     "sku": "TFD-26068-SAM",
-    "batteryHealth": 97,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3607,20 +3595,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 10890,
       "sellingPrice": 13000,
       "projectedProfit": 2110,
-      "profitMarginPercent": 19.4
+      "profitMarginPercent": 16.2
     },
+    "sellingPrice": 13000,
+    "purchasePrice": 10140,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -3628,7 +3618,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26068. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26068."
       }
     ],
     "repairHistory": []
@@ -3636,15 +3626,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26070",
     "brand": "Samsung",
-    "model": "Samsung galaxy a15 5g",
-    "storage": "128GB",
-    "ram": "8GB RAM",
+    "model": "Samsung galaxy a15 5g (dark blue)",
+    "storage": "128 gb /8gb",
     "colour": "dark blue",
     "imei1": "354324782687277",
-    "imei2": "",
     "serialNumber": "SN26070",
     "sku": "TFD-26070-SAM",
-    "batteryHealth": 88,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3658,20 +3645,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 9330,
       "sellingPrice": 11000,
       "projectedProfit": 1670,
-      "profitMarginPercent": 17.9
+      "profitMarginPercent": 15.2
     },
+    "sellingPrice": 11000,
+    "purchasePrice": 8580,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -3679,7 +3668,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26070. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26070."
       }
     ],
     "repairHistory": []
@@ -3687,15 +3676,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26071",
     "brand": "Samsung",
-    "model": "Samsung Galaxy S22 ultra",
-    "storage": "256GB",
-    "ram": "12 RAM",
+    "model": "Samsung Galaxy S22 ultra (BURGANDY)",
+    "storage": "256/12",
     "colour": "BURGANDY",
     "imei1": "357187980837326",
-    "imei2": "",
     "serialNumber": "SN26071",
     "sku": "TFD-26071-SAM",
-    "batteryHealth": 89,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3709,20 +3695,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 35070,
       "sellingPrice": 44000,
       "projectedProfit": 8930,
-      "profitMarginPercent": 25.5
+      "profitMarginPercent": 20.3
     },
+    "sellingPrice": 44000,
+    "purchasePrice": 34320,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1584006682522-dc17d6c0d9ac?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -3730,23 +3718,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26071. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26071."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26075",
-    "brand": "iQOO",
-    "model": "IQOO 9 PRO",
-    "storage": "256GB",
-    "ram": "12 RAM",
+    "brand": "IQOO",
+    "model": "IQOO 9 PRO (black)",
+    "storage": "256/12",
     "colour": "black",
     "imei1": "861374059499050",
-    "imei2": "",
     "serialNumber": "SN26075",
     "sku": "TFD-26075-IQO",
-    "batteryHealth": 93,
     "grade": "A+",
     "status": "Sold",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3760,8 +3745,10 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 19470,
       "sellingPrice": 24000,
       "projectedProfit": 4530,
-      "profitMarginPercent": 23.3
+      "profitMarginPercent": 18.9
     },
+    "sellingPrice": 24000,
+    "purchasePrice": 18720,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
@@ -3769,11 +3756,11 @@ export const initialDevices: Device[] = [
       "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -3781,7 +3768,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26075. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26075."
       }
     ],
     "repairHistory": []
@@ -3789,14 +3776,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26076",
     "brand": "Samsung",
-    "model": "Samsung s24",
-    "storage": "512GB",
+    "model": "Samsung s24 (blue)",
+    "storage": "512",
     "colour": "blue",
     "imei1": "354267931967241",
-    "imei2": "",
     "serialNumber": "SN26076",
     "sku": "TFD-26076-SAM",
-    "batteryHealth": 94,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3810,20 +3795,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 35850,
       "sellingPrice": 45000,
       "projectedProfit": 9150,
-      "profitMarginPercent": 25.5
+      "profitMarginPercent": 20.3
     },
+    "sellingPrice": 45000,
+    "purchasePrice": 35100,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -3831,7 +3818,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26076. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26076."
       }
     ],
     "repairHistory": []
@@ -3839,14 +3826,13 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26077",
     "brand": "Apple",
-    "model": "iPhone 16 plus",
-    "storage": "128GB",
+    "model": "iPhone 16 plus (black)",
+    "storage": "128 gb",
     "colour": "black",
     "imei1": "358809666450624",
-    "imei2": "",
     "serialNumber": "SN26077",
     "sku": "TFD-26077-APP",
-    "batteryHealth": 95,
+    "batteryHealth": 92,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3860,13 +3846,15 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 51450,
       "sellingPrice": 65000,
       "projectedProfit": 13550,
-      "profitMarginPercent": 26.3
+      "profitMarginPercent": 20.8
     },
+    "sellingPrice": 65000,
+    "purchasePrice": 50700,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
       "chipset": "Apple Bionic / A-Series",
@@ -3881,7 +3869,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26077. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26077."
       }
     ],
     "repairHistory": []
@@ -3889,14 +3877,13 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26078",
     "brand": "Apple",
-    "model": "iPhone 13",
-    "storage": "128GB",
+    "model": "iPhone 13 (dark blue)",
+    "storage": "128gb",
     "colour": "dark blue",
     "imei1": "352561336238295",
-    "imei2": "",
     "serialNumber": "SN26078",
     "sku": "TFD-26078-APP",
-    "batteryHealth": 96,
+    "batteryHealth": 93,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3910,13 +3897,15 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 24150,
       "sellingPrice": 30000,
       "projectedProfit": 5850,
-      "profitMarginPercent": 24.2
+      "profitMarginPercent": 19.5
     },
+    "sellingPrice": 30000,
+    "purchasePrice": 23400,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
       "chipset": "Apple Bionic / A-Series",
@@ -3931,7 +3920,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26078. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26078."
       }
     ],
     "repairHistory": []
@@ -3939,15 +3928,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26079",
     "brand": "Samsung",
-    "model": "Galaxy S26 ultra",
-    "storage": "256GB",
-    "ram": "12 RAM",
+    "model": "Galaxy S26 ultra (white)",
+    "storage": "256/12",
     "colour": "white",
     "imei1": "358780490518334",
-    "imei2": "",
     "serialNumber": "SN26079",
     "sku": "TFD-26079-SAM",
-    "batteryHealth": 97,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -3961,20 +3947,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 86550,
       "sellingPrice": 110000,
       "projectedProfit": 23450,
-      "profitMarginPercent": 27.1
+      "profitMarginPercent": 21.3
     },
+    "sellingPrice": 110000,
+    "purchasePrice": 85800,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1584006682522-dc17d6c0d9ac?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -3982,7 +3970,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26079. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26079."
       }
     ],
     "repairHistory": []
@@ -3990,15 +3978,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26080",
     "brand": "Samsung",
-    "model": "Galaxy S24",
-    "storage": "256GB",
-    "ram": "8 RAM",
+    "model": "Galaxy S24 (lemonish yellow)",
+    "storage": "256/8",
     "colour": "lemonish yellow",
     "imei1": "356016370598456",
-    "imei2": "",
     "serialNumber": "SN26080",
     "sku": "TFD-26080-SAM",
-    "batteryHealth": 98,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -4012,20 +3997,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 31950,
       "sellingPrice": 40000,
       "projectedProfit": 8050,
-      "profitMarginPercent": 25.2
+      "profitMarginPercent": 20.1
     },
+    "sellingPrice": 40000,
+    "purchasePrice": 31200,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -4033,23 +4020,20 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26080. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26080."
       }
     ],
     "repairHistory": []
   },
   {
     "id": "Fun-26081",
-    "brand": "Samsung",
-    "model": "S25 edge",
-    "storage": "256GB",
-    "ram": "12 RAM",
+    "brand": "Other",
+    "model": "S25 edge (black)",
+    "storage": "256/12",
     "colour": "black",
     "imei1": "354922133130580",
-    "imei2": "",
     "serialNumber": "SN26081",
-    "sku": "TFD-26081-SAM",
-    "batteryHealth": 88,
+    "sku": "TFD-26081-OTH",
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -4063,20 +4047,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 47550,
       "sellingPrice": 60000,
       "projectedProfit": 12450,
-      "profitMarginPercent": 26.2
+      "profitMarginPercent": 20.8
     },
+    "sellingPrice": 60000,
+    "purchasePrice": 46800,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "Snapdragon / Exynos Octa-Core",
+      "chipset": "Qualcomm Snapdragon / MediaTek Dimensity",
       "screenSize": "6.1\" - 6.8\" High Refresh Display",
       "cameraSpecs": "Certified Dual / Triple Camera system",
       "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "osVersion": "Android 15"
     },
     "activityTimeline": [
       {
@@ -4084,7 +4070,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26081. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26081."
       }
     ],
     "repairHistory": []
@@ -4092,14 +4078,13 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26082",
     "brand": "Apple",
-    "model": "iPhone Air",
-    "storage": "256GB",
+    "model": "iPhone Air ( sky blue)",
+    "storage": "256gb",
     "colour": "sky blue",
     "imei1": "358258287029542",
-    "imei2": "",
     "serialNumber": "SN26082",
     "sku": "TFD-26082-APP",
-    "batteryHealth": 89,
+    "batteryHealth": 97,
     "grade": "A+",
     "status": "In Stock",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -4113,13 +4098,15 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 74850,
       "sellingPrice": 95000,
       "projectedProfit": 20150,
-      "profitMarginPercent": 26.9
+      "profitMarginPercent": 21.2
     },
+    "sellingPrice": 95000,
+    "purchasePrice": 74100,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
       "chipset": "Apple Bionic / A-Series",
@@ -4134,7 +4121,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26082. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26082."
       }
     ],
     "repairHistory": []
@@ -4142,14 +4129,12 @@ export const initialDevices: Device[] = [
   {
     "id": "Fun-26083",
     "brand": "Xiaomi",
-    "model": "Xiaomi 11 i Hyper Charge",
+    "model": "Xiaomi 11 i Hyper Charge (128GB) Refurbished Stealth Black",
     "storage": "128GB",
     "colour": "Stealth Black",
     "imei1": "867179050310196",
-    "imei2": "",
     "serialNumber": "SN26083",
     "sku": "APL-IP15-128-NT",
-    "batteryHealth": 90,
     "grade": "A+",
     "status": "Sold",
     "warehouse": "Lucknow Store (LKO-01)",
@@ -4163,20 +4148,22 @@ export const initialDevices: Device[] = [
       "totalLandedCost": 12450,
       "sellingPrice": 15000,
       "projectedProfit": 2550,
-      "profitMarginPercent": 20.5
+      "profitMarginPercent": 17
     },
+    "sellingPrice": 15000,
+    "purchasePrice": 11700,
     "supplierId": "SUP-001",
     "supplierName": "Esterline Bonaparte Corporation Private Limited",
     "purchaseDate": "2026-11-14",
     "images": [
-      "https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=600&q=80"
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=600&q=80"
     ],
     "specifications": {
-      "chipset": "High Performance 5G Processor",
-      "screenSize": "6.1\" - 6.8\" High Refresh Display",
-      "cameraSpecs": "Certified Dual / Triple Camera system",
-      "network": "5G VoLTE Dual SIM / eSIM",
-      "osVersion": "Android 14"
+      "chipset": "MediaTek Dimensity 920 5G",
+      "screenSize": "6.67\" AMOLED 120Hz",
+      "cameraSpecs": "108MP Triple Camera System",
+      "network": "5G Dual SIM",
+      "osVersion": "MIUI / HyperOS"
     },
     "activityTimeline": [
       {
@@ -4184,7 +4171,7 @@ export const initialDevices: Device[] = [
         "timestamp": "2026-11-14 10:00",
         "user": "Intake Lead (Vikram Singhania)",
         "action": "Inward Intake Verified",
-        "details": "Logged from consignor batch. Assigned Order ID Fun-26083. IMEI verified."
+        "details": "Logged from consignor batch. Assigned Order ID Fun-26083."
       }
     ],
     "repairHistory": []

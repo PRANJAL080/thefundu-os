@@ -90,11 +90,11 @@ export function InvoiceModal({
   // Sourcing & Profit Calculation for Internal Admin Preview Bar
   const buyCostX = financials?.purchasePrice !== undefined 
     ? financials.purchasePrice 
-    : (device?.costs.purchasePrice || 25000);
+    : (device?.costs?.purchasePrice ?? device?.purchasePrice ?? 25000);
 
   const sellPriceY = financials?.sellingPrice !== undefined 
     ? financials.sellingPrice 
-    : (Number(order?.sellingPrice) || Number(device?.costs.sellingPrice) || 30000);
+    : (Number(order?.sellingPrice) || Number(device?.costs?.sellingPrice) || Number(device?.sellingPrice) || 30000);
 
   const discountD = financials?.discount !== undefined 
     ? financials.discount 

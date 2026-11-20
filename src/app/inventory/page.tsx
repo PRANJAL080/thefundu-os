@@ -1092,8 +1092,8 @@ export default function InventoryPage() {
                 <th className="p-3">Device &amp; Specs</th>
                 <th className="p-3">IMEI Numbers</th>
                 <th className="p-3">Battery Health</th>
-                <th className="p-3 text-right">Purchase Price</th>
-                <th className="p-3 text-right">Selling Price</th>
+                <th className="p-3 text-right">Purchase / Buy Price</th>
+                <th className="p-3 text-right">Selling Price (Ori.)</th>
                 <th className="p-3">Status</th>
                 <th className="p-3">Store Location</th>
                 <th className="p-3 text-center">Actions</th>
@@ -1142,7 +1142,7 @@ export default function InventoryPage() {
                           <div>
                             <div className="flex items-center gap-1.5 flex-wrap">
                               <p className="font-semibold text-slate-900 dark:text-slate-100 group-hover:text-fundu-600 dark:group-hover:text-fundu-400 transition-colors flex items-center gap-1.5">
-                                <span>{dev.brand} {dev.model}</span>
+                                <span>{dev.model.toLowerCase().includes(dev.brand.toLowerCase()) ? dev.model : `${dev.brand} ${dev.model}`}</span>
                               </p>
                               {(dev.customerKyc || dev.supplierName?.toLowerCase().includes("customer") || dev.supplierName?.toLowerCase().includes("buyback")) && (
                                 <span
@@ -1201,13 +1201,25 @@ export default function InventoryPage() {
                             ₹ ••••••
                           </span>
                         ) : (
-                          formatINR(dev.costs.purchasePrice)
+                          <div className="flex flex-col items-end">
+                            <span className="font-semibold text-slate-800 dark:text-slate-200">
+                              {formatINR(dev.costs?.purchasePrice ?? dev.purchasePrice ?? 0)}
+                            </span>
+                            <span className="text-[10px] text-slate-400 font-medium">Buy Price</span>
+                          </div>
                         )}
                       </td>
 
-                      {/* Selling Price */}
+                      {/* Selling Price (Ori.) */}
                       <td className="p-3 text-right font-bold text-slate-900 dark:text-slate-100">
-                        {formatINR(dev.costs.sellingPrice)}
+                        <div className="flex flex-col items-end">
+                          <span className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">
+                            {formatINR(dev.costs?.sellingPrice ?? dev.sellingPrice ?? 0)}
+                          </span>
+                          <span className="text-[10px] uppercase font-bold text-emerald-700/90 dark:text-emerald-300/90 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-200/80 dark:border-emerald-800/80 shadow-2xs">
+                            Selling Ori.
+                          </span>
+                        </div>
                       </td>
 
                       {/* Status */}

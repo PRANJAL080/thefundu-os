@@ -250,27 +250,27 @@ export function DeviceDetailsModal({
               </h4>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
                 <div>
-                  <span className="text-slate-400">Purchase Cost</span>
+                  <span className="text-slate-400">Purchase / Buy Cost</span>
                   <p className="text-base font-bold text-slate-800 dark:text-slate-100">
-                    {formatINR(device.costs.purchasePrice)}
+                    {formatINR(device.costs?.purchasePrice ?? device.purchasePrice ?? 0)}
                   </p>
                 </div>
                 <div>
                   <span className="text-slate-400">Repair & Testing</span>
                   <p className="text-base font-bold text-slate-800 dark:text-slate-100">
-                    {formatINR(device.costs.repairCost + device.costs.testingCost)}
+                    {formatINR((device.costs?.repairCost || 0) + (device.costs?.testingCost || 0))}
                   </p>
                 </div>
                 <div>
                   <span className="text-slate-400">Total Landed Cost</span>
                   <p className="text-base font-bold text-slate-900 dark:text-slate-50">
-                    {formatINR(device.costs.totalLandedCost)}
+                    {formatINR(device.costs?.totalLandedCost || (device.costs?.purchasePrice ?? device.purchasePrice ?? 0))}
                   </p>
                 </div>
                 <div>
-                  <span className="text-slate-400">Selling Price</span>
-                  <p className="text-base font-bold text-fundu-600 dark:text-fundu-400">
-                    {formatINR(device.costs.sellingPrice)}
+                  <span className="text-slate-400">Selling Price (Ori.)</span>
+                  <p className="text-base font-bold text-emerald-600 dark:text-emerald-400">
+                    {formatINR(device.costs?.sellingPrice ?? device.sellingPrice ?? 0)}
                   </p>
                 </div>
               </div>
@@ -279,13 +279,13 @@ export function DeviceDetailsModal({
                 <div>
                   <span className="text-slate-400">Projected Gross Profit: </span>
                   <span className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">
-                    {formatINR(device.costs.projectedProfit)}
+                    {formatINR(device.costs?.projectedProfit || Math.max(0, (device.costs?.sellingPrice ?? device.sellingPrice ?? 0) - (device.costs?.purchasePrice ?? device.purchasePrice ?? 0)))}
                   </span>
                 </div>
                 <div>
                   <span className="text-slate-400">Margin: </span>
                   <span className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">
-                    {device.costs.profitMarginPercent}%
+                    {device.costs?.profitMarginPercent ?? 20}%
                   </span>
                 </div>
               </div>

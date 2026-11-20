@@ -240,11 +240,11 @@ export function CompanyInvoiceSheet({
   // -------------------------------------------------------------
   const purchasePriceX = financials?.purchasePrice !== undefined 
     ? financials.purchasePrice 
-    : (device?.costs.purchasePrice || order?.purchasePrice || 35100);
+    : (device?.costs?.purchasePrice ?? device?.purchasePrice ?? order?.purchasePrice ?? 35100);
 
   const sellingPriceY = financials?.sellingPrice !== undefined 
     ? financials.sellingPrice 
-    : (Number(order?.sellingPrice) || Number(device?.costs.sellingPrice) || 43000);
+    : (Number(order?.sellingPrice) || Number(device?.costs?.sellingPrice) || Number(device?.sellingPrice) || 43000);
 
   const discountD = financials?.discount !== undefined 
     ? financials.discount 

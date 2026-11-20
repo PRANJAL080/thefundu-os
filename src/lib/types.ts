@@ -126,6 +126,8 @@ export interface Device {
   status: DeviceStatus;
   warehouse: WarehouseLocation;
   costs: DeviceCosts;
+  sellingPrice?: number;
+  purchasePrice?: number;
   supplierId: string;
   supplierName: string;
   purchaseDate: string;

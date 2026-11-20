@@ -273,7 +273,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // LocalStorage keys for cross-tab & session persistence
   const STORAGE_KEYS = {
-    devices: "thefundu_devices_v20261120_v2",
+    devices: "thefundu_devices_v20261120_v5",
     repairs: "thefundu_repairs_v5",
     qcInspections: "thefundu_qc_v5",
     warehouses: "thefundu_stores_v6",
@@ -297,9 +297,23 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (typeof window === "undefined") return;
     try {
       try {
-        localStorage.removeItem("thefundu_devices_v10");
-        localStorage.removeItem("thefundu_devices_v9");
-        localStorage.removeItem("thefundu_devices_v8");
+        [
+          "thefundu_devices_v20261120_v4",
+          "thefundu_devices_v20261120_v3",
+          "thefundu_devices_v20261120_v2",
+          "thefundu_devices_v20261120_v1",
+          "thefundu_devices_v10",
+          "thefundu_devices_v9",
+          "thefundu_devices_v8",
+          "thefundu_devices_v7",
+          "thefundu_devices_v6",
+          "thefundu_devices_v5",
+          "thefundu_devices_v4",
+          "thefundu_devices_v3",
+          "thefundu_devices_v2",
+          "thefundu_devices_v1",
+          "thefundu_devices",
+        ].forEach((k) => localStorage.removeItem(k));
       } catch (e) {}
 
       // Collect known sold handset IDs and IMEIs from baseline sales
@@ -329,10 +343,24 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (storedDevs) {
         const parsed = JSON.parse(storedDevs);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Merge with all initial devices so no baseline phones are ever missing
+          // Merge initialDevices with parsed, but ALWAYS guarantee Excel prices & costs take precedence
           const devMap = new Map<string, Device>();
-          initialDevices.forEach((d) => devMap.set(d.id, d));
           parsed.forEach((d: Device) => devMap.set(d.id, d));
+          initialDevices.forEach((d) => {
+            const existing = devMap.get(d.id);
+            if (existing) {
+              devMap.set(d.id, {
+                ...existing,
+                ...d,
+                costs: { ...d.costs },
+                sellingPrice: d.costs.sellingPrice,
+                purchasePrice: d.costs.purchasePrice,
+                status: (d.status === "Sold" || existing.status === "Sold") ? "Sold" : d.status,
+              });
+            } else {
+              devMap.set(d.id, d);
+            }
+          });
           const allMapped = Array.from(devMap.values()).map((d: Device) => {
             const isSold =
               d.status === "Sold" ||
