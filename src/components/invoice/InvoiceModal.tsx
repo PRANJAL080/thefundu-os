@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   Printer,
   Download,
@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   Smartphone,
   Info,
+  RefreshCw,
 } from "lucide-react";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ import { Device, SalesOrder } from "@/lib/types";
 import { CompanyInvoiceSheet } from "./CompanyInvoiceSheet";
 import { formatINR } from "@/lib/utils";
 import { useApp } from "@/lib/store";
+import { downloadInvoicePDF } from "@/lib/pdfDownloader";
 
 interface InvoiceModalProps {
   isOpen: boolean;
@@ -104,11 +106,13 @@ export function InvoiceModal({
   const profitMarginZ = Math.max(0, finalSellingPrice - buyCostX);
   const marginTax18 = Math.round((profitMarginZ * 18 / 118) * 100) / 100;
 
-  const handlePrint = () => {
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const autoRecordSaleIfNew = () => {
     if (device && device.status !== "Sold") {
       const rawId = device.id.replace(/\D/g, "") || "26001";
       const storeCode = (currentStore?.code || "LKO-01").replace(/-/g, "");
-      const invNumber = `INV${storeCode}2611-${rawId}`;
+      const invNumber = invoiceNumber || `INV${storeCode}2611-${rawId}`;
       const cleanTitle = `${device.brand} ${device.model} (${device.storage}) Refurbished ${device.colour && device.colour !== "Default Edition" ? device.colour : ""}`.replace(/\s+/g, " ").trim();
       addSale({
         invoiceNumber: invNumber,
@@ -128,8 +132,40 @@ export function InvoiceModal({
         customerAadhaar: customCustomer?.aadhaar || "",
         placeOfSupply: customCustomer?.placeOfSupply || "Uttar Pradesh",
       });
+      return invNumber;
     }
+    return invoiceNumber || order?.invoiceNumber || "INV-RETAIL";
+  };
+
+  const handlePrint = () => {
+    autoRecordSaleIfNew();
     window.print();
+  };
+
+  const handleDownloadPDF = async () => {
+    if (isDownloading) return;
+    setIsDownloading(true);
+    try {
+      const invNum = autoRecordSaleIfNew();
+      const targetEl = printContainerRef.current?.querySelector<HTMLElement>("[data-invoice-sheet]") || printContainerRef.current;
+      if (targetEl) {
+        const cleanInvNum = invNum.replace(/[^A-Za-z0-9_-]/g, "_");
+        const success = await downloadInvoicePDF(targetEl, `${cleanInvNum}.pdf`);
+        if (success) {
+          showToast(`Tax Invoice ${cleanInvNum} directly downloaded to your laptop!`, "success");
+        } else {
+          showToast("Direct download failed, opening print dialogue instead...", "error");
+          window.print();
+        }
+      } else {
+        window.print();
+      }
+    } catch (e) {
+      console.error("Direct download error:", e);
+      window.print();
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   return (
@@ -160,11 +196,17 @@ export function InvoiceModal({
             <Button
               variant="fundu"
               size="sm"
-              onClick={handlePrint}
-              className="gap-1.5 text-xs font-semibold shadow-xs"
+              onClick={handleDownloadPDF}
+              disabled={isDownloading}
+              className="gap-1.5 text-xs font-semibold shadow-xs bg-blue-600 hover:bg-blue-700 text-white"
+              title="Download PDF directly to your laptop without print dialog"
             >
-              <Download className="h-3.5 w-3.5" />
-              <span>Download PDF</span>
+              {isDownloading ? (
+                <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Download className="h-3.5 w-3.5" />
+              )}
+              <span>{isDownloading ? "Downloading..." : "Download PDF"}</span>
             </Button>
           </div>
         </div>

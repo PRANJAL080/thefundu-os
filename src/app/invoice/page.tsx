@@ -50,6 +50,7 @@ import { InvoiceModal } from "@/components/invoice/InvoiceModal";
 import { InvoiceSettingsModal } from "@/components/invoice/InvoiceSettingsModal";
 import { formatINR } from "@/lib/utils";
 import { exportGSTRule32AuditCSV, exportSavedBillsCSV } from "@/lib/exportGSTRule32";
+import { downloadInvoicePDF } from "@/lib/pdfDownloader";
 
 export default function InvoiceGeneratorPage() {
   const {
@@ -560,10 +561,55 @@ export default function InvoiceGeneratorPage() {
     return recordedSale;
   };
 
+  const [isDownloading, setIsDownloading] = useState(false);
+
   const handlePrint = () => {
     autoRecordCurrentInvoice();
     window.print();
     showToast(`Tax Invoice ${invoiceNumber} for ${selectedDevice?.id || "Handset"} saved & printed!`, "success");
+  };
+
+  const handleDownloadPDF = async () => {
+    if (isDownloading) return;
+    setIsDownloading(true);
+    try {
+      autoRecordCurrentInvoice();
+      const targetEl = document.querySelector<HTMLElement>("#live-preview-sheet [data-invoice-sheet]") ||
+                       document.getElementById("live-invoice-sheet") ||
+                       document.querySelector<HTMLElement>("[data-invoice-sheet]");
+      if (targetEl) {
+        const cleanInvNum = (invoiceNumber || "Tax-Invoice").replace(/[^A-Za-z0-9_-]/g, "_");
+        const ok = await downloadInvoicePDF(targetEl, `${cleanInvNum}.pdf`);
+        if (ok) {
+          showToast(`Tax Invoice ${cleanInvNum} directly downloaded to your laptop!`, "success");
+        } else {
+          showToast("Direct download failed, opening print dialogue...", "error");
+          window.print();
+        }
+      } else {
+        window.print();
+      }
+    } catch (err) {
+      console.error("Direct PDF download error:", err);
+      window.print();
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handleDownloadSavedBill = (order: SalesOrder) => {
+    setSelectedHistoryOrder(order);
+    setIsHistoryModalOpen(true);
+    setTimeout(async () => {
+      const modalSheet = document.querySelector<HTMLElement>("[data-invoice-sheet]");
+      if (modalSheet) {
+        const cleanInvNum = (order.invoiceNumber || "Tax-Invoice").replace(/[^A-Za-z0-9_-]/g, "_");
+        const ok = await downloadInvoicePDF(modalSheet, `${cleanInvNum}.pdf`);
+        if (ok) {
+          showToast(`Tax Invoice ${order.invoiceNumber} directly downloaded to your laptop!`, "success");
+        }
+      }
+    }, 450);
   };
 
   const handleSendWhatsApp = () => {
@@ -722,12 +768,17 @@ https://thefundu.com/verify/${serialNo}
           <Button
             variant="primary"
             size="sm"
-            onClick={handlePrint}
+            onClick={handleDownloadPDF}
+            disabled={isDownloading}
             className="gap-1.5 shadow-sm font-bold bg-blue-600 hover:bg-blue-700 text-white"
-            title="Download & Save Tax Invoice as PDF file"
+            title="Download Tax Invoice PDF directly to your laptop"
           >
-            <Download className="h-3.5 w-3.5" />
-            <span>Download Bill (PDF)</span>
+            {isDownloading ? (
+              <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Download className="h-3.5 w-3.5" />
+            )}
+            <span>{isDownloading ? "Downloading..." : "Download Bill (PDF)"}</span>
           </Button>
 
           <Button
@@ -1859,12 +1910,17 @@ https://thefundu.com/verify/${serialNo}
               <div className="flex items-center gap-1.5">
                 <Button
                   size="sm"
-                  onClick={handlePrint}
+                  onClick={handleDownloadPDF}
+                  disabled={isDownloading}
                   className="bg-blue-600 hover:bg-blue-700 text-white font-bold gap-1 text-[11px] h-6 px-2.5 shadow-xs"
-                  title="Download and save Tax Invoice PDF"
+                  title="Directly download Tax Invoice PDF to laptop"
                 >
-                  <Download className="h-3 w-3" />
-                  <span>Download PDF</span>
+                  {isDownloading ? (
+                    <RefreshCw className="h-3 w-3 animate-spin" />
+                  ) : (
+                    <Download className="h-3 w-3" />
+                  )}
+                  <span>{isDownloading ? "Downloading..." : "Download PDF"}</span>
                 </Button>
                 <Button
                   size="sm"
@@ -1879,7 +1935,7 @@ https://thefundu.com/verify/${serialNo}
             </div>
 
             {/* LIVE INVOICE SHEET CONTAINER WITH BOX SHADOW */}
-            <div className="bg-slate-100 dark:bg-slate-950 p-2 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-md overflow-x-auto print:p-0 print:border-0 print:bg-white print:shadow-none">
+            <div id="live-preview-sheet" className="bg-slate-100 dark:bg-slate-950 p-2 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-md overflow-x-auto print:p-0 print:border-0 print:bg-white print:shadow-none">
               <CompanyInvoiceSheet
                 device={selectedDevice}
                 selectedStore={currentStore}
@@ -2343,15 +2399,9 @@ https://thefundu.com/verify/${serialNo}
                               <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={() => {
-                                  setSelectedHistoryOrder(s);
-                                  setIsHistoryModalOpen(true);
-                                  setTimeout(() => {
-                                    window.print();
-                                  }, 300);
-                                }}
+                                onClick={() => handleDownloadSavedBill(s)}
                                 className="h-7 text-xs px-2 gap-1 font-bold border-blue-300 text-blue-700 bg-blue-50/70 hover:bg-blue-100 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800 shadow-2xs"
-                                title="Download & Save this Bill directly as PDF"
+                                title="Download & Save this Bill directly as PDF to laptop"
                               >
                                 <Download className="w-3 h-3 text-blue-600" />
                                 <span>Download PDF</span>

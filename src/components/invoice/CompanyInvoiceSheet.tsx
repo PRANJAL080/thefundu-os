@@ -57,6 +57,7 @@ export interface CompanyInvoiceSheetProps {
   channelOrderNo?: string;
   orderNo?: string;
   warrantyDays?: number;
+  id?: string;
 }
 
 // Convert numbers to Indian Rupees in words
@@ -98,6 +99,7 @@ export function CompanyInvoiceSheet({
   channelOrderNo: customChannelOrderNo,
   orderNo: customOrderNo,
   warrantyDays = 180,
+  id,
 }: CompanyInvoiceSheetProps) {
   // Serial extraction (e.g. Fun-26001 -> 26001)
   const rawId = device?.id ? device.id.replace("Fun-", "").replace("TFD-", "") : (order?.deviceId ? order.deviceId.replace("Fun-", "").replace("TFD-", "") : "26001");
@@ -304,6 +306,8 @@ export function CompanyInvoiceSheet({
 
   return (
     <div
+      id={id || "company-invoice-sheet"}
+      data-invoice-sheet="true"
       className="bg-white text-black p-4 sm:p-6 print:p-0 print:m-0 w-full max-w-[850px] mx-auto text-[10px] leading-tight select-text"
       style={{
         fontFamily: "Arial, Helvetica, sans-serif",
